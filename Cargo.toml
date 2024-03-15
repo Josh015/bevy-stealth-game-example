@@ -1,0 +1,22 @@
+[package]
+name = "bevy-stealth-sound-game"
+version = "0.1.0"
+authors = ["Joshua Ols <joshua.d.ols@gmail.com>"]
+edition = "2021"
+rust-version = "1.64"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+bevy = { version = "0.13.0", features = ["file_watcher"] }
+bevy_asset_loader = { version = "0.20.0", features = ["standard_dynamic_assets"] }
+bevy_common_assets = { version = "0.10.0", features = ["yaml"] }
+bevy-scene-hook = "10.0.0"
+bevy-sequential-actions = "0.10.0"
+leafwing-input-manager = "0.13.3"
+rand = { version = "0.8.5", features = ["small_rng"] }
+seldom_state = "0.10.0"
+serde = { version = "1.0.197", features = ["serde_derive"] }
+spew = "0.5.1"
+strum = { version = "0.26.2", features = ["derive"] }
+vleue_navigator = "0.7.1"
