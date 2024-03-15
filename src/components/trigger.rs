@@ -1,8 +1,8 @@
-use crate::common::recurrence::Recurrence;
+use crate::common::repeat::Repeat;
 
 /// Entity that player can collide with to trigger an in-game effect.
 pub struct Trigger {
-    number_of_uses: Recurrence,
+    reusable: Repeat,
     // TODO: How to assign effect? Maybe custom commands?
 }
 

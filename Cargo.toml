@@ -14,6 +14,8 @@ bevy_common_assets = { version = "0.10.0", features = ["yaml"] }
 bevy_hanabi = "0.10.0"
 bevy-scene-hook = "10.0.0"
 bevy-sequential-actions = "0.10.0"
+bevy_tweening = "0.10.0"
+derive-new = "0.6.0"
 leafwing-input-manager = "0.13.3"
 rand = { version = "0.8.5", features = ["small_rng"] }
 seldom_state = "0.10.0"
