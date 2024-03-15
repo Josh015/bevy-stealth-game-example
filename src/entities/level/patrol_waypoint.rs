@@ -1,0 +1,3 @@
+// Patrol Waypoint
+//   Transform
+//   GlobalTransform

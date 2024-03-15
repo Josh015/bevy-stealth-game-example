@@ -11,6 +11,7 @@ rust-version = "1.64"
 bevy = { version = "0.13.0", features = ["file_watcher"] }
 bevy_asset_loader = { version = "0.20.0", features = ["standard_dynamic_assets"] }
 bevy_common_assets = { version = "0.10.0", features = ["yaml"] }
+bevy_hanabi = "0.10.0"
 bevy-scene-hook = "10.0.0"
 bevy-sequential-actions = "0.10.0"
 leafwing-input-manager = "0.13.3"
