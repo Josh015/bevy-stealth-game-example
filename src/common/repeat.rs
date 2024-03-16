@@ -1,4 +1,4 @@
-/// Controls how many times an action can repeat.
+/// Controls how many times a thing can repeat.
 pub enum Repeat {
     Forever,
     Times(u32),

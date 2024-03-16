@@ -6,7 +6,6 @@ pub mod components;
 pub mod entities;
 pub mod events;
 pub mod game;
-pub mod states;
 pub mod ui;
 
 use actions::{
@@ -15,8 +14,8 @@ use actions::{
 use bevy_sequential_actions::*;
 use bevy_tweening::*;
 use components::{
+    agents::player::*,
     movement::{MovementBundle, MovingSpeed, TurningSpeed},
-    player::*,
 };
 
 use bevy::{
@@ -54,10 +53,12 @@ fn main() {
         .run();
 }
 
+#[allow(dead_code)]
 #[derive(Clone, Component, Copy, Reflect)]
 #[component(storage = "SparseSet")]
 struct Ping;
 
+#[allow(dead_code)]
 #[derive(Clone, Component, Copy, Reflect)]
 #[component(storage = "SparseSet")]
 struct Pong;
@@ -173,6 +174,7 @@ fn tinkering_zone_system(
         });
 }
 
+#[allow(dead_code)]
 fn ping(mut commands: Commands, query: Query<Entity, Added<Ping>>) {
     for entity in &query {
         commands.actions(entity).add_many(actions![
@@ -185,6 +187,7 @@ fn ping(mut commands: Commands, query: Query<Entity, Added<Ping>>) {
     }
 }
 
+#[allow(dead_code)]
 fn pong(mut commands: Commands, query: Query<Entity, Added<Ping>>) {
     let sphere_radius = 0.0625;
     let sphere_height = sphere_radius + 0.01;
