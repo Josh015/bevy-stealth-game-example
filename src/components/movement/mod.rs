@@ -3,11 +3,11 @@ use bevy::prelude::*;
 pub mod moving;
 pub mod turning;
 
-/// Movement speed in meters/second.
+/// Moving speed in `meters/second`.
 #[derive(Clone, Component, Debug, Default)]
 pub struct MovingSpeed(pub f32);
 
-/// Turning speed in radians/second.
+/// Turning speed in `radians/second`.
 #[derive(Clone, Component, Debug, Default)]
 pub struct TurningSpeed(pub f32);
 
