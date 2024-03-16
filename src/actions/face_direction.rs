@@ -9,7 +9,7 @@ use crate::{
 
 /// Rotate an entity to face a given direction.
 ///
-/// **WARNING**: Can't be run in parallel with [`MoveToAction`](super::move_to_action::MoveToAction).
+/// **WARNING**: Can't be run in parallel with [`MoveTo`](super::move_to::MoveTo).
 #[derive(new)]
 pub struct FaceDirection {
     direction: Direction3d,

@@ -9,7 +9,7 @@ use crate::{
 
 /// Move the entity in a straight line to a given point.
 ///
-/// **WARNING**: Can't be run in parallel with [`FaceDirectionAction`](super::face_direction_action::FaceDirectionAction).
+/// **WARNING**: Can't be run in parallel with [`FaceDirection`](super::face_direction::FaceDirection).
 #[derive(new)]
 pub struct MoveTo {
     position: Vec3,

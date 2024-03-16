@@ -129,7 +129,6 @@ fn tinkering_zone_system(
                 ..default()
             },
             // TODO: States:
-            // Spawn sphere with vision cone.
             //  State Spin back and forth with delays. Switch to Move when done.
             //    LoopAction
             //  State move back and forth with delays. Switch to Spin when done.
@@ -167,6 +166,6 @@ fn tinkering_zone_system(
         MoveTo::new(Vec3::new(-movement_range, sphere_height, -movement_range)),
         MoveTo::new(Vec3::new(-movement_range, sphere_height, movement_range)),
         MoveTo::new(Vec3::new(0.0, sphere_height, 0.0)),
-        FaceDirection::new(Direction3d::NEG_Z),
+        FaceDirection::new(Direction3d::Y),
     ]);
 }
