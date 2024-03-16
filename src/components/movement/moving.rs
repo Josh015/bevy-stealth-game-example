@@ -14,8 +14,8 @@ impl Plugin for MovingPlugin {
 /// Moves a [`MovingSpeed`] entity.
 #[derive(Clone, Component, Debug, new)]
 pub struct Moving {
-    start_position: Vec3,
-    end_position: Vec3,
+    start: Vec3,
+    end: Vec3,
 
     #[new(default)]
     progress: f32,
@@ -30,9 +30,7 @@ fn moving(
         moving.progress =
             (moving.progress + moving_speed.0 * time.delta_seconds()).min(1.0);
 
-        transform.translation = moving
-            .start_position
-            .lerp(moving.end_position, moving.progress);
+        transform.translation = moving.start.lerp(moving.end, moving.progress);
 
         if moving.progress == 1.0 {
             commands.entity(entity).remove::<Moving>();

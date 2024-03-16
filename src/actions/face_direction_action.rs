@@ -12,7 +12,7 @@ use crate::{
 /// **WARNING**: Can't be run in parallel with [`MoveToAction`](super::move_to_action::MoveToAction).
 #[derive(new)]
 pub struct FaceDirectionAction {
-    new_direction: Direction3d,
+    direction: Direction3d,
 }
 
 impl Action for FaceDirectionAction {
@@ -27,7 +27,7 @@ impl Action for FaceDirectionAction {
         };
         entity.insert(Turning::new(
             transform.rotation,
-            Quat::from_rotation_arc(FORWARD_DIRECTION, *self.new_direction),
+            Quat::from_rotation_arc(FORWARD_DIRECTION, *self.direction),
         ));
 
         false

@@ -14,8 +14,8 @@ impl Plugin for TurningPlugin {
 /// Rotates a [`TurningSpeed`] entity.
 #[derive(Clone, Component, Debug, new)]
 pub struct Turning {
-    start_rotation: Quat,
-    end_rotation: Quat,
+    start: Quat,
+    end: Quat,
 
     #[new(default)]
     progress: f32,
@@ -31,9 +31,7 @@ fn turning(
             + turning_speed.0 * time.delta_seconds())
         .min(1.0);
 
-        transform.rotation = turning
-            .start_rotation
-            .slerp(turning.end_rotation, turning.progress);
+        transform.rotation = turning.start.slerp(turning.end, turning.progress);
 
         if turning.progress == 1.0 {
             commands.entity(entity).remove::<Turning>();

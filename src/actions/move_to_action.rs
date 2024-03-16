@@ -12,7 +12,7 @@ use crate::{
 /// **WARNING**: Can't be run in parallel with [`FaceDirectionAction`](super::face_direction_action::FaceDirectionAction).
 #[derive(new)]
 pub struct MoveToAction {
-    new_position: Vec3,
+    position: Vec3,
 }
 
 impl Action for MoveToAction {
@@ -27,11 +27,10 @@ impl Action for MoveToAction {
         let Some(transform) = entity.get::<Transform>() else {
             return true;
         };
-        let new_direction =
-            (self.new_position - transform.translation).normalize();
+        let new_direction = (self.position - transform.translation).normalize();
 
         entity.insert((
-            Moving::new(transform.translation, self.new_position),
+            Moving::new(transform.translation, self.position),
             Turning::new(
                 transform.rotation,
                 Quat::from_rotation_arc(FORWARD_DIRECTION, new_direction),
