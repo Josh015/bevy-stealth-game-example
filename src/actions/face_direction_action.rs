@@ -7,7 +7,9 @@ use crate::{
     components::movement::turning::Turning,
 };
 
-/// Rotates an entity to face a given direction and plays a corresponding turning animation for left/right.
+/// Rotate an entity to face a given direction.
+///
+/// **WARNING**: Can't be run in parallel with [`MoveToAction`](super::move_to_action::MoveToAction).
 #[derive(new)]
 pub struct FaceDirectionAction {
     new_direction: Direction3d,

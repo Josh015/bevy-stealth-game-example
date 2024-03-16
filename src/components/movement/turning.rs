@@ -11,7 +11,7 @@ impl Plugin for TurningPlugin {
     }
 }
 
-/// Rotates an entity.
+/// Rotates a [`TurningSpeed`] entity.
 #[derive(Clone, Component, Debug, new)]
 pub struct Turning {
     start_rotation: Quat,

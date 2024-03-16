@@ -11,7 +11,7 @@ impl Plugin for MovingPlugin {
     }
 }
 
-/// Moves an entity.
+/// Moves a [`MovingSpeed`] entity.
 #[derive(Clone, Component, Debug, new)]
 pub struct Moving {
     start_position: Vec3,

@@ -7,10 +7,9 @@ use crate::{
     components::movement::{moving::Moving, turning::Turning},
 };
 
-// Move the entity in a straight line to a given point while playing a
-// corresponding animation.
+/// Move the entity in a straight line to a given point.
 ///
-/// WARNING: Can't be used in parallel with [`MoveToActionAction`](super::turn_to_face_direction_action::MoveToActionAction).
+/// **WARNING**: Can't be run in parallel with [`FaceDirectionAction`](super::face_direction_action::FaceDirectionAction).
 #[derive(new)]
 pub struct MoveToAction {
     new_position: Vec3,
