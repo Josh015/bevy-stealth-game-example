@@ -9,7 +9,9 @@ pub mod game;
 pub mod states;
 pub mod ui;
 
-use actions::{face_direction::FaceDirection, move_to::MoveTo};
+use actions::{
+    face_direction::FaceDirection, move_to::MoveTo, state_done::StateDone,
+};
 use bevy_sequential_actions::*;
 use bevy_tweening::*;
 use components::{
@@ -21,10 +23,11 @@ use bevy::{
     prelude::*,
     window::{PresentMode, WindowResolution},
 };
+use seldom_state::prelude::*;
 
 fn main() {
     App::new()
-        .add_plugins(
+        .add_plugins((
             DefaultPlugins
                 .set(WindowPlugin {
                     primary_window: Some(Window {
@@ -38,16 +41,26 @@ fn main() {
                 .set(AssetPlugin {
                     ..Default::default()
                 }),
-        )
-        .add_plugins(SequentialActionsPlugin)
-        .add_plugins(TweeningPlugin)
-        .add_plugins(components::ComponentsPlugin)
+            SequentialActionsPlugin,
+            StateMachinePlugin,
+            TweeningPlugin,
+        ))
+        .add_plugins((components::ComponentsPlugin,))
         .insert_resource(Msaa::default())
         .insert_resource(ClearColor(Color::rgba(0.7, 0.9, 1.0, 1.0)))
         .add_systems(Update, bevy::window::close_on_esc)
+        .add_systems(Update, (ping, pong))
         .add_systems(Startup, tinkering_zone_system)
         .run();
 }
+
+#[derive(Clone, Component, Copy, Reflect)]
+#[component(storage = "SparseSet")]
+struct Ping;
+
+#[derive(Clone, Component, Copy, Reflect)]
+#[component(storage = "SparseSet")]
+struct Pong;
 
 // TODO: Remove this after testing.
 #[allow(dead_code)]
@@ -107,15 +120,25 @@ fn tinkering_zone_system(
         radius: 0.5 * cylinder_radius,
         half_height: cylinder_radius,
     });
-    let movement_range = 0.5;
 
-    let agent = commands
+    commands
         .spawn((
             Player,
             MovementBundle {
                 moving_speed: MovingSpeed(1.0),
                 turning_speed: TurningSpeed(120f32.to_radians()),
             },
+            StateMachine::default()
+                // Whenever the player presses jump, jump
+                .trans::<Ping, _>(
+                    done(None),
+                    Pong,
+                )
+                .trans::<Pong, _>(
+                    done(None),
+                    Ping,
+                ),
+            Ping,
             ActionsBundle::new(),
             PbrBundle {
                 mesh: meshes.add(Sphere {
@@ -147,25 +170,50 @@ fn tinkering_zone_system(
                 ),
                 ..default()
             });
-        })
-        .id();
+        });
+}
 
-    // commands
-    //     .actions(agent)
-    //     .add(RotateToFaceDirectionAction::new(
-    //         Direction3d::new_unchecked(Vec3::X),
-    //     ));
+fn ping(mut commands: Commands, query: Query<Entity, Added<Ping>>) {
+    for entity in &query {
+        commands.actions(entity).add_many(actions![
+            FaceDirection::new(Direction3d::X),
+            FaceDirection::new(Direction3d::Z),
+            FaceDirection::new(Direction3d::NEG_X),
+            FaceDirection::new(Direction3d::NEG_Z),
+            StateDone::new(Done::Success)
+        ]);
+    }
+}
 
-    commands.actions(agent).add_many(actions![
-        FaceDirection::new(Direction3d::X),
-        FaceDirection::new(Direction3d::Z),
-        FaceDirection::new(Direction3d::NEG_X),
-        FaceDirection::new(Direction3d::NEG_Z),
-        MoveTo::new(Vec3::new(movement_range, sphere_height, movement_range)),
-        MoveTo::new(Vec3::new(movement_range, sphere_height, -movement_range)),
-        MoveTo::new(Vec3::new(-movement_range, sphere_height, -movement_range)),
-        MoveTo::new(Vec3::new(-movement_range, sphere_height, movement_range)),
-        MoveTo::new(Vec3::new(0.0, sphere_height, 0.0)),
-        FaceDirection::new(Direction3d::Y),
-    ]);
+fn pong(mut commands: Commands, query: Query<Entity, Added<Ping>>) {
+    let sphere_radius = 0.0625;
+    let sphere_height = sphere_radius + 0.01;
+    let movement_range = 0.5;
+
+    for entity in &query {
+        commands.actions(entity).add_many(actions![
+            MoveTo::new(Vec3::new(
+                movement_range,
+                sphere_height,
+                movement_range
+            )),
+            MoveTo::new(Vec3::new(
+                movement_range,
+                sphere_height,
+                -movement_range
+            )),
+            MoveTo::new(Vec3::new(
+                -movement_range,
+                sphere_height,
+                -movement_range
+            )),
+            MoveTo::new(Vec3::new(
+                -movement_range,
+                sphere_height,
+                movement_range
+            )),
+            MoveTo::new(Vec3::new(0.0, sphere_height, 0.0)),
+            StateDone::new(Done::Success)
+        ]);
+    }
 }
