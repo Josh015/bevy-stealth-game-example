@@ -40,6 +40,7 @@ fn main() {
         )
         .add_plugins(SequentialActionsPlugin)
         .add_plugins(TweeningPlugin)
+        .add_plugins(components::ComponentsPlugin)
         .insert_resource(Msaa::default())
         .insert_resource(ClearColor(Color::rgba(0.7, 0.9, 1.0, 1.0)))
         .add_systems(Update, bevy::window::close_on_esc)

@@ -1,6 +1,8 @@
 // TODO: These all need to act as physical attributes, status conditions,
 // senses, event emitters, and data storage. Don’t have them perform AI logic!
 
+use bevy::app::{App, Plugin};
+
 pub mod blocks_vision;
 pub mod deflects_sounds;
 pub mod firearm;
@@ -20,3 +22,11 @@ pub mod start_location;
 pub mod trigger;
 pub mod vision;
 pub mod waypoint;
+
+pub(super) struct ComponentsPlugin;
+
+impl Plugin for ComponentsPlugin {
+    fn build(&self, app: &mut App) {
+        app.add_plugins((movement::MovementPlugin,));
+    }
+}

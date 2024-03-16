@@ -41,6 +41,7 @@
     "seedable",
     "shatterable",
     "signum",
+    "slerp",
     "spawnable",
     "streetsidesoftware",
     "struct",
