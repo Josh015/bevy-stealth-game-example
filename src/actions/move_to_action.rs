@@ -19,7 +19,7 @@ impl Action for MoveToAction {
     fn is_finished(&self, agent: Entity, world: &World) -> bool {
         let entity = world.entity(agent);
 
-        entity.get::<Moving>().is_none() && entity.get::<Turning>().is_none()
+        !entity.contains::<Moving>() && !entity.contains::<Turning>()
     }
 
     fn on_start(&mut self, agent: Entity, world: &mut World) -> bool {
@@ -47,7 +47,6 @@ impl Action for MoveToAction {
         world: &mut World,
         _reason: StopReason,
     ) {
-        world.entity_mut(agent).remove::<Moving>();
-        world.entity_mut(agent).remove::<Turning>();
+        world.entity_mut(agent).remove::<(Moving, Turning)>();
     }
 }

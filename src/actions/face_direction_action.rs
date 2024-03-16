@@ -17,7 +17,7 @@ pub struct FaceDirectionAction {
 
 impl Action for FaceDirectionAction {
     fn is_finished(&self, agent: Entity, world: &World) -> bool {
-        world.entity(agent).get::<Turning>().is_none()
+        !world.entity(agent).contains::<Turning>()
     }
 
     fn on_start(&mut self, agent: Entity, world: &mut World) -> bool {
