@@ -1,6 +1,5 @@
 use bevy::{ecs::prelude::*, math::primitives::Direction3d, prelude::*};
 use bevy_sequential_actions::*;
-use derive_new::new;
 
 use crate::{
     common::constants::FORWARD_DIRECTION,
@@ -10,12 +9,9 @@ use crate::{
 /// Rotate an entity to face a given direction.
 ///
 /// **WARNING**: Can't be run in parallel with [`MoveToAction`](super::move_to_action::MoveToAction).
-#[derive(new)]
-pub struct FaceDirectionAction {
-    direction: Direction3d,
-}
+pub struct FaceDirection(pub Direction3d);
 
-impl Action for FaceDirectionAction {
+impl Action for FaceDirection {
     fn is_finished(&self, agent: Entity, world: &World) -> bool {
         !world.entity(agent).contains::<Turning>()
     }
@@ -27,7 +23,7 @@ impl Action for FaceDirectionAction {
         };
         entity.insert(Turning::new(
             transform.rotation,
-            Quat::from_rotation_arc(FORWARD_DIRECTION, *self.direction),
+            Quat::from_rotation_arc(FORWARD_DIRECTION, *self.0),
         ));
 
         false

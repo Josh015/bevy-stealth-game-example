@@ -9,9 +9,7 @@ pub mod game;
 pub mod states;
 pub mod ui;
 
-use actions::{
-    face_direction_action::FaceDirectionAction, move_to_action::MoveToAction,
-};
+use actions::{face_direction::FaceDirection, move_to::MoveTo};
 use bevy_sequential_actions::*;
 use bevy_tweening::*;
 use components::{
@@ -160,31 +158,15 @@ fn tinkering_zone_system(
     //     ));
 
     commands.actions(agent).add_many(actions![
-        FaceDirectionAction::new(Direction3d::X),
-        FaceDirectionAction::new(Direction3d::Z),
-        FaceDirectionAction::new(Direction3d::NEG_X),
-        FaceDirectionAction::new(Direction3d::NEG_Z),
-        MoveToAction::new(Vec3::new(
-            movement_range,
-            sphere_height,
-            movement_range
-        )),
-        MoveToAction::new(Vec3::new(
-            movement_range,
-            sphere_height,
-            -movement_range
-        )),
-        MoveToAction::new(Vec3::new(
-            -movement_range,
-            sphere_height,
-            -movement_range
-        )),
-        MoveToAction::new(Vec3::new(
-            -movement_range,
-            sphere_height,
-            movement_range
-        )),
-        MoveToAction::new(Vec3::new(0.0, sphere_height, 0.0)),
-        FaceDirectionAction::new(Direction3d::NEG_Z),
+        FaceDirection(Direction3d::X),
+        FaceDirection(Direction3d::Z),
+        FaceDirection(Direction3d::NEG_X),
+        FaceDirection(Direction3d::NEG_Z),
+        MoveTo(Vec3::new(movement_range, sphere_height, movement_range)),
+        MoveTo(Vec3::new(movement_range, sphere_height, -movement_range)),
+        MoveTo(Vec3::new(-movement_range, sphere_height, -movement_range)),
+        MoveTo(Vec3::new(-movement_range, sphere_height, movement_range)),
+        MoveTo(Vec3::new(0.0, sphere_height, 0.0)),
+        FaceDirection(Direction3d::NEG_Z),
     ]);
 }
