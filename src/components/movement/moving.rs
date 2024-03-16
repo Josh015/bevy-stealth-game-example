@@ -1,6 +1,8 @@
 use bevy::{ecs::prelude::*, prelude::*};
 use derive_new::new;
 
+use super::MovingSpeed;
+
 pub(super) struct MovingPlugin;
 
 impl Plugin for MovingPlugin {
@@ -22,10 +24,11 @@ pub struct Moving {
 fn moving(
     time: Res<Time>,
     mut commands: Commands,
-    mut query: Query<(Entity, &mut Moving, &mut Transform)>,
+    mut query: Query<(Entity, &MovingSpeed, &mut Moving, &mut Transform)>,
 ) {
-    for (entity, mut moving, mut transform) in &mut query {
-        moving.progress = (moving.progress + time.delta_seconds()).min(1.0);
+    for (entity, moving_speed, mut moving, mut transform) in &mut query {
+        moving.progress =
+            (moving.progress + moving_speed.0 * time.delta_seconds()).min(1.0);
 
         transform.translation = moving
             .start_position

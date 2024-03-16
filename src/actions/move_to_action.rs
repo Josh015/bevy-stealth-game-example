@@ -4,7 +4,7 @@ use derive_new::new;
 
 use crate::{
     common::constants::FORWARD_DIRECTION,
-    components::movement::{moving::Moving, rotating::Rotating},
+    components::movement::{moving::Moving, turning::Turning},
 };
 
 // Move the entity in a straight line to a given point while playing a
@@ -20,7 +20,7 @@ impl Action for MoveToAction {
     fn is_finished(&self, agent: Entity, world: &World) -> bool {
         let entity = world.entity(agent);
 
-        entity.get::<Moving>().is_none() && entity.get::<Rotating>().is_none()
+        entity.get::<Moving>().is_none() && entity.get::<Turning>().is_none()
     }
 
     fn on_start(&mut self, agent: Entity, world: &mut World) -> bool {
@@ -33,7 +33,7 @@ impl Action for MoveToAction {
 
         entity.insert((
             Moving::new(transform.translation, self.new_position),
-            Rotating::new(
+            Turning::new(
                 transform.rotation,
                 Quat::from_rotation_arc(FORWARD_DIRECTION, new_direction),
             ),
@@ -49,6 +49,6 @@ impl Action for MoveToAction {
         _reason: StopReason,
     ) {
         world.entity_mut(agent).remove::<Moving>();
-        world.entity_mut(agent).remove::<Rotating>();
+        world.entity_mut(agent).remove::<Turning>();
     }
 }

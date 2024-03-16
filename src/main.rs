@@ -14,7 +14,10 @@ use actions::{
 };
 use bevy_sequential_actions::*;
 use bevy_tweening::*;
-use components::player::*;
+use components::{
+    movement::{MovementBundle, MovingSpeed, TurningSpeed},
+    player::*,
+};
 
 use bevy::{
     prelude::*,
@@ -111,6 +114,10 @@ fn tinkering_zone_system(
     let agent = commands
         .spawn((
             Player,
+            MovementBundle {
+                moving_speed: MovingSpeed(1.0),
+                turning_speed: TurningSpeed(120f32.to_radians()),
+            },
             ActionsBundle::new(),
             PbrBundle {
                 mesh: meshes.add(Sphere {

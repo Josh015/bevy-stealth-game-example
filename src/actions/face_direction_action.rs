@@ -4,7 +4,7 @@ use derive_new::new;
 
 use crate::{
     common::constants::FORWARD_DIRECTION,
-    components::movement::rotating::Rotating,
+    components::movement::turning::Turning,
 };
 
 /// Rotates an entity to face a given direction and plays a corresponding turning animation for left/right.
@@ -15,7 +15,7 @@ pub struct FaceDirectionAction {
 
 impl Action for FaceDirectionAction {
     fn is_finished(&self, agent: Entity, world: &World) -> bool {
-        world.entity(agent).get::<Rotating>().is_none()
+        world.entity(agent).get::<Turning>().is_none()
     }
 
     fn on_start(&mut self, agent: Entity, world: &mut World) -> bool {
@@ -23,7 +23,7 @@ impl Action for FaceDirectionAction {
         let Some(transform) = entity.get::<Transform>() else {
             return true;
         };
-        entity.insert(Rotating::new(
+        entity.insert(Turning::new(
             transform.rotation,
             Quat::from_rotation_arc(FORWARD_DIRECTION, *self.new_direction),
         ));
@@ -37,6 +37,6 @@ impl Action for FaceDirectionAction {
         world: &mut World,
         _reason: StopReason,
     ) {
-        world.entity_mut(agent).remove::<Rotating>();
+        world.entity_mut(agent).remove::<Turning>();
     }
 }
