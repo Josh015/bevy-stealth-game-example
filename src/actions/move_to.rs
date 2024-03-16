@@ -1,5 +1,6 @@
 use bevy::{ecs::prelude::*, prelude::*};
 use bevy_sequential_actions::*;
+use derive_new::new;
 
 use crate::{
     common::constants::FORWARD_DIRECTION,
@@ -9,7 +10,10 @@ use crate::{
 /// Move the entity in a straight line to a given point.
 ///
 /// **WARNING**: Can't be run in parallel with [`FaceDirectionAction`](super::face_direction_action::FaceDirectionAction).
-pub struct MoveTo(pub Vec3);
+#[derive(new)]
+pub struct MoveTo {
+    position: Vec3,
+}
 
 impl Action for MoveTo {
     fn is_finished(&self, agent: Entity, world: &World) -> bool {
@@ -23,10 +27,10 @@ impl Action for MoveTo {
         let Some(transform) = entity.get::<Transform>() else {
             return true;
         };
-        let new_direction = (self.0 - transform.translation).normalize();
+        let new_direction = (self.position - transform.translation).normalize();
 
         entity.insert((
-            Moving::new(transform.translation, self.0),
+            Moving::new(transform.translation, self.position),
             Turning::new(
                 transform.rotation,
                 Quat::from_rotation_arc(FORWARD_DIRECTION, new_direction),

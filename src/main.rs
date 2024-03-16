@@ -158,15 +158,15 @@ fn tinkering_zone_system(
     //     ));
 
     commands.actions(agent).add_many(actions![
-        FaceDirection(Direction3d::X),
-        FaceDirection(Direction3d::Z),
-        FaceDirection(Direction3d::NEG_X),
-        FaceDirection(Direction3d::NEG_Z),
-        MoveTo(Vec3::new(movement_range, sphere_height, movement_range)),
-        MoveTo(Vec3::new(movement_range, sphere_height, -movement_range)),
-        MoveTo(Vec3::new(-movement_range, sphere_height, -movement_range)),
-        MoveTo(Vec3::new(-movement_range, sphere_height, movement_range)),
-        MoveTo(Vec3::new(0.0, sphere_height, 0.0)),
-        FaceDirection(Direction3d::NEG_Z),
+        FaceDirection::new(Direction3d::X),
+        FaceDirection::new(Direction3d::Z),
+        FaceDirection::new(Direction3d::NEG_X),
+        FaceDirection::new(Direction3d::NEG_Z),
+        MoveTo::new(Vec3::new(movement_range, sphere_height, movement_range)),
+        MoveTo::new(Vec3::new(movement_range, sphere_height, -movement_range)),
+        MoveTo::new(Vec3::new(-movement_range, sphere_height, -movement_range)),
+        MoveTo::new(Vec3::new(-movement_range, sphere_height, movement_range)),
+        MoveTo::new(Vec3::new(0.0, sphere_height, 0.0)),
+        FaceDirection::new(Direction3d::NEG_Z),
     ]);
 }
