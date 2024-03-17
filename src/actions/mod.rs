@@ -1,3 +1,4 @@
+pub mod action_sequence;
 pub mod dialog_bubble;
 pub mod face_direction;
 pub mod move_to;
