@@ -1,4 +1,4 @@
-use crate::components::movement::{moving_to::MovingTo, turning_to::TurningTo};
+use crate::components::movement::moving_to::MovingTo;
 use bevy::{ecs::prelude::*, prelude::*};
 use bevy_sequential_actions::*;
 use derive_new::new;
@@ -14,22 +14,13 @@ pub struct MoveToAction {
 
 impl Action for MoveToAction {
     fn is_finished(&self, agent: Entity, world: &World) -> bool {
-        let entity = world.entity(agent);
-
-        !entity.contains::<MovingTo>() && !entity.contains::<TurningTo>()
+        !world.entity(agent).contains::<MovingTo>()
     }
 
     fn on_start(&mut self, agent: Entity, world: &mut World) -> bool {
-        let mut entity = world.entity_mut(agent);
-        let Some(transform) = entity.get::<Transform>() else {
-            return true;
-        };
-        let new_direction = (self.position - transform.translation).normalize();
-
-        entity.insert((
-            MovingTo::new(self.position),
-            TurningTo::new(Direction3d::new_unchecked(new_direction)),
-        ));
+        world
+            .entity_mut(agent)
+            .insert((MovingTo::new(self.position),));
 
         false
     }
@@ -40,6 +31,6 @@ impl Action for MoveToAction {
         world: &mut World,
         _reason: StopReason,
     ) {
-        world.entity_mut(agent).remove::<(MovingTo, TurningTo)>();
+        world.entity_mut(agent).remove::<MovingTo>();
     }
 }

@@ -1,4 +1,5 @@
 use crate::common::constants::MOVEMENT_TOLERANCE;
+use crate::components::movement::turning_to::TurningTo;
 
 use super::{translating::Translating, MovingSpeed};
 use bevy::{ecs::prelude::*, prelude::*};
@@ -26,9 +27,12 @@ fn start_moving_to(
     >,
 ) {
     for (entity, moving_speed, moving_to, transform) in &query {
-        commands.entity(entity).insert(Translating::new(
-            (moving_to.position - transform.translation).normalize_or_zero()
-                * moving_speed.0,
+        let moving_direction =
+            (moving_to.position - transform.translation).normalize();
+
+        commands.entity(entity).insert((
+            Translating::new(moving_direction * moving_speed.0),
+            TurningTo::new(Direction3d::new_unchecked(moving_direction)),
         ));
     }
 }
