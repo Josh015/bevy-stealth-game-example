@@ -1,8 +1,8 @@
 use crate::{
     common::constants::FORWARD_DIRECTION,
-    components::movement::turning::Turning,
+    components::movement::turning_to::TurningTo,
 };
-use bevy::{ecs::prelude::*, math::primitives::Direction3d, prelude::*};
+use bevy::{ecs::prelude::*, prelude::*};
 use bevy_sequential_actions::*;
 use derive_new::new;
 
@@ -17,16 +17,11 @@ pub struct FaceDirection {
 
 impl Action for FaceDirection {
     fn is_finished(&self, agent: Entity, world: &World) -> bool {
-        !world.entity(agent).contains::<Turning>()
+        !world.entity(agent).contains::<TurningTo>()
     }
 
     fn on_start(&mut self, agent: Entity, world: &mut World) -> bool {
-        let mut entity = world.entity_mut(agent);
-        let Some(transform) = entity.get::<Transform>() else {
-            return true;
-        };
-        entity.insert(Turning::new(
-            transform.rotation,
+        world.entity_mut(agent).insert(TurningTo::new(
             Quat::from_rotation_arc(FORWARD_DIRECTION, *self.direction),
         ));
 
@@ -39,6 +34,6 @@ impl Action for FaceDirection {
         world: &mut World,
         _reason: StopReason,
     ) {
-        world.entity_mut(agent).remove::<Turning>();
+        world.entity_mut(agent).remove::<TurningTo>();
     }
 }
