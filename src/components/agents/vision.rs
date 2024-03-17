@@ -1,6 +1,16 @@
-// Vision
-// distance: f32
-// fov: f32
+use bevy::{app::prelude::*, ecs::prelude::*};
 
-// Guards and Cameras. Can be queried to see if Player is in its frustum. For
-// guards, it’ll make the Player position into a PointOfInterest.
+pub(super) struct VisionPlugin;
+
+impl Plugin for VisionPlugin {
+    fn build(&self, app: &mut App) {
+        // app.add_plugins((movement::MovementPlugin,));
+    }
+}
+
+/// A vision cone that can trigger a [`SawPlayerEvent`](crate::events::SawPlayerEvent).
+#[derive(Clone, Component, Debug, Default)]
+pub struct Vision {
+    pub distance: f32,
+    pub fov: f32,
+}
