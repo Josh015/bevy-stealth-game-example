@@ -54,6 +54,10 @@ fn main() {
         .run();
 }
 
+const CUBE_HALF_SIZE: f32 = 0.0625;
+const CUBE_GROUND_HEIGHT: f32 = CUBE_HALF_SIZE + 0.01;
+const CYLINDER_RADIUS: f32 = 0.0625;
+
 #[allow(dead_code)]
 #[derive(Clone, Component, Copy, Reflect)]
 #[component(storage = "SparseSet")]
@@ -115,12 +119,9 @@ fn tinkering_zone_system(
     });
 
     // ---- Sphere with a nose ----
-    let sphere_radius = 0.0625;
-    let sphere_height = sphere_radius + 0.01;
-    let cylinder_radius = 0.0625;
     let cylinder = meshes.add(Cylinder {
-        radius: 0.5 * cylinder_radius,
-        half_height: cylinder_radius,
+        radius: 0.5 * CYLINDER_RADIUS,
+        half_height: CYLINDER_RADIUS,
     });
 
     commands
@@ -143,14 +144,14 @@ fn tinkering_zone_system(
             Ping,
             ActionsBundle::new(),
             PbrBundle {
-                mesh: meshes.add(Sphere {
-                    radius: sphere_radius,
+                mesh: meshes.add(Cuboid {
+                    half_size: Vec3::splat(CUBE_HALF_SIZE),
                 }),
                 material: materials.add(StandardMaterial {
                     base_color: Color::RED,
                     ..default()
                 }),
-                transform: Transform::from_xyz(0.0, sphere_height, 0.0),
+                transform: Transform::from_xyz(0.0, CUBE_GROUND_HEIGHT, 0.0),
                 ..default()
             },
             // TODO: States:
@@ -167,8 +168,11 @@ fn tinkering_zone_system(
                     ..default()
                 }),
                 transform: Transform::from_matrix(
-                    Mat4::from_translation(Vec3::new(0.0, 0.0, -sphere_radius))
-                        * Mat4::from_rotation_x(std::f32::consts::FRAC_PI_2),
+                    Mat4::from_translation(Vec3::new(
+                        0.0,
+                        0.0,
+                        -CUBE_HALF_SIZE,
+                    )) * Mat4::from_rotation_x(std::f32::consts::FRAC_PI_2),
                 ),
                 ..default()
             });
@@ -195,33 +199,31 @@ fn ping(mut commands: Commands, query: Query<Entity, Added<Ping>>) {
 
 #[allow(dead_code)]
 fn pong(mut commands: Commands, query: Query<Entity, Added<Ping>>) {
-    let sphere_radius = 0.0625;
-    let sphere_height = sphere_radius + 0.01;
     let movement_range = 0.5;
 
     for entity in &query {
         commands.actions(entity).add_many(actions![
             MoveToAction::new(Vec3::new(
                 movement_range,
-                sphere_height,
+                CUBE_GROUND_HEIGHT,
                 movement_range
             )),
             MoveToAction::new(Vec3::new(
                 movement_range,
-                sphere_height,
+                CUBE_GROUND_HEIGHT,
                 -movement_range
             )),
             MoveToAction::new(Vec3::new(
                 -movement_range,
-                sphere_height,
+                CUBE_GROUND_HEIGHT,
                 -movement_range
             )),
             MoveToAction::new(Vec3::new(
                 -movement_range,
-                sphere_height,
+                CUBE_GROUND_HEIGHT,
                 movement_range
             )),
-            MoveToAction::new(Vec3::new(0.0, sphere_height, 0.0)),
+            MoveToAction::new(Vec3::new(0.0, CUBE_GROUND_HEIGHT, 0.0)),
             StateDoneAction::new(Done::Success)
         ]);
     }
