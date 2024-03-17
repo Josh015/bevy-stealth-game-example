@@ -1,3 +1,5 @@
+use crate::common::constants::MOVEMENT_TOLERANCE;
+
 use super::MovingSpeed;
 use bevy::{ecs::prelude::*, prelude::*};
 use derive_new::new;
@@ -24,7 +26,8 @@ fn moving_to(
     for (entity, moving_speed, moving_to, mut transform) in &mut query {
         let current_translation = transform.translation;
 
-        if moving_to.position.distance(current_translation) > 0.001 {
+        if moving_to.position.distance(current_translation) > MOVEMENT_TOLERANCE
+        {
             transform.translation += (moving_to.position - current_translation)
                 .normalize_or_zero()
                 * moving_speed.0

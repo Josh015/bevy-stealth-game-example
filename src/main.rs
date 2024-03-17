@@ -128,7 +128,7 @@ fn tinkering_zone_system(
             Player,
             MovementBundle {
                 moving_speed: MovingSpeed(1.0),
-                turning_speed: TurningSpeed(120f32.to_radians()),
+                turning_speed: TurningSpeed(std::f32::consts::TAU),
             },
             StateMachine::default()
                 // Whenever the player presses jump, jump

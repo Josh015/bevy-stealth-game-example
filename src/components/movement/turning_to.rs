@@ -1,4 +1,4 @@
-use crate::common::constants::FORWARD_DIRECTION;
+use crate::common::constants::MOVEMENT_TOLERANCE;
 
 use super::TurningSpeed;
 use bevy::{ecs::prelude::*, prelude::*};
@@ -18,39 +18,33 @@ pub struct TurningTo {
     direction: Direction3d,
 
     #[new(default)]
-    start: Quat,
-
-    #[new(default)]
-    end: Quat,
-
-    #[new(default)]
-    progress: f32,
+    axis: Vec3,
 }
 
 fn start_turning_to(
     mut query: Query<(&mut TurningTo, &Transform), Added<TurningTo>>,
 ) {
-    for (mut turning, transform) in &mut query {
-        turning.start = transform.rotation;
-        turning.end =
-            Quat::from_rotation_arc(FORWARD_DIRECTION, *turning.direction);
+    for (mut turning_to, transform) in &mut query {
+        turning_to.axis = (*transform.forward()).cross(*turning_to.direction);
     }
 }
 
 fn turning_to(
     time: Res<Time>,
     mut commands: Commands,
-    mut query: Query<(Entity, &TurningSpeed, &mut TurningTo, &mut Transform)>,
+    mut query: Query<(Entity, &TurningSpeed, &TurningTo, &mut Transform)>,
 ) {
-    for (entity, turning_speed, mut turning_to, mut transform) in &mut query {
-        turning_to.progress = (turning_to.progress
-            + turning_speed.0 * time.delta_seconds())
-        .min(1.0);
-
-        transform.rotation =
-            turning_to.start.slerp(turning_to.end, turning_to.progress);
-
-        if turning_to.progress == 1.0 {
+    for (entity, turning_speed, turning_to, mut transform) in &mut query {
+        if (*transform.forward()).dot(*turning_to.direction).abs()
+            < 1.0 - MOVEMENT_TOLERANCE
+        {
+            transform.rotation = (transform.rotation
+                * Quat::from_axis_angle(
+                    turning_to.axis,
+                    turning_speed.0 * time.delta_seconds(),
+                ))
+            .normalize();
+        } else {
             commands.entity(entity).remove::<TurningTo>();
         }
     }
