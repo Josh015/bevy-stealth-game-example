@@ -9,7 +9,7 @@ impl Plugin for TranslatingPlugin {
     }
 }
 
-/// Translates an entity.
+/// Translates an entity over time.
 #[derive(Clone, Component, Debug, new)]
 pub struct Translating {
     translation: Vec3,

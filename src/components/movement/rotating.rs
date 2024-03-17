@@ -9,7 +9,7 @@ impl Plugin for RotatingPlugin {
     }
 }
 
-/// Rotates an entity.
+/// Rotates an entity over time.
 #[derive(Clone, Component, Debug, new)]
 pub struct Rotating {
     axis: Direction3d,
