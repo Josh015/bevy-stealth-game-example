@@ -39,12 +39,14 @@ fn start_moving_to(
 
 fn moving_to(
     mut commands: Commands,
-    query: Query<(Entity, &MovingTo, &Transform)>,
+    mut query: Query<(Entity, &MovingTo, &mut Transform)>,
 ) {
-    for (entity, moving_to, transform) in &query {
+    for (entity, moving_to, mut transform) in &mut query {
         if moving_to.position.distance(transform.translation)
             <= MOVEMENT_TOLERANCE
         {
+            // Snap to exact position.
+            transform.translation = moving_to.position;
             commands.entity(entity).remove::<(Translating, MovingTo)>();
         }
     }

@@ -1,4 +1,4 @@
-use crate::common::constants::MOVEMENT_TOLERANCE;
+use crate::common::constants::{FORWARD_DIRECTION, MOVEMENT_TOLERANCE};
 
 use super::{rotating::Rotating, TurningSpeed};
 use bevy::{ecs::prelude::*, prelude::*};
@@ -39,12 +39,17 @@ fn start_turning_to(
 
 fn turning_to(
     mut commands: Commands,
-    query: Query<(Entity, &TurningTo, &Transform)>,
+    mut query: Query<(Entity, &TurningTo, &mut Transform)>,
 ) {
-    for (entity, turning_to, transform) in &query {
+    for (entity, turning_to, mut transform) in &mut query {
         if (*transform.forward()).dot(*turning_to.direction).abs()
             >= 1.0 - MOVEMENT_TOLERANCE
         {
+            // Snap to exact rotation.
+            transform.rotation = Quat::from_rotation_arc(
+                FORWARD_DIRECTION,
+                *turning_to.direction,
+            );
             commands.entity(entity).remove::<(Rotating, TurningTo)>();
         }
     }
