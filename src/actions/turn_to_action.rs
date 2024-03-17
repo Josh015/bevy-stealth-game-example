@@ -6,13 +6,13 @@ use derive_new::new;
 /// Turn an entity to face a specified direction.
 ///
 /// **WARNING**: Can't be run in parallel with
-/// [`MoveTo`](super::move_to::MoveTo).
+/// [`MoveToAction`](super::move_to_action::MoveToAction).
 #[derive(new)]
-pub struct TurnTo {
+pub struct TurnToAction {
     direction: Direction3d,
 }
 
-impl Action for TurnTo {
+impl Action for TurnToAction {
     fn is_finished(&self, agent: Entity, world: &World) -> bool {
         !world.entity(agent).contains::<TurningTo>()
     }

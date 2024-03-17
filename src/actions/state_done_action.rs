@@ -5,12 +5,14 @@ use seldom_state::trigger::Done;
 
 /// Integrates with `seldom_state` to trigger the `done()` condition.
 #[derive(new)]
-pub struct StateDone {
+pub struct StateDoneAction {
     done: Done,
 }
 
-impl Action for StateDone {
-    fn is_finished(&self, _agent: Entity, _world: &World) -> bool { true }
+impl Action for StateDoneAction {
+    fn is_finished(&self, _agent: Entity, _world: &World) -> bool {
+        true
+    }
 
     fn on_start(&mut self, agent: Entity, world: &mut World) -> bool {
         world.entity_mut(agent).insert(self.done);

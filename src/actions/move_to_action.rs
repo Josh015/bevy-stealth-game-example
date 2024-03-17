@@ -6,13 +6,13 @@ use derive_new::new;
 /// Move the entity in a straight line to a given point.
 ///
 /// **WARNING**: Can't be run in parallel with
-/// [`FaceDirection`](super::face_direction::FaceDirection).
+/// [`TurnToAction`](super::turn_to_action::TurnToAction).
 #[derive(new)]
-pub struct MoveTo {
+pub struct MoveToAction {
     position: Vec3,
 }
 
-impl Action for MoveTo {
+impl Action for MoveToAction {
     fn is_finished(&self, agent: Entity, world: &World) -> bool {
         let entity = world.entity(agent);
 

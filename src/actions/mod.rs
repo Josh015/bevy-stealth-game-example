@@ -1,15 +1,13 @@
 pub mod action_sequence;
-pub mod dialog_bubble;
-pub mod move_to;
+pub mod animation_action;
+pub mod dialog_bubble_action;
+pub mod move_to_action;
 pub mod parallel_actions;
-pub mod play_animation;
-pub mod play_sound;
 pub mod repeat_action;
 pub mod repeat_sequence;
-pub mod state_done;
-pub mod stop_animation;
-pub mod stop_sound;
-pub mod turn_to;
+pub mod sound_action;
+pub mod state_done_action;
+pub mod turn_to_action;
 
 // bevy-sequential-actions already provides:
 // WaitAction

@@ -9,8 +9,8 @@ pub mod game;
 pub mod ui;
 
 use actions::{
-    move_to::MoveTo, repeat_sequence::RepeatSequence, state_done::StateDone,
-    turn_to::TurnTo,
+    move_to_action::MoveToAction, repeat_sequence::RepeatSequence,
+    state_done_action::StateDoneAction, turn_to_action::TurnToAction,
 };
 use bevy::{
     prelude::*,
@@ -182,13 +182,13 @@ fn ping(mut commands: Commands, query: Query<Entity, Added<Ping>>) {
             RepeatSequence::new(
                 Repeat::Times(2),
                 actions![
-                    TurnTo::new(Direction3d::X),
-                    TurnTo::new(Direction3d::Z),
-                    TurnTo::new(Direction3d::NEG_X),
-                    TurnTo::new(Direction3d::NEG_Z),
+                    TurnToAction::new(Direction3d::X),
+                    TurnToAction::new(Direction3d::Z),
+                    TurnToAction::new(Direction3d::NEG_X),
+                    TurnToAction::new(Direction3d::NEG_Z),
                 ]
             ),
-            StateDone::new(Done::Success)
+            StateDoneAction::new(Done::Success)
         ]);
     }
 }
@@ -201,28 +201,28 @@ fn pong(mut commands: Commands, query: Query<Entity, Added<Ping>>) {
 
     for entity in &query {
         commands.actions(entity).add_many(actions![
-            MoveTo::new(Vec3::new(
+            MoveToAction::new(Vec3::new(
                 movement_range,
                 sphere_height,
                 movement_range
             )),
-            MoveTo::new(Vec3::new(
+            MoveToAction::new(Vec3::new(
                 movement_range,
                 sphere_height,
                 -movement_range
             )),
-            MoveTo::new(Vec3::new(
+            MoveToAction::new(Vec3::new(
                 -movement_range,
                 sphere_height,
                 -movement_range
             )),
-            MoveTo::new(Vec3::new(
+            MoveToAction::new(Vec3::new(
                 -movement_range,
                 sphere_height,
                 movement_range
             )),
-            MoveTo::new(Vec3::new(0.0, sphere_height, 0.0)),
-            StateDone::new(Done::Success)
+            MoveToAction::new(Vec3::new(0.0, sphere_height, 0.0)),
+            StateDoneAction::new(Done::Success)
         ]);
     }
 }
