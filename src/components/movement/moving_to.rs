@@ -24,12 +24,13 @@ fn moving_to(
     for (entity, moving_speed, moving_to, mut transform) in &mut query {
         let current_translation = transform.translation;
 
-        transform.translation += (moving_to.position - current_translation)
-            .normalize_or_zero()
-            * moving_speed.0
-            * time.delta_seconds();
-
-        if transform.translation.distance(moving_to.position) <= 0.001 {
+        if current_translation.distance(moving_to.position) > 0.001 {
+            transform.translation += (moving_to.position - current_translation)
+                .normalize_or_zero()
+                * moving_speed.0
+                * time.delta_seconds();
+        } else {
+            transform.translation = moving_to.position;
             commands.entity(entity).remove::<MovingTo>();
         }
     }
