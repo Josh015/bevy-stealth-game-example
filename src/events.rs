@@ -6,7 +6,7 @@ impl Plugin for EventsPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<SawPlayerEvent>()
             .add_event::<HeardSoundEvent>()
-            .add_event::<StunnedEvent>();
+            .add_event::<StunnedEnemyEvent>();
     }
 }
 
@@ -24,7 +24,7 @@ pub struct HeardSoundEvent {
 
 /// Fired when an enemy is stunned.
 #[derive(Clone, Component, Debug, Event)]
-pub struct StunnedEvent {
+pub struct StunnedEnemyEvent {
     pub victim: Entity,
 }
 
