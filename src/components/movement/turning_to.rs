@@ -10,7 +10,7 @@ impl Plugin for TurningPlugin {
     }
 }
 
-/// Rotates a [`TurningSpeed`] entity.
+/// Rotates a [`TurningSpeed`] entity to a new rotation before removing itself.
 #[derive(Clone, Component, Debug, new)]
 pub struct TurningTo {
     end: Quat,
