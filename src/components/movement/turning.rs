@@ -1,14 +1,11 @@
+use super::TurningSpeed;
 use bevy::{ecs::prelude::*, prelude::*};
 use derive_new::new;
-
-use super::TurningSpeed;
 
 pub(super) struct TurningPlugin;
 
 impl Plugin for TurningPlugin {
-    fn build(&self, app: &mut App) {
-        app.add_systems(Update, turning);
-    }
+    fn build(&self, app: &mut App) { app.add_systems(Update, turning); }
 }
 
 /// Rotates a [`TurningSpeed`] entity.

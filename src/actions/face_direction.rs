@@ -1,15 +1,15 @@
-use bevy::{ecs::prelude::*, math::primitives::Direction3d, prelude::*};
-use bevy_sequential_actions::*;
-use derive_new::new;
-
 use crate::{
     common::constants::FORWARD_DIRECTION,
     components::movement::turning::Turning,
 };
+use bevy::{ecs::prelude::*, math::primitives::Direction3d, prelude::*};
+use bevy_sequential_actions::*;
+use derive_new::new;
 
 /// Rotate an entity to face a given direction.
 ///
-/// **WARNING**: Can't be run in parallel with [`MoveTo`](super::move_to::MoveTo).
+/// **WARNING**: Can't be run in parallel with
+/// [`MoveTo`](super::move_to::MoveTo).
 #[derive(new)]
 pub struct FaceDirection {
     direction: Direction3d,

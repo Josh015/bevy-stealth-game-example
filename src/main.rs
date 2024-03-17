@@ -9,18 +9,21 @@ pub mod game;
 pub mod ui;
 
 use actions::{
-    face_direction::FaceDirection, move_to::MoveTo, state_done::StateDone,
+    face_direction::FaceDirection,
+    move_to::MoveTo,
+    repeat_sequence::RepeatSequence,
+    state_done::StateDone,
 };
-use bevy_sequential_actions::*;
-use bevy_tweening::*;
-use components::{
-    agents::player::*,
-    movement::{MovementBundle, MovingSpeed, TurningSpeed},
-};
-
 use bevy::{
     prelude::*,
     window::{PresentMode, WindowResolution},
+};
+use bevy_sequential_actions::*;
+use bevy_tweening::*;
+use common::repeat::Repeat;
+use components::{
+    agents::player::*,
+    movement::{MovementBundle, MovingSpeed, TurningSpeed},
 };
 use seldom_state::prelude::*;
 
@@ -153,10 +156,10 @@ fn tinkering_zone_system(
                 ..default()
             },
             // TODO: States:
-            //  State Spin back and forth with delays. Switch to Move when done.
-            //    LoopAction
-            //  State move back and forth with delays. Switch to Spin when done.
-            //    RepeatAction
+            //  State Spin back and forth with delays. Switch to Move when
+            // done.    LoopAction
+            //  State move back and forth with delays. Switch to Spin when
+            // done.    RepeatAction
         ))
         .with_children(|builder| {
             builder.spawn(PbrBundle {
@@ -178,10 +181,15 @@ fn tinkering_zone_system(
 fn ping(mut commands: Commands, query: Query<Entity, Added<Ping>>) {
     for entity in &query {
         commands.actions(entity).add_many(actions![
-            FaceDirection::new(Direction3d::X),
-            FaceDirection::new(Direction3d::Z),
-            FaceDirection::new(Direction3d::NEG_X),
-            FaceDirection::new(Direction3d::NEG_Z),
+            RepeatSequence::new(
+                Repeat::Times(2),
+                actions![
+                    FaceDirection::new(Direction3d::X),
+                    FaceDirection::new(Direction3d::Z),
+                    FaceDirection::new(Direction3d::NEG_X),
+                    FaceDirection::new(Direction3d::NEG_Z),
+                ]
+            ),
             StateDone::new(Done::Success)
         ]);
     }

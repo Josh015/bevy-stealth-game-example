@@ -61,7 +61,9 @@
 // AnimationAction starts playing confused/looking around animation.
 // DoneAction.
 
-// Must be separate from ChasingPlayer so it can resume if Player is spotted again! Can’t handle return to start logic since we need Guards to be able to reset after investigating a sound.
+// Must be separate from ChasingPlayer so it can resume if Player is spotted
+// again! Can’t handle return to start logic since we need Guards to be able to
+// reset after investigating a sound.
 
 // InvestigatingSound
 // sound_location: Vec3
@@ -77,8 +79,8 @@
 // Patrolling, GuardingLocation
 
 // on_enter:
-// RotateToFaceDirectionAction  with direction from entity to location provided by trigger.
-// AnimationAction starts playing confused/looking around animation.
+// RotateToFaceDirectionAction  with direction from entity to location provided
+// by trigger. AnimationAction starts playing confused/looking around animation.
 // DoneAction.
 
 // Guarding::Patrolling

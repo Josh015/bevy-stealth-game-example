@@ -10,9 +10,7 @@ pub struct StateDone {
 }
 
 impl Action for StateDone {
-    fn is_finished(&self, _agent: Entity, _world: &World) -> bool {
-        true
-    }
+    fn is_finished(&self, _agent: Entity, _world: &World) -> bool { true }
 
     fn on_start(&mut self, agent: Entity, world: &mut World) -> bool {
         world.entity_mut(agent).insert(self.done);

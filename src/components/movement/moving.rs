@@ -1,14 +1,11 @@
+use super::MovingSpeed;
 use bevy::{ecs::prelude::*, prelude::*};
 use derive_new::new;
-
-use super::MovingSpeed;
 
 pub(super) struct MovingPlugin;
 
 impl Plugin for MovingPlugin {
-    fn build(&self, app: &mut App) {
-        app.add_systems(Update, moving);
-    }
+    fn build(&self, app: &mut App) { app.add_systems(Update, moving); }
 }
 
 /// Moves a [`MovingSpeed`] entity.

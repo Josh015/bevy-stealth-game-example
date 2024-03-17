@@ -1,21 +1,22 @@
+use crate::common::repeat::Repeat;
 use bevy::ecs::prelude::*;
 use bevy_sequential_actions::*;
 use derive_new::new;
 
-/// Runs a collection of actions in order.
+/// Runs a collection of actions in order and repeats them.
 ///
 /// **WARNING**: Doesn't work with
-/// [`RepeatAction`](super::repeat_action::RepeatAction). Use
-/// [`RepeatSequence`](super::repeat_sequence::RepeatSequence) instead.
+/// [`RepeatAction`](super::repeat_action::RepeatAction).
 #[derive(new)]
-pub struct ActionSequence<const N: usize> {
+pub struct RepeatSequence<const N: usize> {
+    repeat: Repeat,
     actions: [BoxedAction; N],
 
     #[new(default)]
     index: usize,
 }
 
-impl<const N: usize> Action for ActionSequence<N> {
+impl<const N: usize> Action for RepeatSequence<N> {
     fn is_finished(&self, agent: Entity, world: &World) -> bool {
         self.actions[self.index].is_finished(agent, world)
     }
@@ -51,7 +52,12 @@ impl<const N: usize> Action for ActionSequence<N> {
     ) {
         self.index += 1;
 
-        if self.index >= self.actions.len() || reason != DropReason::Done {
+        if self.index >= self.actions.len() {
+            self.repeat.advance();
+            self.index = 0;
+        }
+
+        if self.repeat.is_finished() || reason != DropReason::Done {
             self.actions
                 .iter_mut()
                 .for_each(|action| action.on_remove(agent, world));
