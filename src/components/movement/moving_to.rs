@@ -1,7 +1,6 @@
 use crate::common::constants::MOVEMENT_TOLERANCE;
-use crate::components::movement::turning_to::TurningTo;
 
-use super::{translating::Translating, MovingSpeed};
+use super::{translating::Translating, turning_to::TurningTo, MovingSpeed};
 use bevy::{ecs::prelude::*, prelude::*};
 use derive_new::new;
 
@@ -9,7 +8,10 @@ pub(super) struct MovingToPlugin;
 
 impl Plugin for MovingToPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, (start_moving_to, moving_to).chain());
+        app.add_systems(
+            Update,
+            (start_moving_to, moving_to, clean_up_moving_to).chain(),
+        );
     }
 }
 
@@ -47,7 +49,20 @@ fn moving_to(
         {
             // Snap to exact position.
             transform.translation = moving_to.position;
-            commands.entity(entity).remove::<(Translating, MovingTo)>();
+            commands.entity(entity).remove::<MovingTo>();
+        }
+    }
+}
+
+fn clean_up_moving_to(
+    mut commands: Commands,
+    mut removed: RemovedComponents<MovingTo>,
+    query: Query<Entity, Or<(With<Translating>, With<TurningTo>)>>,
+) {
+    // Clean up associated components if this one is removed early.
+    for entity in removed.read() {
+        if query.contains(entity) {
+            commands.entity(entity).remove::<(Translating, TurningTo)>();
         }
     }
 }

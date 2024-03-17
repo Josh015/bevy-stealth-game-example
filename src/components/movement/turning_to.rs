@@ -8,7 +8,10 @@ pub(super) struct TurningPlugin;
 
 impl Plugin for TurningPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, (start_turning_to, turning_to).chain());
+        app.add_systems(
+            Update,
+            (start_turning_to, turning_to, clean_up_turning_to).chain(),
+        );
     }
 }
 
@@ -50,7 +53,20 @@ fn turning_to(
                 FORWARD_DIRECTION,
                 *turning_to.direction,
             );
-            commands.entity(entity).remove::<(Rotating, TurningTo)>();
+            commands.entity(entity).remove::<TurningTo>();
+        }
+    }
+}
+
+fn clean_up_turning_to(
+    mut commands: Commands,
+    mut removed: RemovedComponents<TurningTo>,
+    query: Query<Entity, With<Rotating>>,
+) {
+    // Clean up associated components if this one is removed early.
+    for entity in removed.read() {
+        if query.contains(entity) {
+            commands.entity(entity).remove::<Rotating>();
         }
     }
 }
