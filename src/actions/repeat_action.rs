@@ -4,11 +4,13 @@ use bevy::ecs::prelude::*;
 use bevy_sequential_actions::*;
 use derive_new::new;
 
-// Takes a single action and repeats it.
+/// Takes a single action and repeats it.
+///
+/// **WARNING**: Doesn't appear to work with [`ActionSequence`](super::action_sequence::ActionSequence).
 #[derive(new)]
 pub struct RepeatAction<A: Action> {
-    action: A,
     repeat: Repeat,
+    action: A,
 }
 
 impl<A: Action> Action for RepeatAction<A> {

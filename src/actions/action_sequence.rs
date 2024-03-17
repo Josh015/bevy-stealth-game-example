@@ -2,8 +2,11 @@ use bevy::ecs::prelude::*;
 use bevy_sequential_actions::*;
 use derive_new::new;
 
+/// Runs a collection of actions in order.
+///
+/// **WARNING**: Doesn't appear to work with [`RepeatAction`](super::repeat_action::RepeatAction).
 #[derive(new)]
-struct ActionSequence<const N: usize> {
+pub struct ActionSequence<const N: usize> {
     actions: [BoxedAction; N],
 
     #[new(default)]
