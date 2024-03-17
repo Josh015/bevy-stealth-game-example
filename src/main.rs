@@ -54,12 +54,16 @@ fn main() {
         .run();
 }
 
-const CYLINDER_RADIUS: f32 = 0.02;
-const CYLINDER_HALF_HEIGHT: f32 = 0.03;
-const ORIGIN_SPHERE_RADIUS: f32 = 2.5 * CYLINDER_RADIUS;
-const ORIGIN_SPHERE_GROUND_HEIGHT: f32 =
-    ORIGIN_SPHERE_RADIUS + (2.0 * CYLINDER_HALF_HEIGHT);
-const CYLINDER_OFFSET: f32 = ORIGIN_SPHERE_RADIUS + CYLINDER_HALF_HEIGHT - 0.01;
+const AXIS_CAPSULE_RADIUS: f32 = 0.02;
+const AXIS_CAPSULE_HALF_LENGTH: f32 = 0.03;
+const ORIGIN_SPHERE_RADIUS: f32 = 2.5 * AXIS_CAPSULE_RADIUS;
+const ORIGIN_SPHERE_GROUND_HEIGHT: f32 = ORIGIN_SPHERE_RADIUS
+    + (2.0 * AXIS_CAPSULE_HALF_LENGTH)
+    + AXIS_CAPSULE_RADIUS;
+const CYLINDER_OFFSET: f32 = ORIGIN_SPHERE_RADIUS
+    + AXIS_CAPSULE_HALF_LENGTH
+    + (0.5 * AXIS_CAPSULE_RADIUS)
+    - 0.01;
 
 #[allow(dead_code)]
 #[derive(Clone, Component, Copy, Reflect)]
@@ -123,8 +127,8 @@ fn tinkering_zone_system(
 
     // ---- Sphere with a nose ----
     let cylinder = meshes.add(Capsule3d {
-        radius: CYLINDER_RADIUS,
-        half_length: CYLINDER_HALF_HEIGHT,
+        radius: AXIS_CAPSULE_RADIUS,
+        half_length: AXIS_CAPSULE_HALF_LENGTH,
     });
 
     commands
