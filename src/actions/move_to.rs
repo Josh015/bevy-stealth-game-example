@@ -1,6 +1,6 @@
 use crate::{
     common::constants::FORWARD_DIRECTION,
-    components::movement::{moving::Moving, turning::Turning},
+    components::movement::{moving_to::MovingTo, turning::Turning},
 };
 use bevy::{ecs::prelude::*, prelude::*};
 use bevy_sequential_actions::*;
@@ -19,7 +19,7 @@ impl Action for MoveTo {
     fn is_finished(&self, agent: Entity, world: &World) -> bool {
         let entity = world.entity(agent);
 
-        !entity.contains::<Moving>() && !entity.contains::<Turning>()
+        !entity.contains::<MovingTo>() && !entity.contains::<Turning>()
     }
 
     fn on_start(&mut self, agent: Entity, world: &mut World) -> bool {
@@ -30,7 +30,7 @@ impl Action for MoveTo {
         let new_direction = (self.position - transform.translation).normalize();
 
         entity.insert((
-            Moving::new(transform.translation, self.position),
+            MovingTo::new(self.position),
             Turning::new(
                 transform.rotation,
                 Quat::from_rotation_arc(FORWARD_DIRECTION, new_direction),
@@ -46,6 +46,6 @@ impl Action for MoveTo {
         world: &mut World,
         _reason: StopReason,
     ) {
-        world.entity_mut(agent).remove::<(Moving, Turning)>();
+        world.entity_mut(agent).remove::<(MovingTo, Turning)>();
     }
 }

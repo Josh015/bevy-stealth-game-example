@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-pub mod moving;
+pub mod moving_to;
 pub mod turning;
 
 /// Moving speed in `meters/second`.
@@ -22,6 +22,6 @@ pub(super) struct MovementPlugin;
 
 impl Plugin for MovementPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugins((moving::MovingPlugin, turning::TurningPlugin));
+        app.add_plugins((moving_to::MovingToPlugin, turning::TurningPlugin));
     }
 }
