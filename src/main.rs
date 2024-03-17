@@ -54,9 +54,9 @@ fn main() {
         .run();
 }
 
-const CYLINDER_RADIUS: f32 = 0.5 * 0.03125;
-const CYLINDER_HALF_HEIGHT: f32 = 0.025;
-const ORIGIN_SPHERE_RADIUS: f32 = 0.0625;
+const CYLINDER_RADIUS: f32 = 0.02;
+const CYLINDER_HALF_HEIGHT: f32 = 0.03;
+const ORIGIN_SPHERE_RADIUS: f32 = 2.5 * CYLINDER_RADIUS;
 const ORIGIN_SPHERE_GROUND_HEIGHT: f32 =
     ORIGIN_SPHERE_RADIUS + (2.0 * CYLINDER_HALF_HEIGHT);
 const CYLINDER_OFFSET: f32 = ORIGIN_SPHERE_RADIUS + CYLINDER_HALF_HEIGHT - 0.01;
@@ -186,37 +186,11 @@ fn tinkering_zone_system(
             builder.spawn(PbrBundle {
                 mesh: cylinder.clone(),
                 material: materials.add(StandardMaterial {
-                    base_color: Color::RED * 0.5,
-                    ..default()
-                }),
-                transform: Transform::from_matrix(
-                    Mat4::from_translation(Vec3::new(
-                        -CYLINDER_OFFSET,
-                        0.0,
-                        0.0,
-                    )) * Mat4::from_rotation_z(std::f32::consts::FRAC_PI_2),
-                ),
-                ..default()
-            });
-            builder.spawn(PbrBundle {
-                mesh: cylinder.clone(),
-                material: materials.add(StandardMaterial {
                     base_color: Color::GREEN,
                     ..default()
                 }),
                 transform: Transform::from_matrix(Mat4::from_translation(
                     Vec3::new(0.0, CYLINDER_OFFSET, 0.0),
-                )),
-                ..default()
-            });
-            builder.spawn(PbrBundle {
-                mesh: cylinder.clone(),
-                material: materials.add(StandardMaterial {
-                    base_color: Color::GREEN * 0.5,
-                    ..default()
-                }),
-                transform: Transform::from_matrix(Mat4::from_translation(
-                    Vec3::new(0.0, -CYLINDER_OFFSET, 0.0),
                 )),
                 ..default()
             });
@@ -235,21 +209,47 @@ fn tinkering_zone_system(
                 ),
                 ..default()
             });
-            builder.spawn(PbrBundle {
-                mesh: cylinder.clone(),
-                material: materials.add(StandardMaterial {
-                    base_color: Color::BLUE * 0.5,
-                    ..default()
-                }),
-                transform: Transform::from_matrix(
-                    Mat4::from_translation(Vec3::new(
-                        0.0,
-                        0.0,
-                        -CYLINDER_OFFSET,
-                    )) * Mat4::from_rotation_x(std::f32::consts::FRAC_PI_2),
-                ),
-                ..default()
-            });
+            // builder.spawn(PbrBundle {
+            //     mesh: cylinder.clone(),
+            //     material: materials.add(StandardMaterial {
+            //         base_color: Color::RED * 0.5,
+            //         ..default()
+            //     }),
+            //     transform: Transform::from_matrix(
+            //         Mat4::from_translation(Vec3::new(
+            //             -CYLINDER_OFFSET,
+            //             0.0,
+            //             0.0,
+            //         )) * Mat4::from_rotation_z(std::f32::consts::FRAC_PI_2),
+            //     ),
+            //     ..default()
+            // });
+            // builder.spawn(PbrBundle {
+            //     mesh: cylinder.clone(),
+            //     material: materials.add(StandardMaterial {
+            //         base_color: Color::GREEN * 0.5,
+            //         ..default()
+            //     }),
+            //     transform: Transform::from_matrix(Mat4::from_translation(
+            //         Vec3::new(0.0, -CYLINDER_OFFSET, 0.0),
+            //     )),
+            //     ..default()
+            // });
+            // builder.spawn(PbrBundle {
+            //     mesh: cylinder.clone(),
+            //     material: materials.add(StandardMaterial {
+            //         base_color: Color::BLUE * 0.5,
+            //         ..default()
+            //     }),
+            //     transform: Transform::from_matrix(
+            //         Mat4::from_translation(Vec3::new(
+            //             0.0,
+            //             0.0,
+            //             -CYLINDER_OFFSET,
+            //         )) * Mat4::from_rotation_x(std::f32::consts::FRAC_PI_2),
+            //     ),
+            //     ..default()
+            // });
         });
 }
 
