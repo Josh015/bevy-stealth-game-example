@@ -3,16 +3,16 @@ use bevy::{ecs::prelude::*, prelude::*};
 use bevy_sequential_actions::*;
 use derive_new::new;
 
-/// Rotate an entity to face a given direction.
+/// Turn an entity to face a specified direction.
 ///
 /// **WARNING**: Can't be run in parallel with
 /// [`MoveTo`](super::move_to::MoveTo).
 #[derive(new)]
-pub struct FaceDirection {
+pub struct TurnTo {
     direction: Direction3d,
 }
 
-impl Action for FaceDirection {
+impl Action for TurnTo {
     fn is_finished(&self, agent: Entity, world: &World) -> bool {
         !world.entity(agent).contains::<TurningTo>()
     }

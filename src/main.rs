@@ -9,10 +9,8 @@ pub mod game;
 pub mod ui;
 
 use actions::{
-    face_direction::FaceDirection,
-    move_to::MoveTo,
-    repeat_sequence::RepeatSequence,
-    state_done::StateDone,
+    move_to::MoveTo, repeat_sequence::RepeatSequence, state_done::StateDone,
+    turn_to::TurnTo,
 };
 use bevy::{
     prelude::*,
@@ -184,10 +182,10 @@ fn ping(mut commands: Commands, query: Query<Entity, Added<Ping>>) {
             RepeatSequence::new(
                 Repeat::Times(2),
                 actions![
-                    FaceDirection::new(Direction3d::X),
-                    FaceDirection::new(Direction3d::Z),
-                    FaceDirection::new(Direction3d::NEG_X),
-                    FaceDirection::new(Direction3d::NEG_Z),
+                    TurnTo::new(Direction3d::X),
+                    TurnTo::new(Direction3d::Z),
+                    TurnTo::new(Direction3d::NEG_X),
+                    TurnTo::new(Direction3d::NEG_Z),
                 ]
             ),
             StateDone::new(Done::Success)
