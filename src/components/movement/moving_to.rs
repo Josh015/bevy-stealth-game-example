@@ -1,6 +1,6 @@
 use crate::common::constants::MOVEMENT_TOLERANCE;
 
-use super::MovingSpeed;
+use super::{translating::Translating, MovingSpeed};
 use bevy::{ecs::prelude::*, prelude::*};
 use derive_new::new;
 
@@ -8,7 +8,7 @@ pub(super) struct MovingToPlugin;
 
 impl Plugin for MovingToPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, moving_to);
+        app.add_systems(Update, (start_moving_to, moving_to).chain());
     }
 }
 
@@ -18,23 +18,30 @@ pub struct MovingTo {
     position: Vec3,
 }
 
-fn moving_to(
-    time: Res<Time>,
+fn start_moving_to(
     mut commands: Commands,
-    mut query: Query<(Entity, &MovingSpeed, &MovingTo, &mut Transform)>,
+    query: Query<
+        (Entity, &MovingSpeed, &MovingTo, &Transform),
+        Added<MovingTo>,
+    >,
 ) {
-    for (entity, moving_speed, moving_to, mut transform) in &mut query {
-        let current_translation = transform.translation;
+    for (entity, moving_speed, moving_to, transform) in &query {
+        commands.entity(entity).insert(Translating::new(
+            (moving_to.position - transform.translation).normalize_or_zero()
+                * moving_speed.0,
+        ));
+    }
+}
 
-        if moving_to.position.distance(current_translation) > MOVEMENT_TOLERANCE
+fn moving_to(
+    mut commands: Commands,
+    query: Query<(Entity, &MovingTo, &Transform)>,
+) {
+    for (entity, moving_to, transform) in &query {
+        if moving_to.position.distance(transform.translation)
+            <= MOVEMENT_TOLERANCE
         {
-            transform.translation += (moving_to.position - current_translation)
-                .normalize_or_zero()
-                * moving_speed.0
-                * time.delta_seconds();
-        } else {
-            transform.translation = moving_to.position;
-            commands.entity(entity).remove::<MovingTo>();
+            commands.entity(entity).remove::<(Translating, MovingTo)>();
         }
     }
 }

@@ -2,6 +2,7 @@ use bevy::prelude::*;
 
 pub mod moving_to;
 pub mod rotating;
+pub mod translating;
 pub mod turning_to;
 
 /// Moving speed in `meters/second`.
@@ -26,6 +27,7 @@ impl Plugin for MovementPlugin {
         app.add_plugins((
             moving_to::MovingToPlugin,
             rotating::RotatingPlugin,
+            translating::TranslatingPlugin,
             turning_to::TurningPlugin,
         ));
     }
