@@ -122,9 +122,9 @@ fn tinkering_zone_system(
     });
 
     // ---- Sphere with a nose ----
-    let cylinder = meshes.add(Cylinder {
+    let cylinder = meshes.add(Capsule3d {
         radius: CYLINDER_RADIUS,
-        half_height: CYLINDER_HALF_HEIGHT,
+        half_length: CYLINDER_HALF_HEIGHT,
     });
 
     commands
