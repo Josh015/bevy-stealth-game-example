@@ -1,7 +1,4 @@
-use crate::{
-    common::constants::FORWARD_DIRECTION,
-    components::movement::turning_to::TurningTo,
-};
+use crate::components::movement::turning_to::TurningTo;
 use bevy::{ecs::prelude::*, prelude::*};
 use bevy_sequential_actions::*;
 use derive_new::new;
@@ -21,9 +18,9 @@ impl Action for FaceDirection {
     }
 
     fn on_start(&mut self, agent: Entity, world: &mut World) -> bool {
-        world.entity_mut(agent).insert(TurningTo::new(
-            Quat::from_rotation_arc(FORWARD_DIRECTION, *self.direction),
-        ));
+        world
+            .entity_mut(agent)
+            .insert(TurningTo::new(self.direction));
 
         false
     }

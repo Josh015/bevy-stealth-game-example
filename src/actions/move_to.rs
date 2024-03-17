@@ -1,7 +1,4 @@
-use crate::{
-    common::constants::FORWARD_DIRECTION,
-    components::movement::{moving_to::MovingTo, turning_to::TurningTo},
-};
+use crate::components::movement::{moving_to::MovingTo, turning_to::TurningTo};
 use bevy::{ecs::prelude::*, prelude::*};
 use bevy_sequential_actions::*;
 use derive_new::new;
@@ -31,10 +28,7 @@ impl Action for MoveTo {
 
         entity.insert((
             MovingTo::new(self.position),
-            TurningTo::new(Quat::from_rotation_arc(
-                FORWARD_DIRECTION,
-                new_direction,
-            )),
+            TurningTo::new(Direction3d::new_unchecked(new_direction)),
         ));
 
         false

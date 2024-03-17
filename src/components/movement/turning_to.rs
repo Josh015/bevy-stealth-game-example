@@ -1,3 +1,5 @@
+use crate::common::constants::FORWARD_DIRECTION;
+
 use super::TurningSpeed;
 use bevy::{ecs::prelude::*, prelude::*};
 use derive_new::new;
@@ -13,10 +15,13 @@ impl Plugin for TurningPlugin {
 /// Rotates a [`TurningSpeed`] entity to a new rotation before removing itself.
 #[derive(Clone, Component, Debug, new)]
 pub struct TurningTo {
-    end: Quat,
+    direction: Direction3d,
 
     #[new(default)]
     start: Quat,
+
+    #[new(default)]
+    end: Quat,
 
     #[new(default)]
     progress: f32,
@@ -27,6 +32,8 @@ fn start_turning_to(
 ) {
     for (mut turning, transform) in &mut query {
         turning.start = transform.rotation;
+        turning.end =
+            Quat::from_rotation_arc(FORWARD_DIRECTION, *turning.direction);
     }
 }
 
