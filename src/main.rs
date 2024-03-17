@@ -20,7 +20,7 @@ use bevy_sequential_actions::*;
 use bevy_tweening::*;
 use common::repeat::Repeat;
 use components::{
-    agents::player::*,
+    actors::player::*,
     movement::{MovementBundle, MovingSpeed, TurningSpeed},
 };
 use seldom_state::prelude::*;

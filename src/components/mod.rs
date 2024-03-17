@@ -3,7 +3,7 @@
 
 use bevy::app::prelude::*;
 
-pub mod agents;
+pub mod actors;
 pub mod level;
 pub mod movement;
 pub mod physics;
@@ -15,7 +15,7 @@ pub(super) struct ComponentsPlugin;
 impl Plugin for ComponentsPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins((
-            agents::AgentsPlugin,
+            actors::AgentsPlugin,
             movement::MovementPlugin,
             physics::PhysicsPlugin,
         ));
