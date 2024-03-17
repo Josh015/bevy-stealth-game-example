@@ -54,9 +54,12 @@ fn main() {
         .run();
 }
 
-const CUBE_HALF_SIZE: f32 = 0.0625;
-const CUBE_GROUND_HEIGHT: f32 = CUBE_HALF_SIZE + 0.01;
-const CYLINDER_RADIUS: f32 = 0.0625;
+const CYLINDER_RADIUS: f32 = 0.5 * 0.03125;
+const CYLINDER_HALF_HEIGHT: f32 = 0.025;
+const ORIGIN_SPHERE_RADIUS: f32 = 0.0625;
+const ORIGIN_SPHERE_GROUND_HEIGHT: f32 =
+    ORIGIN_SPHERE_RADIUS + (2.0 * CYLINDER_HALF_HEIGHT);
+const CYLINDER_OFFSET: f32 = ORIGIN_SPHERE_RADIUS + CYLINDER_HALF_HEIGHT - 0.01;
 
 #[allow(dead_code)]
 #[derive(Clone, Component, Copy, Reflect)]
@@ -120,8 +123,8 @@ fn tinkering_zone_system(
 
     // ---- Sphere with a nose ----
     let cylinder = meshes.add(Cylinder {
-        radius: 0.5 * CYLINDER_RADIUS,
-        half_height: CYLINDER_RADIUS,
+        radius: CYLINDER_RADIUS,
+        half_height: CYLINDER_HALF_HEIGHT,
     });
 
     commands
@@ -144,14 +147,18 @@ fn tinkering_zone_system(
             Ping,
             ActionsBundle::new(),
             PbrBundle {
-                mesh: meshes.add(Cuboid {
-                    half_size: Vec3::splat(CUBE_HALF_SIZE),
+                mesh: meshes.add(Sphere {
+                    radius: ORIGIN_SPHERE_RADIUS,
                 }),
                 material: materials.add(StandardMaterial {
-                    base_color: Color::RED,
+                    base_color: Color::GRAY,
                     ..default()
                 }),
-                transform: Transform::from_xyz(0.0, CUBE_GROUND_HEIGHT, 0.0),
+                transform: Transform::from_xyz(
+                    0.0,
+                    ORIGIN_SPHERE_GROUND_HEIGHT,
+                    0.0,
+                ),
                 ..default()
             },
             // TODO: States:
@@ -162,7 +169,59 @@ fn tinkering_zone_system(
         ))
         .with_children(|builder| {
             builder.spawn(PbrBundle {
-                mesh: cylinder,
+                mesh: cylinder.clone(),
+                material: materials.add(StandardMaterial {
+                    base_color: Color::RED,
+                    ..default()
+                }),
+                transform: Transform::from_matrix(
+                    Mat4::from_translation(Vec3::new(
+                        CYLINDER_OFFSET,
+                        0.0,
+                        0.0,
+                    )) * Mat4::from_rotation_z(std::f32::consts::FRAC_PI_2),
+                ),
+                ..default()
+            });
+            builder.spawn(PbrBundle {
+                mesh: cylinder.clone(),
+                material: materials.add(StandardMaterial {
+                    base_color: Color::RED * 0.5,
+                    ..default()
+                }),
+                transform: Transform::from_matrix(
+                    Mat4::from_translation(Vec3::new(
+                        -CYLINDER_OFFSET,
+                        0.0,
+                        0.0,
+                    )) * Mat4::from_rotation_z(std::f32::consts::FRAC_PI_2),
+                ),
+                ..default()
+            });
+            builder.spawn(PbrBundle {
+                mesh: cylinder.clone(),
+                material: materials.add(StandardMaterial {
+                    base_color: Color::GREEN,
+                    ..default()
+                }),
+                transform: Transform::from_matrix(Mat4::from_translation(
+                    Vec3::new(0.0, CYLINDER_OFFSET, 0.0),
+                )),
+                ..default()
+            });
+            builder.spawn(PbrBundle {
+                mesh: cylinder.clone(),
+                material: materials.add(StandardMaterial {
+                    base_color: Color::GREEN * 0.5,
+                    ..default()
+                }),
+                transform: Transform::from_matrix(Mat4::from_translation(
+                    Vec3::new(0.0, -CYLINDER_OFFSET, 0.0),
+                )),
+                ..default()
+            });
+            builder.spawn(PbrBundle {
+                mesh: cylinder.clone(),
                 material: materials.add(StandardMaterial {
                     base_color: Color::BLUE,
                     ..default()
@@ -171,7 +230,22 @@ fn tinkering_zone_system(
                     Mat4::from_translation(Vec3::new(
                         0.0,
                         0.0,
-                        -CUBE_HALF_SIZE,
+                        CYLINDER_OFFSET,
+                    )) * Mat4::from_rotation_x(std::f32::consts::FRAC_PI_2),
+                ),
+                ..default()
+            });
+            builder.spawn(PbrBundle {
+                mesh: cylinder.clone(),
+                material: materials.add(StandardMaterial {
+                    base_color: Color::BLUE * 0.5,
+                    ..default()
+                }),
+                transform: Transform::from_matrix(
+                    Mat4::from_translation(Vec3::new(
+                        0.0,
+                        0.0,
+                        -CYLINDER_OFFSET,
                     )) * Mat4::from_rotation_x(std::f32::consts::FRAC_PI_2),
                 ),
                 ..default()
@@ -186,9 +260,9 @@ fn ping(mut commands: Commands, query: Query<Entity, Added<Ping>>) {
             RepeatSequence::new(
                 Repeat::Times(2),
                 actions![
-                    TurnToAction::new(Direction3d::X),
-                    TurnToAction::new(Direction3d::Z),
                     TurnToAction::new(Direction3d::NEG_X),
+                    TurnToAction::new(Direction3d::Z),
+                    TurnToAction::new(Direction3d::X),
                     TurnToAction::new(Direction3d::NEG_Z),
                 ]
             ),
@@ -205,25 +279,25 @@ fn pong(mut commands: Commands, query: Query<Entity, Added<Ping>>) {
         commands.actions(entity).add_many(actions![
             MoveToAction::new(Vec3::new(
                 movement_range,
-                CUBE_GROUND_HEIGHT,
+                ORIGIN_SPHERE_GROUND_HEIGHT,
                 movement_range
             )),
             MoveToAction::new(Vec3::new(
                 movement_range,
-                CUBE_GROUND_HEIGHT,
+                ORIGIN_SPHERE_GROUND_HEIGHT,
                 -movement_range
             )),
             MoveToAction::new(Vec3::new(
                 -movement_range,
-                CUBE_GROUND_HEIGHT,
+                ORIGIN_SPHERE_GROUND_HEIGHT,
                 -movement_range
             )),
             MoveToAction::new(Vec3::new(
                 -movement_range,
-                CUBE_GROUND_HEIGHT,
+                ORIGIN_SPHERE_GROUND_HEIGHT,
                 movement_range
             )),
-            MoveToAction::new(Vec3::new(0.0, CUBE_GROUND_HEIGHT, 0.0)),
+            MoveToAction::new(Vec3::new(0.0, ORIGIN_SPHERE_GROUND_HEIGHT, 0.0)),
             StateDoneAction::new(Done::Success)
         ]);
     }
