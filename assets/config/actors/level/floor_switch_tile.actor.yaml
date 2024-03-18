@@ -1,0 +1,5 @@
+name: Floor Switch Tile
+components:
+# - !Animation3D
+#   scene: <fill in later!>
+# - !Trigger #Open associated door.

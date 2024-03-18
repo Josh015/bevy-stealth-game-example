@@ -1,0 +1,6 @@
+name: Security Camera
+components:
+  - !SecurityCamera
+  # - !Animation3D
+  #   scene: <fill in later!>
+  - !Vision

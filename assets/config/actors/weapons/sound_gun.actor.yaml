@@ -1,0 +1,7 @@
+name: Sound Gun
+components:
+  - !Weapon
+  # - !Mesh3D
+  #   scene: <fill in later!>
+
+# It shoots small ricocheting sounds to distract guards.

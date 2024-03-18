@@ -1,0 +1,10 @@
+name: Advanced Guard
+components:
+  - !Guard
+  # - !Animation3D
+  #   scene: <fill in later!>
+  - !Physics { radius: 0.375 }
+  - !Footsteps { sound: Guard }
+  - !Vision
+  - !Hearing
+  - !Stunnable

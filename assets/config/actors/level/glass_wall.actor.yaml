@@ -1,0 +1,5 @@
+name: Glass Wall
+components:
+# - !Mesh3D
+  - !DeflectsSounds
+  - !Shatterable

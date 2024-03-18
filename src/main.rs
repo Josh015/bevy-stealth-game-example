@@ -3,7 +3,6 @@
 pub mod actions;
 pub mod common;
 pub mod components;
-pub mod entities;
 pub mod events;
 pub mod game;
 pub mod ui;
@@ -45,7 +44,11 @@ fn main() {
             StateMachinePlugin,
             TweeningPlugin,
         ))
-        .add_plugins((components::ComponentsPlugin, events::EventsPlugin))
+        .add_plugins((
+            components::ComponentsPlugin,
+            events::EventsPlugin,
+            game::GamePlugin,
+        ))
         .insert_resource(Msaa::default())
         .insert_resource(ClearColor(Color::rgba(0.7, 0.9, 1.0, 1.0)))
         .add_systems(Update, bevy::window::close_on_esc)

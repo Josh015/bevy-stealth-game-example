@@ -1,0 +1,13 @@
+name: Roam Guard
+components:
+  - !Guard
+  # - !Animation3D
+  #   scene: <fill in later!>
+  - !Physics { radius: 0.375 }
+  - !Footsteps { sound: Guard }
+  - !Vision
+  - !Hearing
+  - !Stunnable
+
+# This one repeatedly picks a random spot on the map and navigates to it.
+# It's here purely for testing pathing.

@@ -1,0 +1,5 @@
+name: Silencer Pads Pickup
+components:
+  - !Pickup
+  # - !Mesh3D
+  #   scene: <fill in later!>

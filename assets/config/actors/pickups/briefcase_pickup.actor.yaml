@@ -1,0 +1,5 @@
+name: Briefcase Pickup
+components:
+  - !Pickup
+  # - !Mesh3D
+  #   scene: <fill in later!>

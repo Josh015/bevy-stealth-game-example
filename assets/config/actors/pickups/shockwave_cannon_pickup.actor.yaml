@@ -1,0 +1,7 @@
+name: Shockwave Cannon Pickup
+components:
+  - !Pickup
+  # - !Mesh3D
+  #   scene: <fill in later!>
+
+# Pickup that gives the player the corresponding gun.

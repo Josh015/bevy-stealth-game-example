@@ -1,4 +1,0 @@
-// Wall
-//   PbrBundle
-//   BlocksVision
-//   DeflectsSounds

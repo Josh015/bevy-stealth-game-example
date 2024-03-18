@@ -1,3 +1,0 @@
-// Spawn Point
-//   Transform
-//   GlobalTransform

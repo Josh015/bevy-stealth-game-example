@@ -1,0 +1,7 @@
+name: Player
+components:
+  - !Player
+  # - !Animation3D
+  #   scene: <fill in later!>
+  - !Physics { radius: 0.375 }
+  - !Footsteps { sound: Player }
