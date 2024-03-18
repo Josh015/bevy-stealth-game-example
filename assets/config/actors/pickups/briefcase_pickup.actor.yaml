@@ -1,9 +1,9 @@
 name: Briefcase Pickup
 components:
   - !Pickup
+  - !DropShadow
   # - !Mesh3D
   #   scene: <fill in later!>
-  - !DropShadow
 
 # Triggers temporary wall blocking exit to open.
 # Triggers unique "Acquired" message along the top.

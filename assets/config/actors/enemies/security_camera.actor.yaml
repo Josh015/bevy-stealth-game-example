@@ -1,6 +1,6 @@
 name: Security Camera
 components:
   - !SecurityCamera
+  - !Vision
   # - !Mesh3D
   #   scene: <fill in later!>
-  - !Vision

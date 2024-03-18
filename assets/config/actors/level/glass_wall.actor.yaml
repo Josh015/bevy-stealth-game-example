@@ -1,9 +1,9 @@
 name: Glass Wall
 components:
   - !Wall
-# - !Mesh3D
   - !DeflectsSounds
   - !Shatterable
+# - !Mesh3D
 
 # This is effectively a door, but with a different trigger.
 # Way to share code with Door Wall?

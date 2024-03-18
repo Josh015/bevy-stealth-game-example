@@ -1,7 +1,7 @@
 name: Exit Tile
 components:
-# - !Mesh3D
 # - !Trigger #Level complete.
+# - !Mesh3D
 
 # Encompasses one or more connected tiles in a rectangle.
 # Allows player to complete the stage.

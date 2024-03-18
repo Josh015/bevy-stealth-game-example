@@ -1,11 +1,11 @@
 name: Tough Guard
 components:
   - !Guard
-  # - !Animation3D
-  #   scene: <fill in later!>
   - !Physics { radius: 0.375 }
   - !Footsteps { sound_wave: Guard }
   - !Vision
   - !Hearing
+  # - !Animation3D
+  #   scene: <fill in later!>
 
 # Slightly shorter vision cone than Advanced Guard.

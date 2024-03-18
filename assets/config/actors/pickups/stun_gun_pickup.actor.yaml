@@ -1,8 +1,8 @@
 name: Stun Gun Pickup
 components:
   - !Pickup
+  - !DropShadow
   # - !Mesh3D
   #   scene: <fill in later!>
-  - !DropShadow
 
 # Pickup that gives the player the corresponding gun.

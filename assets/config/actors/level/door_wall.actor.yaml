@@ -1,9 +1,9 @@
 name: Door Wall
 components:
   - !Wall
-# - !Mesh3D
   - !BlocksVision
   - !DeflectsSounds
+# - !Mesh3D
 
 #   States:
 #     Opening

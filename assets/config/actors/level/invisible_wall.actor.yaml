@@ -1,7 +1,7 @@
 name: Invisible Wall
 components:
-# - !Mesh3D
-# Something simple and translucent.
   - !Wall
   - !BlocksVision
   - !DeflectsSounds
+# - !Mesh3D
+# Something simple and translucent.
