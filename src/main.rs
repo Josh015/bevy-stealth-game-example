@@ -7,9 +7,12 @@ pub mod events;
 pub mod game;
 pub mod ui;
 
+use std::time::Duration;
+
 use actions::{
     move_to_action::MoveToAction, repeat_sequence::RepeatSequence,
     state_done_action::StateDoneAction, turn_to_action::TurnToAction,
+    wait_action::WaitAction,
 };
 use bevy::{
     prelude::*,
@@ -45,6 +48,7 @@ fn main() {
             TweeningPlugin,
         ))
         .add_plugins((
+            actions::ActionsPlugin,
             components::ComponentsPlugin,
             events::EventsPlugin,
             game::GamePlugin,
@@ -109,7 +113,7 @@ fn tinkering_zone_system(
     );
     commands.spawn(DirectionalLightBundle {
         directional_light: DirectionalLight {
-            illuminance: 2_500.0,
+            illuminance: 2_400.0,
             shadows_enabled: true,
             ..default()
         },
@@ -268,9 +272,13 @@ fn ping(mut commands: Commands, query: Query<Entity, Added<Ping>>) {
                 Repeat::Times(2),
                 actions![
                     TurnToAction::new(Direction3d::NEG_X),
+                    WaitAction::new(Duration::from_millis(400)),
                     TurnToAction::new(Direction3d::Z),
+                    WaitAction::new(Duration::from_millis(400)),
                     TurnToAction::new(Direction3d::X),
+                    WaitAction::new(Duration::from_millis(400)),
                     TurnToAction::new(Direction3d::NEG_Z),
+                    WaitAction::new(Duration::from_millis(400)),
                 ]
             ),
             StateDoneAction::new(Done::Success)
