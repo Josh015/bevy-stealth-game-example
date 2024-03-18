@@ -16,14 +16,14 @@ pub struct TurningSpeed(pub f32);
 
 /// Required components for movement.
 #[derive(Bundle, Clone, Debug, Default)]
-pub struct MovementBundle {
+pub struct MotionBundle {
     pub moving_speed: MovingSpeed,
     pub turning_speed: TurningSpeed,
 }
 
-pub(super) struct MovementPlugin;
+pub(super) struct MotionPlugin;
 
-impl Plugin for MovementPlugin {
+impl Plugin for MotionPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins((RotatingPlugin, TranslatingPlugin));
     }

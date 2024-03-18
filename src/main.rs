@@ -136,7 +136,7 @@ fn tinkering_zone_system(
     commands
         .spawn((
             Player,
-            MovementBundle {
+            MotionBundle {
                 moving_speed: MovingSpeed(1.0),
                 turning_speed: TurningSpeed(std::f32::consts::TAU),
             },
