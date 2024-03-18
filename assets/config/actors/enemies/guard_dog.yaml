@@ -1,4 +1,4 @@
-name: Roam Guard
+name: Guard Dog
 components:
   - !Guard
   # - !Animation3D
@@ -10,4 +10,4 @@ components:
   - !Stunnable
 
 # This one repeatedly picks a random spot on the map and navigates to it.
-# It's here purely for testing pathing.
+# It's here purely for testing.
