@@ -5,7 +5,9 @@ pub enum Repeat {
 }
 
 impl Repeat {
-    pub fn is_finished(&self) -> bool { matches!(self, Self::Times(0)) }
+    pub fn is_finished(&self) -> bool {
+        matches!(self, Self::Times(0))
+    }
 
     pub fn advance(&mut self) {
         match self {
