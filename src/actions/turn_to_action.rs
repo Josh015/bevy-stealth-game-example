@@ -1,6 +1,6 @@
 use crate::{
     common::{FORWARD_DIRECTION, MOVEMENT_TOLERANCE},
-    Rotating, TurningSpeed,
+    Rotating, RotationalSpeed,
 };
 use bevy::{ecs::prelude::*, prelude::*};
 use bevy_sequential_actions::*;
@@ -58,7 +58,10 @@ pub(super) struct TurnTo {
 
 fn start_turn_to(
     mut commands: Commands,
-    query: Query<(Entity, &TurningSpeed, &TurnTo, &Transform), Added<TurnTo>>,
+    query: Query<
+        (Entity, &RotationalSpeed, &TurnTo, &Transform),
+        Added<TurnTo>,
+    >,
 ) {
     for (entity, turning_speed, turn_to, transform) in &query {
         commands.entity(entity).insert(Rotating {

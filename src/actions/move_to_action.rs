@@ -4,7 +4,7 @@ use bevy_sequential_actions::*;
 use derive_new::new;
 
 use crate::common::MOVEMENT_TOLERANCE;
-use crate::{MovingSpeed, Velocity};
+use crate::{Speed, Velocity};
 
 use super::TurnTo;
 
@@ -62,7 +62,7 @@ pub(super) struct MoveTo {
 
 fn start_move_to(
     mut commands: Commands,
-    query: Query<(Entity, &MovingSpeed, &MoveTo, &Transform), Added<MoveTo>>,
+    query: Query<(Entity, &Speed, &MoveTo, &Transform), Added<MoveTo>>,
 ) {
     for (entity, moving_speed, move_to, transform) in &query {
         let moving_direction =
