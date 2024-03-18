@@ -1,11 +1,11 @@
 name: Advanced Guard
 components:
   - !Guard
-  - !Physics { radius: 0.375 }
-  - !Footsteps { sound_wave: Guard }
   - !Vision
   - !Hearing
   - !Stunnable
+  - !Physics { radius: 0.375 }
+  - !Footsteps { sound_wave: Guard }
   # - !Animation3D
   #   scene: <fill in later!>
 
