@@ -1,4 +1,4 @@
-use crate::common::constants::MOVEMENT_TOLERANCE;
+use crate::common::constants::{FORWARD_DIRECTION, MOVEMENT_TOLERANCE};
 
 use super::{rotating::Rotating, TurningSpeed};
 use bevy::{ecs::prelude::*, prelude::*};
@@ -45,12 +45,16 @@ fn start_turning_to(
 
 fn turning_to(
     mut commands: Commands,
-    mut query: Query<(Entity, &mut TurningTo, &Transform)>,
+    mut query: Query<(Entity, &mut TurningTo, &mut Transform)>,
 ) {
-    for (entity, mut turning_to, transform) in &mut query {
-        // Delay removal by one update cycle to complete transformation.
+    for (entity, mut turning_to, mut transform) in &mut query {
+        // Delay removal by one update to prevent visual snapping to final rotation.
         if turning_to.is_finished {
             commands.entity(entity).remove::<TurningTo>();
+            transform.rotation = Quat::from_rotation_arc(
+                FORWARD_DIRECTION,
+                *turning_to.direction,
+            );
         } else {
             turning_to.is_finished =
                 (*transform.forward()).dot(*turning_to.direction).abs()

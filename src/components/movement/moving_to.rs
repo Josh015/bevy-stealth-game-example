@@ -47,10 +47,10 @@ fn moving_to(
     mut query: Query<(Entity, &mut MovingTo, &mut Transform)>,
 ) {
     for (entity, mut moving_to, mut transform) in &mut query {
-        // Delay removal by one update cycle to complete transformation.
+        // Delay removal by one update to prevent visual snapping to final position.
         if moving_to.is_finished {
-            transform.translation = moving_to.position;
             commands.entity(entity).remove::<MovingTo>();
+            transform.translation = moving_to.position;
         } else {
             moving_to.is_finished =
                 moving_to.position.distance(transform.translation)
