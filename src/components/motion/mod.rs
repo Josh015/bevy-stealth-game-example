@@ -1,10 +1,10 @@
 use bevy::prelude::*;
 
 mod rotating;
-mod translating;
+mod velocity;
 
 pub use rotating::*;
-pub use translating::*;
+pub use velocity::*;
 
 /// Moving speed in `meters/second`.
 #[derive(Clone, Component, Debug, Default)]
@@ -25,6 +25,6 @@ pub(super) struct MotionPlugin;
 
 impl Plugin for MotionPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugins((RotatingPlugin, TranslatingPlugin));
+        app.add_plugins((RotatingPlugin, VelocityPlugin));
     }
 }

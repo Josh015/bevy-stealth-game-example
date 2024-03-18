@@ -4,7 +4,7 @@ use bevy_sequential_actions::*;
 use derive_new::new;
 
 use crate::common::MOVEMENT_TOLERANCE;
-use crate::{MovingSpeed, Translating};
+use crate::{MovingSpeed, Velocity};
 
 use super::TurnTo;
 
@@ -69,9 +69,7 @@ fn start_move_to(
             (move_to.position - transform.translation).normalize();
 
         commands.entity(entity).insert((
-            Translating {
-                translation: moving_direction * moving_speed.0,
-            },
+            Velocity(moving_direction * moving_speed.0),
             TurnTo::new(Direction3d::new_unchecked(moving_direction)),
         ));
     }
@@ -97,12 +95,12 @@ fn move_to(
 fn clean_up_move_to(
     mut commands: Commands,
     mut removed: RemovedComponents<MoveTo>,
-    query: Query<Entity, Or<(With<Translating>, With<TurnTo>)>>,
+    query: Query<Entity, Or<(With<Velocity>, With<TurnTo>)>>,
 ) {
     // Clean up associated components if this one is removed early.
     for entity in removed.read() {
         if query.contains(entity) {
-            commands.entity(entity).remove::<(Translating, TurnTo)>();
+            commands.entity(entity).remove::<(Velocity, TurnTo)>();
         }
     }
 }
