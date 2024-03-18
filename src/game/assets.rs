@@ -10,6 +10,7 @@ pub(super) struct AssetsPlugin;
 impl Plugin for AssetsPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins(YamlAssetPlugin::<ActorConfig>::new(&["actor.yaml"]))
+            .add_plugins(YamlAssetPlugin::<SoundConfig>::new(&["sound.yaml"]))
             .add_loading_state(
                 LoadingState::new(GameState::Loading)
                     .continue_to_state(GameState::StartMenu),
@@ -27,13 +28,23 @@ impl Plugin for AssetsPlugin {
     }
 }
 
-/// Configuration for spawnable entities.
+#[derive(AssetCollection, Resource)]
+pub struct GameAssets {
+    #[asset(path = "config/actors", collection(typed))]
+    pub actors: Vec<Handle<ActorConfig>>,
+
+    #[asset(path = "config/sounds", collection(typed))]
+    pub sounds: Vec<Handle<SoundConfig>>,
+}
+
+/// Configs for spawnable entities.
 #[derive(Asset, Debug, Deserialize, Resource, TypePath)]
 pub struct ActorConfig {
     pub name: String,
     pub components: Vec<ComponentConfig>,
 }
 
+/// Configs for entity components.
 #[derive(Clone, Debug, Deserialize)]
 pub enum ComponentConfig {
     Player,
@@ -55,8 +66,9 @@ pub enum ComponentConfig {
     Shatterable,
 }
 
-#[derive(AssetCollection, Resource)]
-pub struct GameAssets {
-    #[asset(path = "config/actors", collection(typed))]
-    pub actors: Vec<Handle<ActorConfig>>,
+/// Configs for spawnable entities.
+#[derive(Asset, Debug, Deserialize, Resource, TypePath)]
+pub struct SoundConfig {
+    pub name: String,
+    pub color: String,
 }
