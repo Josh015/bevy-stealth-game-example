@@ -7,3 +7,5 @@ components:
   - !Footsteps { sound_wave: Guard }
   - !Vision
   - !Hearing
+
+# Slightly shorter vision cone than Advanced Guard.

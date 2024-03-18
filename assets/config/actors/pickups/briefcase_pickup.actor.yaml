@@ -4,3 +4,7 @@ components:
   # - !Mesh3D
   #   scene: <fill in later!>
   - !DropShadow
+
+# Triggers temporary wall blocking exit to open.
+# Triggers unique "Acquired" message along the top.
+# Triggers story dialog along the bottom.

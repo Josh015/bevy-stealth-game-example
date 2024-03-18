@@ -2,4 +2,6 @@ name: Floor Switch Tile
 components:
 # - !Animation3D
 #   scene: <fill in later!>
-# - !Trigger #Open all associated doors.
+# - !Trigger
+
+# Opens all associated doors temporarily!

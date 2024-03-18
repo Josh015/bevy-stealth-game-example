@@ -60,8 +60,10 @@ pub enum ComponentConfig {
         file_name: String,
     },
     //Trigger {} // Probably want to have a sub-enum with pre-allowed events?
+    Wall,
     Animation3D {
         scene: String,
+        // NOTE: Need to be able to remap and reuse animations for different keys!
         animations: HashMap<String, String>,
     },
     Mesh3D {
@@ -87,4 +89,5 @@ pub enum ComponentConfig {
 pub struct SoundWaveConfig {
     pub name: String,
     pub color: String,
+    // sound??
 }

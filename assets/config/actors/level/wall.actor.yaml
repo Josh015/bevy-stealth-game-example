@@ -1,5 +1,6 @@
 name: Wall
 components:
+  - !Wall
 # - !Mesh3D
   - !BlocksVision
   - !DeflectsSounds

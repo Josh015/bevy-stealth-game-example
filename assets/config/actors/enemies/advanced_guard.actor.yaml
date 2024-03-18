@@ -8,3 +8,5 @@ components:
   - !Vision
   - !Hearing
   - !Stunnable
+
+# Longest vision cone.

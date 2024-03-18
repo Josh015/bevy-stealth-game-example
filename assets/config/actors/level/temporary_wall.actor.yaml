@@ -1,5 +1,6 @@
 name: Temporary Wall
 components:
+  - !Wall
 # - !Mesh3D
   - !BlocksVision
   - !DeflectsSounds
@@ -9,4 +10,4 @@ components:
 #     Raising
 #     Idle
 #
-# Needs to stop blocking vision and deflecting sound when it opens.
+# Stops blocking vision and deflecting sound only when it's FULLY open!
