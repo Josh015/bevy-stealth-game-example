@@ -1,6 +1,6 @@
 use crate::{
     common::{FORWARD_DIRECTION, MOVEMENT_TOLERANCE},
-    AngularVelocity, RotationalSpeed,
+    AngularSpeed, AngularVelocity,
 };
 use bevy::{ecs::prelude::*, prelude::*};
 use bevy_sequential_actions::*;
@@ -58,17 +58,14 @@ pub(super) struct TurnTo {
 
 fn start_turn_to(
     mut commands: Commands,
-    query: Query<
-        (Entity, &RotationalSpeed, &TurnTo, &Transform),
-        Added<TurnTo>,
-    >,
+    query: Query<(Entity, &AngularSpeed, &TurnTo, &Transform), Added<TurnTo>>,
 ) {
-    for (entity, turning_speed, turn_to, transform) in &query {
+    for (entity, angular_speed, turn_to, transform) in &query {
         commands.entity(entity).insert(AngularVelocity {
             axis: Direction3d::new_unchecked(
                 (*transform.forward()).cross(*turn_to.direction).normalize(),
             ),
-            velocity: turning_speed.0,
+            velocity: angular_speed.0,
         });
     }
 }

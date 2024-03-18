@@ -64,12 +64,12 @@ fn start_move_to(
     mut commands: Commands,
     query: Query<(Entity, &Speed, &MoveTo, &Transform), Added<MoveTo>>,
 ) {
-    for (entity, moving_speed, move_to, transform) in &query {
+    for (entity, speed, move_to, transform) in &query {
         let moving_direction =
             (move_to.position - transform.translation).normalize();
 
         commands.entity(entity).insert((
-            Velocity(moving_direction * moving_speed.0),
+            Velocity(moving_direction * speed.0),
             TurnTo::new(Direction3d::new_unchecked(moving_direction)),
         ));
     }

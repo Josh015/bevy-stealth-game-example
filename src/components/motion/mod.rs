@@ -18,13 +18,13 @@ impl Plugin for MotionPlugin {
 #[derive(Clone, Component, Debug, Default)]
 pub struct Speed(pub f32);
 
-/// Rotational speed in `radians/second`.
+/// Angular speed in `radians/second`.
 #[derive(Clone, Component, Debug, Default)]
-pub struct RotationalSpeed(pub f32);
+pub struct AngularSpeed(pub f32);
 
 /// Required components for movement.
 #[derive(Bundle, Clone, Debug, Default)]
 pub struct MotionBundle {
     pub speed: Speed,
-    pub rotational_speed: RotationalSpeed,
+    pub angular_speed: AngularSpeed,
 }

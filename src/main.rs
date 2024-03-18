@@ -138,7 +138,7 @@ fn tinkering_zone_system(
             Player,
             MotionBundle {
                 speed: Speed(1.0),
-                rotational_speed: RotationalSpeed(std::f32::consts::TAU),
+                angular_speed: AngularSpeed(std::f32::consts::TAU),
             },
             StateMachine::default()
                 // Whenever the player presses jump, jump
