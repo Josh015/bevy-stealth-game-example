@@ -4,3 +4,6 @@ components:
 # - !Mesh3D
   - !DeflectsSounds
   - !Shatterable
+
+# This is effectively a door, but with a different trigger.
+# Way to share code with Door Wall?

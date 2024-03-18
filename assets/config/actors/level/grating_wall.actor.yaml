@@ -1,0 +1,6 @@
+name: Grating Wall
+components:
+  - !Wall
+# - !Mesh3D
+
+# Doesn't block vision or sound, but can't be passed or removed.

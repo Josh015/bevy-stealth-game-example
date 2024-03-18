@@ -12,26 +12,6 @@ impl Plugin for GuardPlugin {
     }
 }
 
-/// Assigns an entity an animation and gets it to start fading.
-#[derive(Bundle, Clone, Default)]
-pub struct GuardBundle {
-    pub pbr_bundle: PbrBundle, // SceneBundle
-    pub guard: Guard,
-    pub physics: Physics,
-    pub vision: Vision,
-    pub hearing: Hearing,
-    // Footsteps
-    //     sound_wave: “Guard”
-    // Trigger:
-    //     Game Over.
-    // GuardAI
-    //     Stunned
-    //     ChasingPlayer
-    //     SearchingForPlayer
-    //     InvestigatingSound
-    //     GuardingLocation | Patrolling
-}
-
 /// Designates a guard entity.
 #[derive(Clone, Component, Debug, Default)]
 pub struct Guard;

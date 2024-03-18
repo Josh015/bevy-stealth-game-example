@@ -1,4 +1,4 @@
-name: Temporary Wall
+name: Door Wall
 components:
   - !Wall
 # - !Mesh3D
@@ -6,8 +6,9 @@ components:
   - !DeflectsSounds
 
 #   States:
-#     Lowering
-#     Raising
-#     Idle
+#     Opening
+#     Opened
+#     Closing
+#     Closed
 #
 # Stops blocking vision and deflecting sound only when it's FULLY open!
