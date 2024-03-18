@@ -1,16 +1,16 @@
 use bevy::prelude::*;
 
-mod rotational_velocity;
+mod angular_velocity;
 mod velocity;
 
-pub use rotational_velocity::*;
+pub use angular_velocity::*;
 pub use velocity::*;
 
 pub(super) struct MotionPlugin;
 
 impl Plugin for MotionPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugins((RotationalVelocityPlugin, VelocityPlugin));
+        app.add_plugins((AngularVelocityPlugin, VelocityPlugin));
     }
 }
 

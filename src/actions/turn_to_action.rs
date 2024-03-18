@@ -1,6 +1,6 @@
 use crate::{
     common::{FORWARD_DIRECTION, MOVEMENT_TOLERANCE},
-    RotationalSpeed, RotationalVelocity,
+    AngularVelocity, RotationalSpeed,
 };
 use bevy::{ecs::prelude::*, prelude::*};
 use bevy_sequential_actions::*;
@@ -64,7 +64,7 @@ fn start_turn_to(
     >,
 ) {
     for (entity, turning_speed, turn_to, transform) in &query {
-        commands.entity(entity).insert(RotationalVelocity {
+        commands.entity(entity).insert(AngularVelocity {
             axis: Direction3d::new_unchecked(
                 (*transform.forward()).cross(*turn_to.direction).normalize(),
             ),
@@ -94,12 +94,12 @@ fn turn_to(
 fn clean_up_turn_to(
     mut commands: Commands,
     mut removed: RemovedComponents<TurnTo>,
-    query: Query<Entity, With<RotationalVelocity>>,
+    query: Query<Entity, With<AngularVelocity>>,
 ) {
     // Clean up associated components if this one is removed early.
     for entity in removed.read() {
         if query.contains(entity) {
-            commands.entity(entity).remove::<RotationalVelocity>();
+            commands.entity(entity).remove::<AngularVelocity>();
         }
     }
 }
