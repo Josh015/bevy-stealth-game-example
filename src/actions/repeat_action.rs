@@ -6,8 +6,8 @@ use derive_new::new;
 /// Takes a single action and repeats it.
 ///
 /// **WARNING**: Doesn't work with
-/// [`ActionSequence`](super::action_sequence::ActionSequence). Use
-/// [`RepeatSequence`](super::repeat_sequence::RepeatSequence) instead.
+/// [`ActionSequence`](crate::actions::ActionSequence). Use
+/// [`RepeatSequence`](crate::actions::RepeatSequence) instead.
 #[derive(new)]
 pub struct RepeatAction<A: Action> {
     repeat: Repeat,

@@ -6,7 +6,7 @@ use derive_new::new;
 /// Runs a collection of actions in order and repeats them.
 ///
 /// **WARNING**: Doesn't work with
-/// [`RepeatAction`](super::repeat_action::RepeatAction).
+/// [`RepeatAction`](crate::actions::RepeatAction).
 #[derive(new)]
 pub struct RepeatSequence<const N: usize> {
     repeat: Repeat,

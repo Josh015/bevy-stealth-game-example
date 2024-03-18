@@ -6,7 +6,7 @@ use derive_new::new;
 /// Turn an entity to face a specified direction.
 ///
 /// **WARNING**: Can't be run in parallel with
-/// [`MoveToAction`](super::move_to_action::MoveToAction).
+/// [`MoveToAction`](crate::actions::MoveToAction).
 #[derive(new)]
 pub struct TurnToAction {
     direction: Direction3d,

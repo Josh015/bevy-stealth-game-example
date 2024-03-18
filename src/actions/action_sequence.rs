@@ -5,8 +5,8 @@ use derive_new::new;
 /// Runs a collection of actions in order.
 ///
 /// **WARNING**: Doesn't work with
-/// [`RepeatAction`](super::repeat_action::RepeatAction). Use
-/// [`RepeatSequence`](super::repeat_sequence::RepeatSequence) instead.
+/// [`RepeatAction`](crate::actions::RepeatAction). Use
+/// [`RepeatSequence`](crate::actions::RepeatSequence) instead.
 #[derive(new)]
 pub struct ActionSequence<const N: usize> {
     actions: [BoxedAction; N],

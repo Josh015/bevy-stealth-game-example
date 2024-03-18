@@ -6,7 +6,7 @@ use derive_new::new;
 /// Move the entity in a straight line to a given point.
 ///
 /// **WARNING**: Can't be run in parallel with
-/// [`TurnToAction`](super::turn_to_action::TurnToAction).
+/// [`TurnToAction`](crate::actions::TurnToAction).
 #[derive(new)]
 pub struct MoveToAction {
     position: Vec3,
