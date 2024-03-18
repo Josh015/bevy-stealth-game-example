@@ -8,7 +8,7 @@ impl Plugin for VelocityPlugin {
     }
 }
 
-/// Translates an entity over time.
+/// Velocity that updates translation over time.
 #[derive(Clone, Component, Debug)]
 pub struct Velocity(pub Vec3);
 
