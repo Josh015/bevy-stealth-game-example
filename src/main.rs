@@ -10,9 +10,7 @@ pub mod ui;
 use std::time::Duration;
 
 use actions::{
-    move_to_action::MoveToAction, repeat_sequence::RepeatSequence,
-    state_done_action::StateDoneAction, turn_to_action::TurnToAction,
-    wait_action::WaitAction,
+    MoveToAction, RepeatSequence, StateDoneAction, TurnToAction, WaitAction,
 };
 use bevy::{
     prelude::*,
@@ -20,11 +18,8 @@ use bevy::{
 };
 use bevy_sequential_actions::*;
 use bevy_tweening::*;
-use common::repeat::Repeat;
-use components::{
-    actors::player::*,
-    movement::{MovementBundle, MovingSpeed, TurningSpeed},
-};
+use common::Repeat;
+use components::*;
 use seldom_state::prelude::*;
 
 fn main() {

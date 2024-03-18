@@ -1,12 +1,15 @@
 use bevy::prelude::*;
 
-pub mod assets;
-pub mod state;
+mod assets;
+mod state;
+
+pub use assets::*;
+pub use state::*;
 
 pub(super) struct GamePlugin;
 
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugins((assets::AssetsPlugin, state::StatePlugin));
+        app.add_plugins((AssetsPlugin, StatePlugin));
     }
 }

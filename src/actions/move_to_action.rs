@@ -1,4 +1,4 @@
-use crate::components::movement::moving_to::MovingTo;
+use crate::components::MovingTo;
 use bevy::{ecs::prelude::*, prelude::*};
 use bevy_sequential_actions::*;
 use derive_new::new;

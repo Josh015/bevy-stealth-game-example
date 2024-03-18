@@ -1,23 +1,29 @@
 use bevy::app::prelude::*;
 
-pub mod firearm;
-pub mod footsteps;
-pub mod guard;
-pub mod hearing;
-pub mod panning;
-pub mod pickup;
-pub mod player;
-pub mod start_location;
-pub mod vision;
+mod firearm;
+mod footsteps;
+mod guard;
+mod hearing;
+mod panning;
+mod pickup;
+mod player;
+mod start_location;
+mod vision;
+
+pub use firearm::*;
+pub use footsteps::*;
+pub use guard::*;
+pub use hearing::*;
+pub use panning::*;
+pub use pickup::*;
+pub use player::*;
+pub use start_location::*;
+pub use vision::*;
 
 pub(super) struct AgentsPlugin;
 
 impl Plugin for AgentsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugins((
-            guard::GuardPlugin,
-            hearing::HearingPlugin,
-            vision::VisionPlugin,
-        ));
+        app.add_plugins((GuardPlugin, HearingPlugin, VisionPlugin));
     }
 }

@@ -1,4 +1,4 @@
-use crate::common::constants::MOVEMENT_TOLERANCE;
+use crate::common::MOVEMENT_TOLERANCE;
 
 use super::{translating::Translating, turning_to::TurningTo, MovingSpeed};
 use bevy::{ecs::prelude::*, prelude::*};

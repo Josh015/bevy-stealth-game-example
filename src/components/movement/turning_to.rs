@@ -1,4 +1,4 @@
-use crate::common::constants::{FORWARD_DIRECTION, MOVEMENT_TOLERANCE};
+use crate::common::{FORWARD_DIRECTION, MOVEMENT_TOLERANCE};
 
 use super::{rotating::Rotating, TurningSpeed};
 use bevy::{ecs::prelude::*, prelude::*};
