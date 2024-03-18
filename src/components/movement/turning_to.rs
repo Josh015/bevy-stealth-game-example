@@ -1,4 +1,4 @@
-use crate::common::constants::{FORWARD_DIRECTION, MOVEMENT_TOLERANCE};
+use crate::common::constants::MOVEMENT_TOLERANCE;
 
 use super::{rotating::Rotating, TurningSpeed};
 use bevy::{ecs::prelude::*, prelude::*};
@@ -19,6 +19,9 @@ impl Plugin for TurningPlugin {
 #[derive(Clone, Component, Debug, new)]
 pub struct TurningTo {
     direction: Direction3d,
+
+    #[new(default)]
+    is_finished: bool,
 }
 
 fn start_turning_to(
@@ -42,18 +45,16 @@ fn start_turning_to(
 
 fn turning_to(
     mut commands: Commands,
-    mut query: Query<(Entity, &TurningTo, &mut Transform)>,
+    mut query: Query<(Entity, &mut TurningTo, &Transform)>,
 ) {
-    for (entity, turning_to, mut transform) in &mut query {
-        if (*transform.forward()).dot(*turning_to.direction).abs()
-            >= 1.0 - MOVEMENT_TOLERANCE
-        {
-            // Snap to exact rotation.
-            transform.rotation = Quat::from_rotation_arc(
-                FORWARD_DIRECTION,
-                *turning_to.direction,
-            );
+    for (entity, mut turning_to, transform) in &mut query {
+        // Delay removal by one update cycle to complete transformation.
+        if turning_to.is_finished {
             commands.entity(entity).remove::<TurningTo>();
+        } else {
+            turning_to.is_finished =
+                (*transform.forward()).dot(*turning_to.direction).abs()
+                    >= 1.0 - MOVEMENT_TOLERANCE;
         }
     }
 }

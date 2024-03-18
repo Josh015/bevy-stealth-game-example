@@ -19,6 +19,9 @@ impl Plugin for MovingToPlugin {
 #[derive(Clone, Component, Debug, new)]
 pub struct MovingTo {
     position: Vec3,
+
+    #[new(default)]
+    is_finished: bool,
 }
 
 fn start_moving_to(
@@ -41,15 +44,17 @@ fn start_moving_to(
 
 fn moving_to(
     mut commands: Commands,
-    mut query: Query<(Entity, &MovingTo, &mut Transform)>,
+    mut query: Query<(Entity, &mut MovingTo, &mut Transform)>,
 ) {
-    for (entity, moving_to, mut transform) in &mut query {
-        if moving_to.position.distance(transform.translation)
-            <= MOVEMENT_TOLERANCE
-        {
-            // Snap to exact position.
+    for (entity, mut moving_to, mut transform) in &mut query {
+        // Delay removal by one update cycle to complete transformation.
+        if moving_to.is_finished {
             transform.translation = moving_to.position;
             commands.entity(entity).remove::<MovingTo>();
+        } else {
+            moving_to.is_finished =
+                moving_to.position.distance(transform.translation)
+                    <= MOVEMENT_TOLERANCE;
         }
     }
 }
