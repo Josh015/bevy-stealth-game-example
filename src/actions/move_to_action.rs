@@ -24,7 +24,7 @@ impl Plugin for MoveToActionPlugin {
 /// **WARNING**: Can't be run in parallel with
 /// [`TurnToAction`](crate::actions::TurnToAction).
 #[derive(new)]
-pub(super) struct MoveToAction {
+pub struct MoveToAction {
     position: Vec3,
 }
 
@@ -53,7 +53,7 @@ impl Action for MoveToAction {
 
 /// Moves a [`MovingSpeed`] entity to a new position before removing itself.
 #[derive(Clone, Component, Debug, new)]
-struct MoveTo {
+pub(super) struct MoveTo {
     position: Vec3,
 
     #[new(default)]
