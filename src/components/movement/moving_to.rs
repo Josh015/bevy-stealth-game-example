@@ -36,7 +36,9 @@ fn start_moving_to(
             (moving_to.position - transform.translation).normalize();
 
         commands.entity(entity).insert((
-            Translating::new(moving_direction * moving_speed.0),
+            Translating {
+                translation: moving_direction * moving_speed.0,
+            },
             TurningTo::new(Direction3d::new_unchecked(moving_direction)),
         ));
     }

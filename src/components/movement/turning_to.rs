@@ -32,14 +32,14 @@ fn start_turning_to(
     >,
 ) {
     for (entity, turning_speed, turning_to, transform) in &query {
-        commands.entity(entity).insert(Rotating::new(
-            Direction3d::new_unchecked(
+        commands.entity(entity).insert(Rotating {
+            axis: Direction3d::new_unchecked(
                 (*transform.forward())
                     .cross(*turning_to.direction)
                     .normalize(),
             ),
-            turning_speed.0,
-        ));
+            angle: turning_speed.0,
+        });
     }
 }
 

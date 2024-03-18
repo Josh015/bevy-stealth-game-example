@@ -1,5 +1,4 @@
 use bevy::{ecs::prelude::*, prelude::*};
-use derive_new::new;
 
 pub(super) struct TranslatingPlugin;
 
@@ -10,9 +9,9 @@ impl Plugin for TranslatingPlugin {
 }
 
 /// Translates an entity over time.
-#[derive(Clone, Component, Debug, new)]
+#[derive(Clone, Component, Debug)]
 pub struct Translating {
-    translation: Vec3,
+    pub translation: Vec3,
 }
 
 fn translating(

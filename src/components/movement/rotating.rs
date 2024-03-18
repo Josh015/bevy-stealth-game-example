@@ -1,5 +1,4 @@
 use bevy::{ecs::prelude::*, prelude::*};
-use derive_new::new;
 
 pub(super) struct RotatingPlugin;
 
@@ -10,10 +9,10 @@ impl Plugin for RotatingPlugin {
 }
 
 /// Rotates an entity over time.
-#[derive(Clone, Component, Debug, new)]
+#[derive(Clone, Component, Debug)]
 pub struct Rotating {
-    axis: Direction3d,
-    angle: f32,
+    pub axis: Direction3d,
+    pub angle: f32,
 }
 
 fn rotating(time: Res<Time>, mut query: Query<(&Rotating, &mut Transform)>) {
