@@ -6,7 +6,7 @@ use derive_new::new;
 use crate::common::MOVEMENT_TOLERANCE;
 use crate::{Speed, Velocity};
 
-use super::TurnTo;
+use super::FaceDirection;
 
 pub(super) struct MoveToActionPlugin;
 
@@ -70,7 +70,7 @@ fn start_move_to(
 
         commands.entity(entity).insert((
             Velocity(moving_direction * speed.0),
-            TurnTo::new(Direction3d::new_unchecked(moving_direction)),
+            FaceDirection::new(Direction3d::new_unchecked(moving_direction)),
         ));
     }
 }
@@ -95,12 +95,14 @@ fn move_to(
 fn clean_up_move_to(
     mut commands: Commands,
     mut removed: RemovedComponents<MoveTo>,
-    query: Query<Entity, Or<(With<Velocity>, With<TurnTo>)>>,
+    query: Query<Entity, Or<(With<Velocity>, With<FaceDirection>)>>,
 ) {
     // Clean up associated components if this one is removed early.
     for entity in removed.read() {
         if query.contains(entity) {
-            commands.entity(entity).remove::<(Velocity, TurnTo)>();
+            commands
+                .entity(entity)
+                .remove::<(Velocity, FaceDirection)>();
         }
     }
 }
