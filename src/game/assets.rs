@@ -51,6 +51,7 @@ pub enum ComponentConfig {
     Guard,
     SecurityCamera,
     Pickup,
+    DropShadow,
     Powerup { file_name: String },
     Animation3D { scene: String }, // TODO: Determine required files
     Mesh3D { file_name: String },  // TODO: Determine required files

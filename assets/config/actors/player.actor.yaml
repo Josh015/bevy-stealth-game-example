@@ -5,3 +5,4 @@ components:
   #   scene: <fill in later!>
   - !Physics { radius: 0.375 }
   - !Footsteps { sound: Player }
+  - !DropShadow
