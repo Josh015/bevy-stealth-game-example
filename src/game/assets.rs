@@ -1,4 +1,4 @@
-use bevy::{prelude::*, reflect::TypePath};
+use bevy::{prelude::*, reflect::TypePath, utils::HashMap};
 use bevy_asset_loader::prelude::*;
 use bevy_common_assets::yaml::YamlAssetPlugin;
 use serde::Deserialize;
@@ -10,7 +10,9 @@ pub(super) struct AssetsPlugin;
 impl Plugin for AssetsPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins(YamlAssetPlugin::<ActorConfig>::new(&["actor.yaml"]))
-            .add_plugins(YamlAssetPlugin::<SoundConfig>::new(&["sound.yaml"]))
+            .add_plugins(YamlAssetPlugin::<SoundWaveConfig>::new(&[
+                "sound_wave.yaml",
+            ]))
             .add_loading_state(
                 LoadingState::new(GameState::Loading)
                     .continue_to_state(GameState::StartMenu),
@@ -33,8 +35,8 @@ pub struct GameAssets {
     #[asset(path = "config/actors", collection(typed))]
     pub actors: Vec<Handle<ActorConfig>>,
 
-    #[asset(path = "config/sounds", collection(typed))]
-    pub sounds: Vec<Handle<SoundConfig>>,
+    #[asset(path = "config/sound_waves", collection(typed))]
+    pub sounds: Vec<Handle<SoundWaveConfig>>,
 }
 
 /// Configs for spawnable entities.
@@ -51,17 +53,28 @@ pub enum ComponentConfig {
     Guard,
     SecurityCamera,
     Pickup,
-    DropShadow,
-    Powerup { file_name: String },
-    Animation3D { scene: String }, // TODO: Determine required files
-    Mesh3D { file_name: String },  // TODO: Determine required files
+    Weapon,
+    Powerup {
+        file_name: String,
+    },
+    //Trigger {} // Probably want to have a sub-enum with pre-allowed events?
+    Animation3D {
+        scene: String,
+        animations: HashMap<String, String>,
+    },
+    Mesh3D {
+        scene: String,
+    },
+    Physics {
+        radius: f32,
+    },
     Vision,
     Hearing,
-    Physics { radius: f32 },
     Stunnable,
-    Footsteps { sound: String }, // Look up and replace with asset handle.
-    //Trigger {} // Probably want to have a sub-enum with pre-allowed events?
-    Weapon,
+    Footsteps {
+        sound_wave: String,
+    },
+    DropShadow,
     BlocksVision,
     DeflectsSounds,
     Shatterable,
@@ -69,7 +82,7 @@ pub enum ComponentConfig {
 
 /// Configs for spawnable entities.
 #[derive(Asset, Debug, Deserialize, Resource, TypePath)]
-pub struct SoundConfig {
+pub struct SoundWaveConfig {
     pub name: String,
     pub color: String,
 }
