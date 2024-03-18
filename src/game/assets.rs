@@ -24,7 +24,9 @@ impl Plugin for AssetsPlugin {
         // .add_systems(
         //     OnExit(GameState::Loading),
         //     |game_assets: Res<GameAssets>| {
-        //         println!("total files: {}", game_assets.actors.len());
+        //         game_assets.sound_waves.iter().for_each(|s| {
+        //             println!("sound_wave: {}", s.0);
+        //         });
         //     },
         // );
     }
@@ -32,11 +34,11 @@ impl Plugin for AssetsPlugin {
 
 #[derive(AssetCollection, Resource)]
 pub struct GameAssets {
-    #[asset(path = "config/actors", collection(typed))]
-    pub actors: Vec<Handle<ActorConfig>>,
+    #[asset(path = "config/actors", collection(typed, mapped))]
+    pub actors: HashMap<String, Handle<ActorConfig>>,
 
     #[asset(path = "config/sound_waves", collection(typed))]
-    pub sounds: Vec<Handle<SoundWaveConfig>>,
+    pub sound_waves: Vec<Handle<SoundWaveConfig>>,
 }
 
 /// Configs for spawnable entities.
@@ -68,13 +70,13 @@ pub enum ComponentConfig {
     Physics {
         radius: f32,
     },
-    Vision,
-    Hearing,
-    Stunnable,
     Footsteps {
         sound_wave: String,
     },
     DropShadow,
+    Vision,
+    Hearing,
+    Stunnable,
     BlocksVision,
     DeflectsSounds,
     Shatterable,

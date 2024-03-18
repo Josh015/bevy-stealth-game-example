@@ -21,7 +21,7 @@ pub struct GuardBundle {
     pub vision: Vision,
     pub hearing: Hearing,
     // Footsteps
-    //     sound: “Guard”
+    //     sound_wave: “Guard”
     // Trigger:
     //     Game Over.
     // GuardAI
