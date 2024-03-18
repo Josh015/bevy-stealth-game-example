@@ -60,6 +60,7 @@ pub enum ComponentConfig {
         file_name: String,
     },
     //Trigger {} // Probably want to have a sub-enum with pre-allowed events?
+    Door,
     Wall,
     Animation3D {
         scene: String,

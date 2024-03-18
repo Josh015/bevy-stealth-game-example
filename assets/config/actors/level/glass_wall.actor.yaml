@@ -1,9 +1,11 @@
 name: Glass Wall
 components:
+  - !Door
   - !Wall
   - !DeflectsSounds
   - !Shatterable
 # - !Mesh3D
 
-# This is effectively a door, but with a different trigger.
-# Way to share code with Door Wall?
+# Shatter isn't triggered by the sound waves, it's triggered by being
+# in the gun's area of effect and it sending out an event to the affected
+# glass walls!
