@@ -20,7 +20,7 @@ pub enum MoveTo {
     Direction(Direction3d),
 }
 
-/// Moves the entity and then removes itself.
+/// Moves an entity.
 #[derive(Clone, Component, Debug, Default)]
 pub struct Mover {
     move_to: Option<MoveTo>,
@@ -38,7 +38,7 @@ impl Mover {
     }
 
     pub fn is_finished(&self) -> bool {
-        self.move_to.is_none()
+        self.move_to.is_none() && self.heading.is_none()
     }
 }
 
@@ -62,7 +62,7 @@ impl Default for AngularSpeed {
     }
 }
 
-/// Required components for Mover to work.
+/// Required components for [`Mover`] to work.
 #[derive(Bundle, Clone, Debug, Default)]
 pub struct MoverBundle {
     pub mover: Mover,
@@ -142,7 +142,7 @@ fn mover(
                 }
             },
 
-            // Reset to default state if move_to was cleared.
+            // Reset to default state if mover was stopped externally.
             (None, Some(_)) => {
                 mover.heading = None;
                 commands
