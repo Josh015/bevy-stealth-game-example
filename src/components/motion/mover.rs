@@ -30,6 +30,7 @@ pub struct Mover {
 impl Mover {
     pub fn start(&mut self, move_to: MoveTo) {
         self.move_to = Some(move_to);
+        self.heading = None;
     }
 
     pub fn stop(&mut self) {
