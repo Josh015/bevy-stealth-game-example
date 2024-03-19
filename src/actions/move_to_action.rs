@@ -2,7 +2,7 @@ use bevy::{ecs::prelude::*, prelude::*};
 use bevy_sequential_actions::*;
 use derive_new::new;
 
-use crate::{Motion, Mover};
+use crate::{MoveTo, Mover};
 
 /// Move the entity in a straight line to a given point.
 ///
@@ -21,7 +21,7 @@ impl Action for MoveToAction {
     fn on_start(&mut self, agent: Entity, world: &mut World) -> bool {
         world
             .entity_mut(agent)
-            .insert(Mover::new(Motion::Destination(self.destination)));
+            .insert(Mover::new(MoveTo::Destination(self.destination)));
 
         false
     }
