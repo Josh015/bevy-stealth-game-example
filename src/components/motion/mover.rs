@@ -105,7 +105,11 @@ fn mover(
                             .insert(Velocity(heading * speed.0));
                         heading
                     },
-                    MoveTo::Direction(heading) => *heading,
+                    MoveTo::Direction(heading) => {
+                        // A precaution in case mode was switched midway.
+                        commands.entity(entity).remove::<Velocity>();
+                        *heading
+                    },
                 };
 
                 mover.heading = Some(heading);
