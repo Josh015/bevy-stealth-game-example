@@ -1,23 +1,8 @@
-use bevy::app::prelude::*;
 use bevy::{ecs::prelude::*, prelude::*};
 use bevy_sequential_actions::*;
 use derive_new::new;
 
-use crate::common::MOVEMENT_TOLERANCE;
-use crate::{Speed, Velocity};
-
-use super::FaceDirection;
-
-pub(super) struct MoveToActionPlugin;
-
-impl Plugin for MoveToActionPlugin {
-    fn build(&self, app: &mut App) {
-        app.add_systems(
-            Update,
-            (start_move_to, move_to, clean_up_move_to).chain(),
-        );
-    }
-}
+use crate::{Motion, Motivation};
 
 /// Move the entity in a straight line to a given point.
 ///
@@ -25,18 +10,18 @@ impl Plugin for MoveToActionPlugin {
 /// [`TurnToAction`](crate::actions::TurnToAction).
 #[derive(new)]
 pub struct MoveToAction {
-    position: Vec3,
+    destination: Vec3,
 }
 
 impl Action for MoveToAction {
     fn is_finished(&self, agent: Entity, world: &World) -> bool {
-        !world.entity(agent).contains::<MoveTo>()
+        !world.entity(agent).contains::<Motion>()
     }
 
     fn on_start(&mut self, agent: Entity, world: &mut World) -> bool {
         world
             .entity_mut(agent)
-            .insert((MoveTo::new(self.position),));
+            .insert(Motion::new(Motivation::Destination(self.destination)));
 
         false
     }
@@ -47,62 +32,6 @@ impl Action for MoveToAction {
         world: &mut World,
         _reason: StopReason,
     ) {
-        world.entity_mut(agent).remove::<MoveTo>();
-    }
-}
-
-/// Moves a [`MovingSpeed`] entity to a new position before removing itself.
-#[derive(Clone, Component, Debug, new)]
-pub(super) struct MoveTo {
-    position: Vec3,
-
-    #[new(default)]
-    is_finished: bool,
-}
-
-fn start_move_to(
-    mut commands: Commands,
-    query: Query<(Entity, &Speed, &MoveTo, &Transform), Added<MoveTo>>,
-) {
-    for (entity, speed, move_to, transform) in &query {
-        let moving_direction =
-            (move_to.position - transform.translation).normalize();
-
-        commands.entity(entity).insert((
-            Velocity(moving_direction * speed.0),
-            FaceDirection::new(Direction3d::new_unchecked(moving_direction)),
-        ));
-    }
-}
-
-fn move_to(
-    mut commands: Commands,
-    mut query: Query<(Entity, &mut MoveTo, &mut Transform)>,
-) {
-    for (entity, mut move_to, mut transform) in &mut query {
-        // Delay removal by one update to prevent visual snapping to final position.
-        if move_to.is_finished {
-            commands.entity(entity).remove::<MoveTo>();
-            transform.translation = move_to.position;
-        } else {
-            move_to.is_finished =
-                move_to.position.distance(transform.translation)
-                    <= MOVEMENT_TOLERANCE;
-        }
-    }
-}
-
-fn clean_up_move_to(
-    mut commands: Commands,
-    mut removed: RemovedComponents<MoveTo>,
-    query: Query<Entity, Or<(With<Velocity>, With<FaceDirection>)>>,
-) {
-    // Clean up associated components if this one is removed early.
-    for entity in removed.read() {
-        if query.contains(entity) {
-            commands
-                .entity(entity)
-                .remove::<(Velocity, FaceDirection)>();
-        }
+        world.entity_mut(agent).remove::<Motion>();
     }
 }

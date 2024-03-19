@@ -1,4 +1,4 @@
-use crate::common::Repeat;
+use crate::util::Repeat;
 use bevy::ecs::prelude::*;
 use bevy_sequential_actions::*;
 use derive_new::new;

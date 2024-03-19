@@ -28,10 +28,6 @@ pub(super) struct ActionsPlugin;
 
 impl Plugin for ActionsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugins((
-            FaceDirectionPlugin,
-            MoveToActionPlugin,
-            WaitActionPlugin,
-        ));
+        app.add_plugins(WaitActionPlugin);
     }
 }

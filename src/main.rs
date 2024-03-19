@@ -1,11 +1,11 @@
 #![allow(clippy::too_many_arguments, clippy::type_complexity)]
 
 pub mod actions;
-pub mod common;
 pub mod components;
 pub mod events;
 pub mod game;
 pub mod ui;
+pub mod util;
 
 use std::time::Duration;
 
@@ -19,9 +19,9 @@ use bevy::{
 };
 use bevy_sequential_actions::*;
 use bevy_tweening::*;
-use common::Repeat;
 use components::*;
 use seldom_state::prelude::*;
+use util::Repeat;
 
 fn main() {
     App::new()
