@@ -52,7 +52,7 @@ pub enum MoveTo {
     Direction(Direction3d),
 }
 
-/// Provides precise on-demand entity movement.
+/// Provides precise on-demand movement for a [`Transform`] entity.
 #[derive(Clone, Component, Debug, Default)]
 pub struct Mover {
     move_to: Option<MoveTo>,
@@ -109,20 +109,20 @@ fn mover(
     mut commands: Commands,
     mut query: Query<(
         Entity,
+        &mut Transform,
         &mut Mover,
         &LinearSpeed,
         &AngularSpeed,
-        &mut Transform,
         Has<LinearVelocity>,
         Has<AngularVelocity>,
     )>,
 ) {
     for (
         entity,
+        mut transform,
         mut mover,
         linear_speed,
         angular_speed,
-        mut transform,
         has_linear_velocity,
         has_angular_velocity,
     ) in &mut query
