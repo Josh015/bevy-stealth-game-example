@@ -262,11 +262,11 @@ fn ping(mut commands: Commands, query: Query<Entity, Added<Ping>>) {
             RepeatSequence::new(
                 Repeat::Times(2),
                 actions![
-                    MoveAction::new(MoveTo::Direction(Direction3d::NEG_X)),
+                    MoveAction::new(MoveTo::Direction(Direction3d::X)),
                     WaitAction::new(Duration::from_millis(400)),
                     MoveAction::new(MoveTo::Direction(Direction3d::Z)),
                     WaitAction::new(Duration::from_millis(400)),
-                    MoveAction::new(MoveTo::Direction(Direction3d::X)),
+                    MoveAction::new(MoveTo::Direction(Direction3d::NEG_X)),
                     WaitAction::new(Duration::from_millis(400)),
                     MoveAction::new(MoveTo::Direction(Direction3d::NEG_Z)),
                     WaitAction::new(Duration::from_millis(400)),
