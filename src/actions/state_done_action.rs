@@ -3,7 +3,7 @@ use bevy_sequential_actions::*;
 use derive_new::new;
 use seldom_state::trigger::Done;
 
-/// Integrates with `seldom_state` to trigger the `done()` condition.
+/// Triggers the `done()` condition for seldom_state `StateMachine` components.
 #[derive(new)]
 pub struct StateDoneAction {
     done: Done,
@@ -16,7 +16,6 @@ impl Action for StateDoneAction {
 
     fn on_start(&mut self, agent: Entity, world: &mut World) -> bool {
         world.entity_mut(agent).insert(self.done);
-
         true
     }
 

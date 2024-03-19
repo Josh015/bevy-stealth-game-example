@@ -53,7 +53,7 @@ impl Action for WaitAction {
 #[derive(Component)]
 struct WaitTimer(Timer);
 
-fn wait_timer_update(mut query: Query<&mut WaitTimer>, time: Res<Time>) {
+fn wait_timer_update(time: Res<Time>, mut query: Query<&mut WaitTimer>) {
     for mut wait_timer in &mut query {
         wait_timer.0.tick(time.delta());
     }

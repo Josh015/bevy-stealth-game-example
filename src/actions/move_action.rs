@@ -5,6 +5,8 @@ use derive_new::new;
 use crate::{MoveTo, Mover};
 
 /// Move an entity.
+///
+/// **NOTE:** Requires [`Mover`] component.
 #[derive(new)]
 pub struct MoveAction {
     move_to: MoveTo,
