@@ -24,7 +24,7 @@ impl Action for MoveAction {
             return true;
         };
 
-        mover.set_move_to(Some(self.move_to));
+        mover.start(self.move_to);
         false
     }
 
@@ -38,6 +38,6 @@ impl Action for MoveAction {
             return;
         };
 
-        mover.set_move_to(None);
+        mover.stop();
     }
 }

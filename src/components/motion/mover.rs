@@ -28,8 +28,12 @@ pub struct Mover {
 }
 
 impl Mover {
-    pub fn set_move_to(&mut self, move_to: Option<MoveTo>) {
-        self.move_to = move_to;
+    pub fn start(&mut self, move_to: MoveTo) {
+        self.move_to = Some(move_to);
+    }
+
+    pub fn stop(&mut self) {
+        self.move_to = None;
     }
 
     pub fn is_finished(&self) -> bool {
@@ -138,7 +142,12 @@ fn mover(
             },
 
             // Reset to default state if move_to was cleared.
-            (None, Some(_)) => mover.heading = None,
+            (None, Some(_)) => {
+                mover.heading = None;
+                commands
+                    .entity(entity)
+                    .remove::<(AngularVelocity, Velocity)>();
+            },
             _ => {},
         }
     }
