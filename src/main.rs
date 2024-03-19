@@ -134,10 +134,7 @@ fn tinkering_zone_system(
     commands
         .spawn((
             Player,
-            SpeedBundle {
-                speed: Speed(1.0),
-                angular_speed: AngularSpeed(std::f32::consts::TAU),
-            },
+            SpeedBundle::default(),
             StateMachine::default()
                 // Whenever the player presses jump, jump
                 .trans::<Ping, _>(
