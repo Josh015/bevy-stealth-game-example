@@ -13,6 +13,26 @@ impl Plugin for MoverPlugin {
     }
 }
 
+/// Linear speed in `meters/second`.
+#[derive(Clone, Component, Debug)]
+pub struct LinearSpeed(pub f32);
+
+impl Default for LinearSpeed {
+    fn default() -> Self {
+        Self(1.0)
+    }
+}
+
+/// Angular speed in `radians/second`.
+#[derive(Clone, Component, Debug)]
+pub struct AngularSpeed(pub f32);
+
+impl Default for AngularSpeed {
+    fn default() -> Self {
+        Self(std::f32::consts::TAU)
+    }
+}
+
 /// Specify what type of movement is required.
 #[derive(Clone, Copy, Debug)]
 pub enum MoveTo {
@@ -42,31 +62,11 @@ impl Mover {
     }
 }
 
-/// Directional speed in `meters/second`.
-#[derive(Clone, Component, Debug)]
-pub struct Speed(pub f32);
-
-impl Default for Speed {
-    fn default() -> Self {
-        Self(1.0)
-    }
-}
-
-/// Angular speed in `radians/second`.
-#[derive(Clone, Component, Debug)]
-pub struct AngularSpeed(pub f32);
-
-impl Default for AngularSpeed {
-    fn default() -> Self {
-        Self(std::f32::consts::TAU)
-    }
-}
-
 /// Required components for [`Mover`] to work.
 #[derive(Bundle, Clone, Debug, Default)]
 pub struct MoverBundle {
     pub mover: Mover,
-    pub speed: Speed,
+    pub linear_speed: LinearSpeed,
     pub angular_speed: AngularSpeed,
 }
 
@@ -75,7 +75,7 @@ fn mover(
     mut query: Query<(
         Entity,
         &mut Mover,
-        &Speed,
+        &LinearSpeed,
         &AngularSpeed,
         &mut Transform,
         Has<LinearVelocity>,
@@ -85,7 +85,7 @@ fn mover(
     for (
         entity,
         mut mover,
-        speed,
+        linear_speed,
         angular_speed,
         mut transform,
         has_linear_velocity,
@@ -101,7 +101,7 @@ fn mover(
                         let heading =
                             (destination - transform.translation).normalize();
 
-                        entity.insert(LinearVelocity(heading * speed.0));
+                        entity.insert(LinearVelocity(heading * linear_speed.0));
                         heading
                     },
                     MoveTo::Direction(heading) => {
