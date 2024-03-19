@@ -95,25 +95,24 @@ fn mover(
         match (mover.move_to, mover.heading) {
             // Initialize and cache data before inserting working components.
             (Some(move_to), None) => {
+                let mut entity = commands.entity(entity);
                 let heading = match move_to {
                     MoveTo::Destination(destination) => {
                         let heading =
                             (destination - transform.translation).normalize();
 
-                        commands
-                            .entity(entity)
-                            .insert(Velocity(heading * speed.0));
+                        entity.insert(Velocity(heading * speed.0));
                         heading
                     },
                     MoveTo::Direction(heading) => {
                         // A precaution in case mode was switched midway.
-                        commands.entity(entity).remove::<Velocity>();
+                        entity.remove::<Velocity>();
                         *heading
                     },
                 };
 
                 mover.heading = Some(heading);
-                commands.entity(entity).insert(AngularVelocity {
+                entity.insert(AngularVelocity {
                     axis: Direction3d::new_unchecked(
                         (*transform.forward()).cross(heading).normalize(),
                     ),
@@ -123,12 +122,14 @@ fn mover(
 
             // Check progress and eventually remove the working components.
             (Some(move_to), Some(heading)) => {
+                let mut entity = commands.entity(entity);
+
                 if let MoveTo::Destination(destination) = move_to {
                     if has_velocity
                         && destination.distance(transform.translation)
                             <= MOTION_MARGIN_OF_ERROR
                     {
-                        commands.entity(entity).remove::<Velocity>();
+                        entity.remove::<Velocity>();
                         transform.translation = destination;
                     }
                 }
@@ -137,7 +138,7 @@ fn mover(
                     && transform.forward().dot(heading).abs()
                         >= 1.0 - MOTION_MARGIN_OF_ERROR
                 {
-                    commands.entity(entity).remove::<AngularVelocity>();
+                    entity.remove::<AngularVelocity>();
                 }
 
                 if !has_velocity && !has_angular_velocity {
