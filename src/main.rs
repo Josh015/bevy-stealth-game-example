@@ -55,6 +55,7 @@ fn main() {
         .run();
 }
 
+const PICKUP_HALF_SIZE: f32 = 0.05;
 const AXIS_CAPSULE_RADIUS: f32 = 0.02;
 const AXIS_CAPSULE_HALF_LENGTH: f32 = 0.03;
 const ORIGIN_SPHERE_RADIUS: f32 = 2.5 * AXIS_CAPSULE_RADIUS;
@@ -126,7 +127,23 @@ fn tinkering_zone_system(
         ..default()
     });
 
-    // ---- Sphere with a nose ----
+    // ---- Pickup ----
+    commands.spawn((
+        Pickup,
+        PbrBundle {
+            mesh: meshes.add(Cuboid {
+                half_size: Vec3::splat(PICKUP_HALF_SIZE),
+            }),
+            material: materials.add(StandardMaterial {
+                base_color: Color::YELLOW,
+                ..default()
+            }),
+            transform: Transform::from_xyz(0.25, PICKUP_HALF_SIZE + 0.1, 0.0),
+            ..default()
+        },
+    ));
+
+    // ---- Mover ----
     let cylinder = meshes.add(Capsule3d {
         radius: AXIS_CAPSULE_RADIUS,
         half_length: AXIS_CAPSULE_HALF_LENGTH,
@@ -134,7 +151,6 @@ fn tinkering_zone_system(
 
     commands
         .spawn((
-            Player,
             MoverBundle::default(),
             StateMachine::default()
                 // Whenever the player presses jump, jump

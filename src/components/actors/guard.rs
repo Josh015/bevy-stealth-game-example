@@ -1,8 +1,4 @@
-use bevy::{app::prelude::*, ecs::prelude::*, pbr::PbrBundle};
-
-use crate::components::physics::Physics;
-
-use super::{hearing::Hearing, vision::Vision};
+use bevy::{app::prelude::*, ecs::prelude::*};
 
 pub(super) struct GuardPlugin;
 
