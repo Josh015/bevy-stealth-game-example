@@ -135,7 +135,7 @@ fn tinkering_zone_system(
     commands
         .spawn((
             Player,
-            SpeedBundle::default(),
+            MoverBundle::default(),
             StateMachine::default()
                 // Whenever the player presses jump, jump
                 .trans::<Ping, _>(

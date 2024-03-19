@@ -1,11 +1,9 @@
 use bevy::prelude::*;
 
 mod mover;
-mod speed;
 mod velocity;
 
 pub use mover::*;
-pub use speed::*;
 pub use velocity::*;
 
 pub(super) struct MotionPlugin;
