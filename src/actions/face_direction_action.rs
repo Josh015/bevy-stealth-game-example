@@ -20,7 +20,7 @@ impl Action for FaceDirectionAction {
     fn on_start(&mut self, agent: Entity, world: &mut World) -> bool {
         world
             .entity_mut(agent)
-            .insert(Mover::new(MoveTo::Heading(self.direction)));
+            .insert(Mover::new(MoveTo::Direction(self.direction)));
 
         false
     }

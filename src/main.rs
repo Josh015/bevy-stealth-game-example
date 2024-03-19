@@ -10,7 +10,7 @@ pub mod util;
 use std::time::Duration;
 
 use actions::{
-    FaceDirectionAction, MoveToAction, RepeatSequence, StateDoneAction,
+    FaceDirectionAction, MoveAction, RepeatSequence, StateDoneAction,
     WaitAction,
 };
 use bevy::{
@@ -288,27 +288,31 @@ fn pong(mut commands: Commands, query: Query<Entity, Added<Ping>>) {
 
     for entity in &query {
         commands.actions(entity).add_many(actions![
-            MoveToAction::new(Vec3::new(
+            MoveAction::new(MoveTo::Destination(Vec3::new(
                 movement_range,
                 ORIGIN_SPHERE_GROUND_HEIGHT,
                 movement_range
-            )),
-            MoveToAction::new(Vec3::new(
+            ))),
+            MoveAction::new(MoveTo::Destination(Vec3::new(
                 movement_range,
                 ORIGIN_SPHERE_GROUND_HEIGHT,
                 -movement_range
-            )),
-            MoveToAction::new(Vec3::new(
+            ))),
+            MoveAction::new(MoveTo::Destination(Vec3::new(
                 -movement_range,
                 ORIGIN_SPHERE_GROUND_HEIGHT,
                 -movement_range
-            )),
-            MoveToAction::new(Vec3::new(
+            ))),
+            MoveAction::new(MoveTo::Destination(Vec3::new(
                 -movement_range,
                 ORIGIN_SPHERE_GROUND_HEIGHT,
                 movement_range
-            )),
-            MoveToAction::new(Vec3::new(0.0, ORIGIN_SPHERE_GROUND_HEIGHT, 0.0)),
+            ))),
+            MoveAction::new(MoveTo::Destination(Vec3::new(
+                0.0,
+                ORIGIN_SPHERE_GROUND_HEIGHT,
+                0.0
+            ))),
             StateDoneAction::new(Done::Success)
         ]);
     }

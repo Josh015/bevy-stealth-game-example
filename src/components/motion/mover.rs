@@ -15,10 +15,10 @@ impl Plugin for MoverPlugin {
 }
 
 /// Specify what type of movement is required.
-#[derive(Clone, Debug)]
+#[derive(Clone, Copy, Debug)]
 pub enum MoveTo {
     Destination(Vec3),
-    Heading(Direction3d),
+    Direction(Direction3d),
 }
 
 /// Moves the entity and then removes itself.
@@ -45,7 +45,7 @@ fn start_mover(
                 commands.entity(entity).insert(Velocity(heading * speed.0));
                 heading
             },
-            MoveTo::Heading(heading) => *heading,
+            MoveTo::Direction(heading) => *heading,
         };
 
         commands.entity(entity).insert(AngularVelocity {
