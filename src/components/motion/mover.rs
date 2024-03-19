@@ -106,7 +106,10 @@ fn mover(
                     },
                     MoveTo::Direction(heading) => {
                         // A precaution in case mode was switched midway.
-                        entity.remove::<Velocity>();
+                        if has_velocity {
+                            entity.remove::<Velocity>();
+                        }
+
                         *heading
                     },
                 };
@@ -150,9 +153,12 @@ fn mover(
             // Reset to default state if mover was stopped externally.
             (None, Some(_)) => {
                 mover.heading = None;
-                commands
-                    .entity(entity)
-                    .remove::<(AngularVelocity, Velocity)>();
+
+                if has_velocity || has_angular_velocity {
+                    commands
+                        .entity(entity)
+                        .remove::<(AngularVelocity, Velocity)>();
+                }
             },
             _ => {},
         }
