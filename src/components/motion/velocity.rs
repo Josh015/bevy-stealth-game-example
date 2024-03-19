@@ -4,20 +4,20 @@ pub(super) struct VelocityPlugin;
 
 impl Plugin for VelocityPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, (angular_velocity, velocity).chain());
+        app.add_systems(Update, (angular_velocity, linear_velocity).chain());
     }
 }
 
-/// Rotational velocity which updates rotation over time.
+/// Angular velocity which updates rotation over time.
 #[derive(Clone, Component, Debug)]
 pub struct AngularVelocity {
     pub axis: Direction3d,
     pub velocity: f32,
 }
 
-/// Velocity that updates translation over time.
+/// Linear velocity that updates translation over time.
 #[derive(Clone, Component, Debug)]
-pub struct Velocity(pub Vec3);
+pub struct LinearVelocity(pub Vec3);
 
 fn angular_velocity(
     time: Res<Time>,
@@ -33,8 +33,11 @@ fn angular_velocity(
     }
 }
 
-fn velocity(time: Res<Time>, mut query: Query<(&Velocity, &mut Transform)>) {
-    for (velocity, mut transform) in &mut query {
-        transform.translation += velocity.0 * time.delta_seconds();
+fn linear_velocity(
+    time: Res<Time>,
+    mut query: Query<(&LinearVelocity, &mut Transform)>,
+) {
+    for (linear_velocity, mut transform) in &mut query {
+        transform.translation += linear_velocity.0 * time.delta_seconds();
     }
 }

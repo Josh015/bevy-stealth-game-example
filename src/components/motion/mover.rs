@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::{AngularVelocity, Velocity};
+use crate::{AngularVelocity, LinearVelocity};
 
 pub const FORWARD_DIRECTION: Vec3 = Vec3::NEG_Z;
 pub const MOTION_MARGIN_OF_ERROR: f32 = 0.01;
@@ -78,7 +78,7 @@ fn mover(
         &Speed,
         &AngularSpeed,
         &mut Transform,
-        Has<Velocity>,
+        Has<LinearVelocity>,
         Has<AngularVelocity>,
     )>,
 ) {
@@ -88,7 +88,7 @@ fn mover(
         speed,
         angular_speed,
         mut transform,
-        has_velocity,
+        has_linear_velocity,
         has_angular_velocity,
     ) in &mut query
     {
@@ -101,13 +101,13 @@ fn mover(
                         let heading =
                             (destination - transform.translation).normalize();
 
-                        entity.insert(Velocity(heading * speed.0));
+                        entity.insert(LinearVelocity(heading * speed.0));
                         heading
                     },
                     MoveTo::Direction(heading) => {
                         // A precaution in case mode was switched midway.
-                        if has_velocity {
-                            entity.remove::<Velocity>();
+                        if has_linear_velocity {
+                            entity.remove::<LinearVelocity>();
                         }
 
                         *heading
@@ -128,11 +128,11 @@ fn mover(
                 let mut entity = commands.entity(entity);
 
                 if let MoveTo::Destination(destination) = move_to {
-                    if has_velocity
+                    if has_linear_velocity
                         && destination.distance(transform.translation)
                             <= MOTION_MARGIN_OF_ERROR
                     {
-                        entity.remove::<Velocity>();
+                        entity.remove::<LinearVelocity>();
                         transform.translation = destination;
                     }
                 }
@@ -144,7 +144,7 @@ fn mover(
                     entity.remove::<AngularVelocity>();
                 }
 
-                if !has_velocity && !has_angular_velocity {
+                if !has_linear_velocity && !has_angular_velocity {
                     mover.move_to = None;
                     mover.heading = None;
                 }
@@ -154,10 +154,10 @@ fn mover(
             (None, Some(_)) => {
                 mover.heading = None;
 
-                if has_velocity || has_angular_velocity {
+                if has_linear_velocity || has_angular_velocity {
                     commands
                         .entity(entity)
-                        .remove::<(AngularVelocity, Velocity)>();
+                        .remove::<(AngularVelocity, LinearVelocity)>();
                 }
             },
             _ => {},
