@@ -1,3 +1,5 @@
+# This entity is just for testing components and systems during development.
+# It will be removed from the final game.
 name: Guard Dog
 components:
   - !Guard
@@ -15,5 +17,3 @@ components:
       Puzzled: models/animated/Fox.glb#Animation2
       Shocked: models/animated/Fox.glb#Animation1
 
-# This one repeatedly picks a random spot on the map and navigates to it.
-# It's here purely for testing.

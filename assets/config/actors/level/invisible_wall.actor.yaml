@@ -1,7 +1,7 @@
+# Translucent walls whose backs face the camera.
 name: Invisible Wall
 components:
   - !Wall
   - !BlocksVision
   - !DeflectsSounds
 # - !Mesh3D
-# Something simple and translucent.

@@ -1,3 +1,5 @@
+# A translucent wall that can be shattered by being in the Shockwave Cannon's
+# area of effect when it's fired. Doesn't block vision.
 name: Glass Wall
 components:
   - !Door
@@ -5,7 +7,3 @@ components:
   - !DeflectsSounds
   - !Shatterable
 # - !Mesh3D
-
-# Shatter isn't triggered by the sound waves, it's triggered by being
-# in the gun's area of effect and it sending out an event to the affected
-# glass walls!
