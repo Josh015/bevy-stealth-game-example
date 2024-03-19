@@ -4,10 +4,7 @@ use derive_new::new;
 
 use crate::{MoveTo, Mover};
 
-/// Move the entity in a straight line to a given point.
-///
-/// **WARNING**: Can't be run in parallel with
-/// [`TurnToAction`](crate::actions::TurnToAction).
+/// Move an entity.
 #[derive(new)]
 pub struct MoveAction {
     move_to: MoveTo,

@@ -9,10 +9,7 @@ pub mod util;
 
 use std::time::Duration;
 
-use actions::{
-    FaceDirectionAction, MoveAction, RepeatSequence, StateDoneAction,
-    WaitAction,
-};
+use actions::{MoveAction, RepeatSequence, StateDoneAction, WaitAction};
 use bevy::{
     prelude::*,
     window::{PresentMode, WindowResolution},
@@ -267,13 +264,13 @@ fn ping(mut commands: Commands, query: Query<Entity, Added<Ping>>) {
             RepeatSequence::new(
                 Repeat::Times(2),
                 actions![
-                    FaceDirectionAction::new(Direction3d::NEG_X),
+                    MoveAction::new(MoveTo::Direction(Direction3d::NEG_X)),
                     WaitAction::new(Duration::from_millis(400)),
-                    FaceDirectionAction::new(Direction3d::Z),
+                    MoveAction::new(MoveTo::Direction(Direction3d::Z)),
                     WaitAction::new(Duration::from_millis(400)),
-                    FaceDirectionAction::new(Direction3d::X),
+                    MoveAction::new(MoveTo::Direction(Direction3d::X)),
                     WaitAction::new(Duration::from_millis(400)),
-                    FaceDirectionAction::new(Direction3d::NEG_Z),
+                    MoveAction::new(MoveTo::Direction(Direction3d::NEG_Z)),
                     WaitAction::new(Duration::from_millis(400)),
                 ]
             ),
