@@ -1,4 +1,4 @@
-use crate::{Motivation, Mover};
+use crate::{Motion, Mover};
 use bevy::{ecs::prelude::*, prelude::*};
 use bevy_sequential_actions::*;
 use derive_new::new;
@@ -20,7 +20,7 @@ impl Action for FaceDirectionAction {
     fn on_start(&mut self, agent: Entity, world: &mut World) -> bool {
         world
             .entity_mut(agent)
-            .insert(Mover::new(Motivation::Heading(self.direction)));
+            .insert(Mover::new(Motion::Heading(self.direction)));
 
         false
     }

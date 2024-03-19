@@ -14,16 +14,17 @@ impl Plugin for MoverPlugin {
     }
 }
 
-/// Means of imparting mover.
+/// Means of imparting motion.
 #[derive(Clone, Debug)]
-pub enum Motivation {
+pub enum Motion {
     Destination(Vec3),
     Heading(Direction3d),
 }
 
+/// Component that translates and rotates the entity.
 #[derive(Clone, Component, Debug, new)]
 pub struct Mover {
-    motivation: Motivation,
+    motion: Motion,
 
     #[new(default)]
     heading: Vec3,
@@ -37,14 +38,14 @@ fn start_mover(
     >,
 ) {
     for (entity, speed, angular_speed, mut mover, transform) in &mut query {
-        mover.heading = match mover.motivation {
-            Motivation::Destination(destination) => {
+        mover.heading = match mover.motion {
+            Motion::Destination(destination) => {
                 let heading = (destination - transform.translation).normalize();
 
                 commands.entity(entity).insert(Velocity(heading * speed.0));
                 heading
             },
-            Motivation::Heading(heading) => *heading,
+            Motion::Heading(heading) => *heading,
         };
 
         commands.entity(entity).insert(AngularVelocity {
@@ -69,7 +70,7 @@ fn mover(
     for (entity, mover, mut transform, has_velocity, has_angular_velocity) in
         &mut query
     {
-        if let Motivation::Destination(destination) = mover.motivation {
+        if let Motion::Destination(destination) = mover.motion {
             if has_velocity
                 && destination.distance(transform.translation)
                     <= MOTION_MARGIN_OF_ERROR
