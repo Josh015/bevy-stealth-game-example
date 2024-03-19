@@ -1,7 +1,5 @@
 use bevy::prelude::*;
 
-use crate::{AngularVelocity, LinearVelocity};
-
 pub const FORWARD_DIRECTION: Vec3 = Vec3::NEG_Z;
 pub const MOTION_MARGIN_OF_ERROR: f32 = 0.01;
 
@@ -9,9 +7,23 @@ pub(super) struct MoverPlugin;
 
 impl Plugin for MoverPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, mover);
+        app.add_systems(
+            Update,
+            (angular_velocity, linear_velocity, mover).chain(),
+        );
     }
 }
+
+/// Angular velocity which updates rotation over time.
+#[derive(Clone, Component, Debug)]
+pub struct AngularVelocity {
+    pub axis: Direction3d,
+    pub velocity: f32,
+}
+
+/// Linear velocity that updates translation over time.
+#[derive(Clone, Component, Debug)]
+pub struct LinearVelocity(pub Vec3);
 
 /// Linear speed in `meters/second`.
 #[derive(Clone, Component, Debug)]
@@ -68,6 +80,29 @@ pub struct MoverBundle {
     pub mover: Mover,
     pub linear_speed: LinearSpeed,
     pub angular_speed: AngularSpeed,
+}
+
+fn angular_velocity(
+    time: Res<Time>,
+    mut query: Query<(&AngularVelocity, &mut Transform)>,
+) {
+    for (angular_velocity, mut transform) in &mut query {
+        transform.rotation = (transform.rotation
+            * Quat::from_axis_angle(
+                *angular_velocity.axis,
+                angular_velocity.velocity * time.delta_seconds(),
+            ))
+        .normalize();
+    }
+}
+
+fn linear_velocity(
+    time: Res<Time>,
+    mut query: Query<(&LinearVelocity, &mut Transform)>,
+) {
+    for (linear_velocity, mut transform) in &mut query {
+        transform.translation += linear_velocity.0 * time.delta_seconds();
+    }
 }
 
 fn mover(
