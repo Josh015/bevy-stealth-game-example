@@ -137,7 +137,7 @@ fn tinkering_zone_system(
     commands
         .spawn((
             Player,
-            MotionBundle {
+            SpeedBundle {
                 speed: Speed(1.0),
                 angular_speed: AngularSpeed(std::f32::consts::TAU),
             },

@@ -32,7 +32,7 @@ pub struct AngularSpeed(pub f32);
 
 /// Required components for movement.
 #[derive(Bundle, Clone, Debug, Default)]
-pub struct MotionBundle {
+pub struct SpeedBundle {
     pub speed: Speed,
     pub angular_speed: AngularSpeed,
 }
