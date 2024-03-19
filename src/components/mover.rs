@@ -9,10 +9,14 @@ impl Plugin for MoverPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(
             Update,
-            (angular_velocity, linear_velocity, mover).chain(),
+            (linear_velocity, angular_velocity, mover).chain(),
         );
     }
 }
+
+/// Linear velocity that updates translation over time.
+#[derive(Clone, Component, Debug)]
+pub struct LinearVelocity(pub Vec3);
 
 /// Angular velocity which updates rotation over time.
 #[derive(Clone, Component, Debug)]
@@ -20,10 +24,6 @@ pub struct AngularVelocity {
     pub axis: Direction3d,
     pub velocity: f32,
 }
-
-/// Linear velocity that updates translation over time.
-#[derive(Clone, Component, Debug)]
-pub struct LinearVelocity(pub Vec3);
 
 /// Linear speed in `meters/second`.
 #[derive(Clone, Component, Debug)]
@@ -82,6 +82,15 @@ pub struct MoverBundle {
     pub angular_speed: AngularSpeed,
 }
 
+fn linear_velocity(
+    time: Res<Time>,
+    mut query: Query<(&LinearVelocity, &mut Transform)>,
+) {
+    for (linear_velocity, mut transform) in &mut query {
+        transform.translation += linear_velocity.0 * time.delta_seconds();
+    }
+}
+
 fn angular_velocity(
     time: Res<Time>,
     mut query: Query<(&AngularVelocity, &mut Transform)>,
@@ -93,15 +102,6 @@ fn angular_velocity(
                 angular_velocity.velocity * time.delta_seconds(),
             ))
         .normalize();
-    }
-}
-
-fn linear_velocity(
-    time: Res<Time>,
-    mut query: Query<(&LinearVelocity, &mut Transform)>,
-) {
-    for (linear_velocity, mut transform) in &mut query {
-        transform.translation += linear_velocity.0 * time.delta_seconds();
     }
 }
 
