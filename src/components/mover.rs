@@ -18,7 +18,7 @@ impl Plugin for MoverPlugin {
 #[derive(Clone, Component, Debug)]
 pub struct LinearVelocity(pub Vec3);
 
-/// Angular velocity which updates rotation over time.
+/// Angular velocity that updates rotation over time.
 #[derive(Clone, Component, Debug)]
 pub struct AngularVelocity {
     pub axis: Direction3d,
@@ -45,14 +45,14 @@ impl Default for AngularSpeed {
     }
 }
 
-/// Specify what type of movement is required.
+/// Specifies the desired movement type.
 #[derive(Clone, Copy, Debug)]
 pub enum MoveTo {
     Destination(Vec3),
     Direction(Direction3d),
 }
 
-/// Moves an entity.
+/// Provides precise on-demand entity movement.
 #[derive(Clone, Component, Debug, Default)]
 pub struct Mover {
     move_to: Option<MoveTo>,
@@ -74,7 +74,7 @@ impl Mover {
     }
 }
 
-/// Required components for [`Mover`] to work.
+/// Required components for a [`Mover`] entity.
 #[derive(Bundle, Clone, Debug, Default)]
 pub struct MoverBundle {
     pub mover: Mover,
@@ -140,7 +140,7 @@ fn mover(
                         heading
                     },
                     MoveTo::Direction(heading) => {
-                        // A precaution in case mode was switched midway.
+                        // Cleanup for when move_to mode is switched midway.
                         if has_linear_velocity {
                             entity.remove::<LinearVelocity>();
                         }
@@ -160,28 +160,29 @@ fn mover(
 
             // Check progress and eventually remove the working components.
             (Some(move_to), Some(heading)) => {
-                let mut entity = commands.entity(entity);
-
-                if let MoveTo::Destination(destination) = move_to {
-                    if has_linear_velocity
-                        && destination.distance(transform.translation)
-                            <= MOTION_MARGIN_OF_ERROR
-                    {
-                        entity.remove::<LinearVelocity>();
-                        transform.translation = destination;
-                    }
-                }
-
-                if has_angular_velocity
-                    && transform.forward().dot(heading).abs()
-                        >= 1.0 - MOTION_MARGIN_OF_ERROR
-                {
-                    entity.remove::<AngularVelocity>();
-                }
-
                 if !has_linear_velocity && !has_angular_velocity {
                     mover.move_to = None;
                     mover.heading = None;
+                } else {
+                    let mut entity = commands.entity(entity);
+
+                    if has_linear_velocity {
+                        if let MoveTo::Destination(destination) = move_to {
+                            if destination.distance(transform.translation)
+                                <= MOTION_MARGIN_OF_ERROR
+                            {
+                                entity.remove::<LinearVelocity>();
+                                transform.translation = destination;
+                            }
+                        }
+                    }
+
+                    if has_angular_velocity
+                        && transform.forward().dot(heading).abs()
+                            >= 1.0 - MOTION_MARGIN_OF_ERROR
+                    {
+                        entity.remove::<AngularVelocity>();
+                    }
                 }
             },
 
