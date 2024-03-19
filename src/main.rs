@@ -129,7 +129,7 @@ fn tinkering_zone_system(
 
     // ---- Pickup ----
     commands.spawn((
-        Pickup,
+        PickupBundle::default(),
         PbrBundle {
             mesh: meshes.add(Cuboid {
                 half_size: Vec3::splat(PICKUP_HALF_SIZE),
@@ -143,7 +143,7 @@ fn tinkering_zone_system(
         },
     ));
 
-    // ---- Mover ----
+    // ---- AI ----
     let cylinder = meshes.add(Capsule3d {
         radius: AXIS_CAPSULE_RADIUS,
         half_length: AXIS_CAPSULE_HALF_LENGTH,

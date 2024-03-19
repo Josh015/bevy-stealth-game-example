@@ -24,11 +24,6 @@ pub(super) struct AgentsPlugin;
 
 impl Plugin for AgentsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugins((
-            GuardPlugin,
-            HearingPlugin,
-            PickupPlugin,
-            VisionPlugin,
-        ));
+        app.add_plugins((GuardPlugin, HearingPlugin, VisionPlugin));
     }
 }
