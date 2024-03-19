@@ -70,6 +70,7 @@ pub enum ComponentConfig {
     Mesh3D {
         scene: String,
     },
+    Mover, // TODO: Let them specify speeds?
     Physics {
         radius: f32,
     },

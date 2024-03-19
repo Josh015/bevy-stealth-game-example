@@ -1,6 +1,7 @@
 name: Player
 components:
   - !Player
+  - !Mover
   - !Physics { radius: 0.375 }
   - !Footsteps { sound_wave: Player }
   - !DropShadow
