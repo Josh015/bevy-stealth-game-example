@@ -1,4 +1,4 @@
-use crate::{Motion, Motivation};
+use crate::{Motivation, Mover};
 use bevy::{ecs::prelude::*, prelude::*};
 use bevy_sequential_actions::*;
 use derive_new::new;
@@ -14,13 +14,13 @@ pub struct FaceDirectionAction {
 
 impl Action for FaceDirectionAction {
     fn is_finished(&self, agent: Entity, world: &World) -> bool {
-        !world.entity(agent).contains::<Motion>()
+        !world.entity(agent).contains::<Mover>()
     }
 
     fn on_start(&mut self, agent: Entity, world: &mut World) -> bool {
         world
             .entity_mut(agent)
-            .insert(Motion::new(Motivation::Heading(self.direction)));
+            .insert(Mover::new(Motivation::Heading(self.direction)));
 
         false
     }
@@ -31,6 +31,6 @@ impl Action for FaceDirectionAction {
         world: &mut World,
         _reason: StopReason,
     ) {
-        world.entity_mut(agent).remove::<Motion>();
+        world.entity_mut(agent).remove::<Mover>();
     }
 }

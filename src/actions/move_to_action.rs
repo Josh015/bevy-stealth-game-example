@@ -2,7 +2,7 @@ use bevy::{ecs::prelude::*, prelude::*};
 use bevy_sequential_actions::*;
 use derive_new::new;
 
-use crate::{Motion, Motivation};
+use crate::{Motivation, Mover};
 
 /// Move the entity in a straight line to a given point.
 ///
@@ -15,13 +15,13 @@ pub struct MoveToAction {
 
 impl Action for MoveToAction {
     fn is_finished(&self, agent: Entity, world: &World) -> bool {
-        !world.entity(agent).contains::<Motion>()
+        !world.entity(agent).contains::<Mover>()
     }
 
     fn on_start(&mut self, agent: Entity, world: &mut World) -> bool {
         world
             .entity_mut(agent)
-            .insert(Motion::new(Motivation::Destination(self.destination)));
+            .insert(Mover::new(Motivation::Destination(self.destination)));
 
         false
     }
@@ -32,6 +32,6 @@ impl Action for MoveToAction {
         world: &mut World,
         _reason: StopReason,
     ) {
-        world.entity_mut(agent).remove::<Motion>();
+        world.entity_mut(agent).remove::<Mover>();
     }
 }
