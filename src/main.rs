@@ -17,6 +17,7 @@ use bevy::{
 use bevy_sequential_actions::*;
 use bevy_tweening::*;
 use components::*;
+use game::GameState;
 use seldom_state::prelude::*;
 use util::Repeat;
 
@@ -50,7 +51,7 @@ fn main() {
         .insert_resource(ClearColor(Color::rgba(0.7, 0.9, 1.0, 1.0)))
         .add_systems(Update, bevy::window::close_on_esc)
         .add_systems(Update, (ping, pong))
-        .add_systems(Startup, tinkering_zone_system)
+        .add_systems(OnExit(GameState::Loading), tinkering_zone_system)
         .run();
 }
 

@@ -85,8 +85,8 @@ fn mover(
                 >= 1.0 - MOTION_MARGIN_OF_ERROR
         {
             commands.entity(entity).remove::<AngularVelocity>();
-            transform.rotation =
-                Quat::from_rotation_arc(FORWARD_DIRECTION, mover.heading);
+            // transform.rotation =
+            //     Quat::from_rotation_arc(FORWARD_DIRECTION, mover.heading);
         }
 
         if !has_velocity && !has_angular_velocity {
