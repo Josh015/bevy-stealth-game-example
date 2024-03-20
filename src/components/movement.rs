@@ -95,7 +95,9 @@ fn destination_cleanup(
     mut removed: RemovedComponents<Destination>,
 ) {
     for entity in removed.read() {
-        commands.entity(entity).remove::<LinearVelocity>();
+        commands
+            .entity(entity)
+            .remove::<(LinearVelocity, Heading)>();
     }
 }
 
@@ -118,6 +120,7 @@ fn heading_check_progress(
     query: Query<(Entity, &Transform, &Heading, Has<Destination>)>,
 ) {
     for (entity, transform, heading, has_destination) in &query {
+        // Negate forward() because glTF models typically face +Z axis.
         if (-*transform.forward()).dot(*heading.0).abs()
             >= 1.0 - ANGULAR_VELOCITY_MARGIN_OF_ERROR
         {
