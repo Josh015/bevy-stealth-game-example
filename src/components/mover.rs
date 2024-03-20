@@ -170,8 +170,10 @@ fn mover(
 
                     if has_linear_velocity {
                         if let MoveTo::Destination(destination) = move_to {
-                            if destination.distance(transform.translation)
-                                <= LINEAR_VELOCITY_MARGIN_OF_ERROR
+                            if (destination - transform.translation)
+                                .normalize()
+                                .dot(heading)
+                                <= 0.0
                             {
                                 entity.remove::<LinearVelocity>();
                                 transform.translation = destination;
