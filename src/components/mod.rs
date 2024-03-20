@@ -1,6 +1,3 @@
-// TODO: These all need to act as physical attributes, status conditions,
-// senses, event emitters, and data storage. Don’t have them perform AI logic!
-
 use bevy::app::prelude::*;
 
 mod animation_clips;
