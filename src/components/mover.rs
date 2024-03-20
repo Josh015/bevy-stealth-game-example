@@ -150,10 +150,10 @@ fn mover(
                     },
                 };
 
-                // Negate forward() because glTF models face POS_Z!
                 mover.heading = Some(heading);
                 entity.insert(AngularVelocity {
                     axis: Direction3d::new_unchecked(
+                        // Negate forward() because glTF models face POS_Z!
                         -(*transform.forward()).cross(heading).normalize(),
                     ),
                     velocity: angular_speed.0,
@@ -179,8 +179,9 @@ fn mover(
                         }
                     }
 
+                    // Negate forward() because glTF models face POS_Z!
                     if has_angular_velocity
-                        && transform.forward().dot(heading).abs()
+                        && (-transform.forward()).dot(heading).abs()
                             >= 1.0 - ANGULAR_VELOCITY_MARGIN_OF_ERROR
                     {
                         entity.remove::<AngularVelocity>();
