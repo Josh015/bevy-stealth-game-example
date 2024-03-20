@@ -3,8 +3,8 @@ use spew::prelude::*;
 
 use crate::{
     AnimationClips, Barrier, BlocksVision, DeflectsSounds, Door, DropShadow,
-    Ears, Eyes, FloorSwitch, GuardBundle, MoverBundle, Pickup, Player,
-    SecurityCamera, Shatterable, Stunnable, Weapon,
+    Ears, Eyes, FloorSwitch, Glass, GuardBundle, MoverBundle, Pickup, Player,
+    SecurityCamera, Stunnable, Weapon,
 };
 
 use super::{ActorConfig, ComponentConfig};
@@ -67,6 +67,9 @@ fn spawn_actor_from_config_at_position(
             ComponentConfig::Door => {
                 actor.insert(Door::default());
             },
+            ComponentConfig::Glass => {
+                actor.insert(Glass::default());
+            },
             ComponentConfig::Mover => {
                 // TODO: Implement setting Linear and Angular Speed?
                 actor.insert(MoverBundle::default());
@@ -96,9 +99,6 @@ fn spawn_actor_from_config_at_position(
             },
             ComponentConfig::DeflectsSounds => {
                 actor.insert(DeflectsSounds::default());
-            },
-            ComponentConfig::Shatterable => {
-                actor.insert(Shatterable::default());
             },
             ComponentConfig::AnimationClips(clips) => {
                 // TODO: Load animations and store indices.

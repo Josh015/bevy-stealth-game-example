@@ -53,6 +53,7 @@ pub enum ComponentConfig {
     FloorSwitch,
     Barrier,
     Door,
+    Glass,
     Mover, // TODO: Let them specify speeds?
     Physics { radius: f32 },
     Footsteps { sound_wave: String },
@@ -62,7 +63,6 @@ pub enum ComponentConfig {
     Stunnable,
     BlocksVision,
     DeflectsSounds,
-    Shatterable,
     Scene(String),
     AnimationClips(HashMap<String, String>),
 }

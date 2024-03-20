@@ -1,15 +1,11 @@
+# A temporary barrier that stops blocking player, guards, vision, and sound
+# waves when it's open!
 name: Door
 components:
-  - !Barrier
   - !Door
+  - !Barrier
   - !BlocksVision
   - !DeflectsSounds
 # - !Scene models/animated/Fox.glb#Scene0
 
-#   States:
-#     Opening
-#     Opened
-#     Closing
-#     Closed
-#
-# Stops blocking vision and deflecting sound only when it's FULLY open!
+

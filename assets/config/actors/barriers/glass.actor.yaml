@@ -2,7 +2,7 @@
 # area of effect when it's fired. Doesn't block vision.
 name: Glass
 components:
+  - !Glass
   - !Barrier
   - !DeflectsSounds
-  - !Shatterable
 # - !Scene models/animated/Fox.glb#Scene0
