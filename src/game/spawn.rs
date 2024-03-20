@@ -109,7 +109,7 @@ fn spawn_actor_from_config_at_position(
                     transform: Transform::from_matrix(
                         Mat4::from_scale_rotation_translation(
                             Vec3::splat(0.0025), // TODO: Integrate scale into config?
-                            Quat::IDENTITY,
+                            Quat::from_rotation_y(std::f32::consts::PI),
                             position,
                         ),
                     ),

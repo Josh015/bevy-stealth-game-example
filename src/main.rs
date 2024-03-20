@@ -7,9 +7,6 @@ pub mod game;
 pub mod ui;
 pub mod util;
 
-use std::time::Duration;
-
-use actions::{MoveAction, RepeatSequence, StateDoneAction, WaitAction};
 use bevy::{
     prelude::*,
     window::{PresentMode, WindowResolution},
@@ -20,7 +17,6 @@ use components::*;
 use game::{ActorConfig, GameAssets, GameState, Spawn};
 use seldom_state::prelude::*;
 use spew::prelude::SpawnEvent;
-use util::Repeat;
 
 fn main() {
     App::new()
@@ -51,32 +47,11 @@ fn main() {
         .insert_resource(Msaa::default())
         .insert_resource(ClearColor(Color::rgba(0.7, 0.9, 1.0, 1.0)))
         .add_systems(Update, bevy::window::close_on_esc)
-        .add_systems(Update, (ping, pong))
         .add_systems(OnExit(GameState::Loading), tinkering_zone_system)
         .run();
 }
 
 const PICKUP_HALF_SIZE: f32 = 0.05;
-const AXIS_CAPSULE_RADIUS: f32 = 0.02;
-const AXIS_CAPSULE_HALF_LENGTH: f32 = 0.03;
-const ORIGIN_SPHERE_RADIUS: f32 = 2.5 * AXIS_CAPSULE_RADIUS;
-const ORIGIN_SPHERE_GROUND_HEIGHT: f32 = ORIGIN_SPHERE_RADIUS
-    + (2.0 * AXIS_CAPSULE_HALF_LENGTH)
-    + AXIS_CAPSULE_RADIUS;
-const CYLINDER_OFFSET: f32 = ORIGIN_SPHERE_RADIUS
-    + AXIS_CAPSULE_HALF_LENGTH
-    + (0.5 * AXIS_CAPSULE_RADIUS)
-    - 0.01;
-
-#[allow(dead_code)]
-#[derive(Clone, Component, Copy, Reflect)]
-#[component(storage = "SparseSet")]
-struct Ping;
-
-#[allow(dead_code)]
-#[derive(Clone, Component, Copy, Reflect)]
-#[component(storage = "SparseSet")]
-struct Pong;
 
 // TODO: Remove this after testing.
 #[allow(dead_code)]
@@ -148,7 +123,7 @@ fn tinkering_zone_system(
         },
     ));
 
-    //
+    // ---- Actor ----
     let guard_dog = game_assets
         .actors
         .get("config/actors/enemies/guard_dog.actor.yaml")
@@ -157,189 +132,4 @@ fn tinkering_zone_system(
         Spawn::Actor,
         (guard_dog.clone_weak(), Vec3::ZERO),
     ));
-
-    // ---- AI ----
-    let cylinder = meshes.add(Capsule3d {
-        radius: AXIS_CAPSULE_RADIUS,
-        half_length: AXIS_CAPSULE_HALF_LENGTH,
-    });
-
-    commands
-        .spawn((
-            MoverBundle::default(),
-            StateMachine::default()
-                // Whenever the player presses jump, jump
-                .trans::<Ping, _>(
-                    done(None),
-                    Pong,
-                )
-                .trans::<Pong, _>(
-                    done(None),
-                    Ping,
-                ),
-            Ping,
-            ActionsBundle::new(),
-            PbrBundle {
-                mesh: meshes.add(Sphere {
-                    radius: ORIGIN_SPHERE_RADIUS,
-                }),
-                material: materials.add(StandardMaterial {
-                    base_color: Color::GRAY,
-                    ..default()
-                }),
-                transform: Transform::from_xyz(
-                    0.0,
-                    ORIGIN_SPHERE_GROUND_HEIGHT,
-                    0.0,
-                ),
-                ..default()
-            },
-            // TODO: States:
-            //  State Spin back and forth with delays. Switch to Move when
-            // done.    LoopAction
-            //  State move back and forth with delays. Switch to Spin when
-            // done.    RepeatAction
-        ))
-        .with_children(|builder| {
-            builder.spawn(PbrBundle {
-                mesh: cylinder.clone(),
-                material: materials.add(StandardMaterial {
-                    base_color: Color::RED,
-                    ..default()
-                }),
-                transform: Transform::from_matrix(
-                    Mat4::from_translation(Vec3::new(
-                        CYLINDER_OFFSET,
-                        0.0,
-                        0.0,
-                    )) * Mat4::from_rotation_z(std::f32::consts::FRAC_PI_2),
-                ),
-                ..default()
-            });
-            builder.spawn(PbrBundle {
-                mesh: cylinder.clone(),
-                material: materials.add(StandardMaterial {
-                    base_color: Color::GREEN,
-                    ..default()
-                }),
-                transform: Transform::from_matrix(Mat4::from_translation(
-                    Vec3::new(0.0, CYLINDER_OFFSET, 0.0),
-                )),
-                ..default()
-            });
-            builder.spawn(PbrBundle {
-                mesh: cylinder.clone(),
-                material: materials.add(StandardMaterial {
-                    base_color: Color::BLUE,
-                    ..default()
-                }),
-                transform: Transform::from_matrix(
-                    Mat4::from_translation(Vec3::new(
-                        0.0,
-                        0.0,
-                        CYLINDER_OFFSET,
-                    )) * Mat4::from_rotation_x(std::f32::consts::FRAC_PI_2),
-                ),
-                ..default()
-            });
-            // builder.spawn(PbrBundle {
-            //     mesh: cylinder.clone(),
-            //     material: materials.add(StandardMaterial {
-            //         base_color: Color::RED * 0.5,
-            //         ..default()
-            //     }),
-            //     transform: Transform::from_matrix(
-            //         Mat4::from_translation(Vec3::new(
-            //             -CYLINDER_OFFSET,
-            //             0.0,
-            //             0.0,
-            //         )) * Mat4::from_rotation_z(std::f32::consts::FRAC_PI_2),
-            //     ),
-            //     ..default()
-            // });
-            // builder.spawn(PbrBundle {
-            //     mesh: cylinder.clone(),
-            //     material: materials.add(StandardMaterial {
-            //         base_color: Color::GREEN * 0.5,
-            //         ..default()
-            //     }),
-            //     transform: Transform::from_matrix(Mat4::from_translation(
-            //         Vec3::new(0.0, -CYLINDER_OFFSET, 0.0),
-            //     )),
-            //     ..default()
-            // });
-            // builder.spawn(PbrBundle {
-            //     mesh: cylinder.clone(),
-            //     material: materials.add(StandardMaterial {
-            //         base_color: Color::BLUE * 0.5,
-            //         ..default()
-            //     }),
-            //     transform: Transform::from_matrix(
-            //         Mat4::from_translation(Vec3::new(
-            //             0.0,
-            //             0.0,
-            //             -CYLINDER_OFFSET,
-            //         )) * Mat4::from_rotation_x(std::f32::consts::FRAC_PI_2),
-            //     ),
-            //     ..default()
-            // });
-        });
-}
-
-#[allow(dead_code)]
-fn ping(mut commands: Commands, query: Query<Entity, Added<Ping>>) {
-    for entity in &query {
-        commands.actions(entity).add_many(actions![
-            RepeatSequence::new(
-                Repeat::Times(2),
-                actions![
-                    MoveAction::new(MoveTo::Direction(Direction3d::X)),
-                    WaitAction::new(Duration::from_millis(400)),
-                    MoveAction::new(MoveTo::Direction(Direction3d::Z)),
-                    WaitAction::new(Duration::from_millis(400)),
-                    MoveAction::new(MoveTo::Direction(Direction3d::NEG_X)),
-                    WaitAction::new(Duration::from_millis(400)),
-                    MoveAction::new(MoveTo::Direction(Direction3d::NEG_Z)),
-                    WaitAction::new(Duration::from_millis(400)),
-                ]
-            ),
-            StateDoneAction::new(Done::Success)
-        ]);
-    }
-}
-
-#[allow(dead_code)]
-fn pong(mut commands: Commands, query: Query<Entity, Added<Ping>>) {
-    let movement_range = 0.5;
-
-    for entity in &query {
-        commands.actions(entity).add_many(actions![
-            MoveAction::new(MoveTo::Destination(Vec3::new(
-                movement_range,
-                ORIGIN_SPHERE_GROUND_HEIGHT,
-                movement_range
-            ))),
-            MoveAction::new(MoveTo::Destination(Vec3::new(
-                movement_range,
-                ORIGIN_SPHERE_GROUND_HEIGHT,
-                -movement_range
-            ))),
-            MoveAction::new(MoveTo::Destination(Vec3::new(
-                -movement_range,
-                ORIGIN_SPHERE_GROUND_HEIGHT,
-                -movement_range
-            ))),
-            MoveAction::new(MoveTo::Destination(Vec3::new(
-                -movement_range,
-                ORIGIN_SPHERE_GROUND_HEIGHT,
-                movement_range
-            ))),
-            MoveAction::new(MoveTo::Destination(Vec3::new(
-                0.0,
-                ORIGIN_SPHERE_GROUND_HEIGHT,
-                0.0
-            ))),
-            StateDoneAction::new(Done::Success)
-        ]);
-    }
 }
