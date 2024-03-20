@@ -5,7 +5,7 @@ use std::time::Duration;
 
 use crate::{
     actions::{
-        MoveAction, MoveTo, RepeatSequence, StateDoneAction, WaitAction,
+        MoveToAction, RepeatSequence, StateDoneAction, TurnToAction, WaitAction,
     },
     util::Repeat,
 };
@@ -92,13 +92,13 @@ fn ping(mut commands: Commands, query: Query<Entity, Added<Ping>>) {
             RepeatSequence::new(
                 Repeat::Times(2),
                 actions![
-                    MoveAction::new(MoveTo::Heading(Direction3d::NEG_X)),
+                    TurnToAction::new(Direction3d::NEG_X),
                     WaitAction::new(Duration::from_millis(SPIN_DELAY_MILLIS)),
-                    MoveAction::new(MoveTo::Heading(Direction3d::NEG_Z)),
+                    TurnToAction::new(Direction3d::NEG_Z),
                     WaitAction::new(Duration::from_millis(SPIN_DELAY_MILLIS)),
-                    MoveAction::new(MoveTo::Heading(Direction3d::X)),
+                    TurnToAction::new(Direction3d::X),
                     WaitAction::new(Duration::from_millis(SPIN_DELAY_MILLIS)),
-                    MoveAction::new(MoveTo::Heading(Direction3d::Z)),
+                    TurnToAction::new(Direction3d::Z),
                     WaitAction::new(Duration::from_millis(SPIN_DELAY_MILLIS)),
                 ]
             ),
@@ -112,28 +112,12 @@ fn pong(mut commands: Commands, query: Query<Entity, Added<Ping>>) {
 
     for entity in &query {
         commands.actions(entity).add_many(actions![
-            MoveAction::new(MoveTo::Destination(Vec3::new(
-                movement_range,
-                0.0,
-                movement_range
-            ))),
-            MoveAction::new(MoveTo::Destination(Vec3::new(
-                movement_range,
-                0.0,
-                -movement_range
-            ))),
-            MoveAction::new(MoveTo::Destination(Vec3::new(
-                -movement_range,
-                0.0,
-                -movement_range
-            ))),
-            MoveAction::new(MoveTo::Destination(Vec3::new(
-                -movement_range,
-                0.0,
-                movement_range
-            ))),
-            MoveAction::new(MoveTo::Destination(Vec3::new(0.0, 0.0, 0.0))),
-            MoveAction::new(MoveTo::Heading(Direction3d::Z)),
+            MoveToAction::new(Vec3::new(movement_range, 0.0, movement_range)),
+            MoveToAction::new(Vec3::new(movement_range, 0.0, -movement_range)),
+            MoveToAction::new(Vec3::new(-movement_range, 0.0, -movement_range)),
+            MoveToAction::new(Vec3::new(-movement_range, 0.0, movement_range)),
+            MoveToAction::new(Vec3::new(0.0, 0.0, 0.0)),
+            TurnToAction::new(Direction3d::Z),
             WaitAction::new(Duration::from_millis(SPIN_DELAY_MILLIS)),
             StateDoneAction::new(Done::Success)
         ]);
