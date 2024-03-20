@@ -3,9 +3,9 @@ use spew::prelude::*;
 
 use crate::{
     AnimationClips, Barrier, BlocksVision, DeflectsSounds, DoorBundle,
-    DropShadow, Ears, Eyes, FloorSwitchBundle, GlassBundle, GuardBundle,
+    DropShadow, FloorSwitchBundle, GlassBundle, GuardBundle, Hearing,
     MoverBundle, PickupBundle, PlayerBundle, SecurityCameraBundle, Stunnable,
-    Weapon,
+    Vision, Weapon,
 };
 
 use super::{ActorConfig, ComponentConfig};
@@ -81,13 +81,13 @@ fn spawn_actor_from_config_at_position(
             ComponentConfig::DropShadow => {
                 actor.insert(DropShadow::default());
             },
-            ComponentConfig::Eyes => {
+            ComponentConfig::Vision => {
                 // TODO: Implement setting the fields.
-                actor.insert(Eyes::default());
+                actor.insert(Vision::default());
             },
-            ComponentConfig::Ears => {
+            ComponentConfig::Hearing => {
                 // TODO: Implement setting the fields.
-                actor.insert(Ears::default());
+                actor.insert(Hearing::default());
             },
             ComponentConfig::Stunnable => {
                 actor.insert(Stunnable::default());

@@ -3,8 +3,8 @@
 name: Guard Dog
 components:
   - !Guard
-  - !Eyes
-  - !Ears
+  - !Vision
+  - !Hearing
   - !Stunnable
   - !Mover
   - !Physics { radius: 0.375 }

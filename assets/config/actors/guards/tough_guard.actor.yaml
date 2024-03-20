@@ -1,8 +1,8 @@
 name: Tough Guard
 components:
   - !Guard
-  - !Eyes
-  - !Ears
+  - !Vision
+  - !Hearing
   - !Mover
   - !Physics { radius: 0.375 }
   - !Footsteps { sound_wave: Guard }

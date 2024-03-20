@@ -53,14 +53,14 @@ pub struct Guard;
 
 /// Entities that can see the player.
 #[derive(Clone, Component, Debug, Default)]
-pub struct Eyes {
+pub struct Vision {
     pub distance: f32,
     pub fov: f32,
 }
 
 /// Entities that can hear and respond to sound waves.
 #[derive(Clone, Component, Debug, Default)]
-pub struct Ears {
+pub struct Hearing {
     pub radius: f32,
 }
 
