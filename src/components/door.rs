@@ -8,7 +8,7 @@ pub struct DoorBundle {
     pub door: Door,
     pub actions_bundle: ActionsBundle,
     pub state_machine: StateMachine,
-    pub closed: Closed,
+    pub door_state: DoorState,
 }
 
 impl Default for DoorBundle {
@@ -20,31 +20,28 @@ impl Default for DoorBundle {
             door: Door,
             actions_bundle: ActionsBundle::new(),
             state_machine: StateMachine::default(),
-            closed: Closed,
+            door_state: DoorState::Closed,
         }
     }
 }
 
-/// A door that can be opened/closed.
+/// A barrier that can be opened/closed.
 #[derive(Clone, Component, Debug, Default)]
 pub struct Door;
 
-/// [`Door`] state where it's blocking passage.
-#[derive(Clone, Component, Copy, Reflect)]
+/// [`Door`] current state.
+#[derive(Clone, Component, Copy, Default, Reflect)]
 #[component(storage = "SparseSet")]
-pub struct Closed;
+pub enum DoorState {
+    #[default]
+    Closed,
+    Open,
+}
 
-/// [`Door`] state where it's blocking passage and closing.
+/// [`Door`] transition states.
 #[derive(Clone, Component, Copy, Reflect)]
 #[component(storage = "SparseSet")]
-pub struct Closing;
-
-/// [`Door`] state where it's not blocking passage.
-#[derive(Clone, Component, Copy, Reflect)]
-#[component(storage = "SparseSet")]
-pub struct Open;
-
-/// [`Door`] state where it's blocking passage and opening.
-#[derive(Clone, Component, Copy, Reflect)]
-#[component(storage = "SparseSet")]
-pub struct Opening;
+pub enum DoorTransitionState {
+    Closing,
+    Opening,
+}

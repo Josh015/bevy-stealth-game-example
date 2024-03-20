@@ -8,7 +8,7 @@ pub struct GlassBundle {
     pub glass: Glass,
     pub actions_bundle: ActionsBundle,
     pub state_machine: StateMachine,
-    pub solid: Solid,
+    pub glass_state: GlassState,
 }
 
 impl Default for GlassBundle {
@@ -20,7 +20,7 @@ impl Default for GlassBundle {
             glass: Glass,
             actions_bundle: ActionsBundle::new(),
             state_machine: StateMachine::default(),
-            solid: Solid,
+            glass_state: GlassState::Solid,
         }
     }
 }
@@ -29,17 +29,16 @@ impl Default for GlassBundle {
 #[derive(Clone, Component, Debug, Default)]
 pub struct Glass;
 
-/// [`Glass`] state where it's still intact.
-#[derive(Clone, Component, Copy, Reflect)]
+/// [`Glass`] current state.
+#[derive(Clone, Component, Copy, Default, Reflect)]
 #[component(storage = "SparseSet")]
-pub struct Solid;
+pub enum GlassState {
+    #[default]
+    Solid,
+    Shattered,
+}
 
 /// [`Glass`] state where it's being shattered by the player.
 #[derive(Clone, Component, Copy, Reflect)]
 #[component(storage = "SparseSet")]
 pub struct Shattering;
-
-/// [`Glass`] state after it's been shattered.
-#[derive(Clone, Component, Copy, Reflect)]
-#[component(storage = "SparseSet")]
-pub struct Shattered;

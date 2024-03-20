@@ -9,6 +9,7 @@
     "actionlike",
     "clippy",
     "collidable",
+    "configurability",
     "consts",
     "copysign",
     "despawn",

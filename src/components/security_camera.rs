@@ -8,7 +8,7 @@ pub struct SecurityCameraBundle {
     pub security_camera: SecurityCamera,
     pub actions_bundle: ActionsBundle,
     pub state_machine: StateMachine,
-    pub panning_right: PanningRight,
+    pub security_camera_state: SecurityCameraState,
 }
 
 impl Default for SecurityCameraBundle {
@@ -19,21 +19,21 @@ impl Default for SecurityCameraBundle {
             security_camera: SecurityCamera,
             actions_bundle: ActionsBundle::new(),
             state_machine: StateMachine::default(),
-            panning_right: PanningRight,
+            security_camera_state: SecurityCameraState::PanningLeft,
         }
     }
 }
 
-/// Designates a security camera entity.
+/// Designates a security camera entity that can raise alarm events when it
+/// sees the player.
 #[derive(Clone, Component, Debug, Default)]
 pub struct SecurityCamera;
 
-/// [`SecurityCamera`] state where it's panning to the right.
-#[derive(Clone, Component, Copy, Reflect)]
+/// [`SecurityCamera`] current state.
+#[derive(Clone, Component, Copy, Default, Reflect)]
 #[component(storage = "SparseSet")]
-pub struct PanningRight;
-
-/// [`SecurityCamera`] state where it's panning to the left.
-#[derive(Clone, Component, Copy, Reflect)]
-#[component(storage = "SparseSet")]
-pub struct PanningLeft;
+pub enum SecurityCameraState {
+    #[default]
+    PanningRight,
+    PanningLeft,
+}
