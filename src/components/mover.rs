@@ -15,42 +15,12 @@ impl Plugin for MoverPlugin {
     }
 }
 
-/// Linear velocity that updates translation over time.
-#[derive(Clone, Component, Debug)]
-pub struct LinearVelocity(pub Vec3);
-
-/// Angular velocity that updates rotation over time.
-#[derive(Clone, Component, Debug)]
-pub struct AngularVelocity {
-    pub axis: Direction3d,
-    pub velocity: f32,
-}
-
-/// Linear speed in `meters/second`.
-#[derive(Clone, Component, Debug)]
-pub struct LinearSpeed(pub f32);
-
-impl Default for LinearSpeed {
-    fn default() -> Self {
-        Self(1.0)
-    }
-}
-
-/// Angular speed in `radians/second`.
-#[derive(Clone, Component, Debug)]
-pub struct AngularSpeed(pub f32);
-
-impl Default for AngularSpeed {
-    fn default() -> Self {
-        Self(std::f32::consts::TAU)
-    }
-}
-
-/// Specifies the desired movement type.
-#[derive(Clone, Copy, Debug)]
-pub enum MoveTo {
-    Destination(Vec3),
-    Direction(Direction3d),
+/// Required components for a [`Mover`] entity.
+#[derive(Bundle, Clone, Debug, Default)]
+pub struct MoverBundle {
+    pub mover: Mover,
+    pub linear_speed: LinearSpeed,
+    pub angular_speed: AngularSpeed,
 }
 
 /// Provides precise on-demand movement for a [`Transform`] entity.
@@ -75,12 +45,42 @@ impl Mover {
     }
 }
 
-/// Required components for a [`Mover`] entity.
-#[derive(Bundle, Clone, Debug, Default)]
-pub struct MoverBundle {
-    pub mover: Mover,
-    pub linear_speed: LinearSpeed,
-    pub angular_speed: AngularSpeed,
+/// Specifies the desired movement type.
+#[derive(Clone, Copy, Debug)]
+pub enum MoveTo {
+    Destination(Vec3),
+    Direction(Direction3d),
+}
+
+/// Linear speed in `meters/second`.
+#[derive(Clone, Component, Debug)]
+pub struct LinearSpeed(pub f32);
+
+impl Default for LinearSpeed {
+    fn default() -> Self {
+        Self(1.0)
+    }
+}
+
+/// Angular speed in `radians/second`.
+#[derive(Clone, Component, Debug)]
+pub struct AngularSpeed(pub f32);
+
+impl Default for AngularSpeed {
+    fn default() -> Self {
+        Self(std::f32::consts::TAU)
+    }
+}
+
+/// Linear velocity that updates translation over time.
+#[derive(Clone, Component, Debug)]
+pub struct LinearVelocity(pub Vec3);
+
+/// Angular velocity that updates rotation over time.
+#[derive(Clone, Component, Debug)]
+pub struct AngularVelocity {
+    pub axis: Direction3d,
+    pub velocity: f32,
 }
 
 fn linear_velocity(
