@@ -16,6 +16,7 @@ mod security_camera;
 mod spawn_point;
 mod start_location;
 mod trigger;
+mod velocity;
 mod waypoint;
 mod weapon;
 
@@ -35,6 +36,7 @@ pub use security_camera::*;
 pub use spawn_point::*;
 pub use start_location::*;
 pub use trigger::*;
+pub use velocity::*;
 pub use waypoint::*;
 pub use weapon::*;
 
@@ -42,6 +44,11 @@ pub(super) struct ComponentsPlugin;
 
 impl Plugin for ComponentsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugins((GuardPlugin, MotionPlugin, PhysicsPlugin));
+        app.add_plugins((
+            GuardPlugin,
+            MotionPlugin,
+            PhysicsPlugin,
+            VelocityPlugin,
+        ));
     }
 }

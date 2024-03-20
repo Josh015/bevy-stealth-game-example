@@ -4,8 +4,8 @@ use spew::prelude::*;
 use crate::{
     AngularSpeed, AnimationClips, Barrier, BlocksVision, DeflectsSounds,
     DoorBundle, DropShadow, FloorSwitchBundle, GlassBundle, GuardBundle,
-    Hearing, LinearSpeed, MotionBundle, PickupBundle, PlayerBundle,
-    SecurityCameraBundle, Stunnable, Vision, Weapon,
+    Hearing, LinearSpeed, PickupBundle, PlayerBundle, SecurityCameraBundle,
+    Stunnable, Vision, Weapon,
 };
 
 use super::{ActorConfig, ComponentConfig};

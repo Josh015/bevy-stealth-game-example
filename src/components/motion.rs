@@ -1,5 +1,7 @@
 use bevy::prelude::*;
 
+use crate::{AngularVelocity, LinearVelocity};
+
 const ANGULAR_VELOCITY_MARGIN_OF_ERROR: f32 = 0.0001;
 
 pub(super) struct MotionPlugin;
@@ -9,8 +11,6 @@ impl Plugin for MotionPlugin {
         app.add_systems(
             Update,
             (
-                linear_velocity,
-                angular_velocity,
                 destination_setup,
                 destination_check_progress,
                 destination_cleanup,
@@ -21,13 +21,6 @@ impl Plugin for MotionPlugin {
                 .chain(),
         );
     }
-}
-
-/// Required components for motion.
-#[derive(Bundle, Clone, Debug, Default)]
-pub struct MotionBundle {
-    pub linear_speed: LinearSpeed,
-    pub angular_speed: AngularSpeed,
 }
 
 /// Linear speed in `meters/second`.
@@ -50,17 +43,6 @@ impl Default for AngularSpeed {
     }
 }
 
-/// Linear velocity that updates translation over time.
-#[derive(Clone, Component, Debug)]
-pub struct LinearVelocity(pub Vec3);
-
-/// Angular velocity that updates rotation over time.
-#[derive(Clone, Component, Debug)]
-pub struct AngularVelocity {
-    pub axis: Direction3d,
-    pub velocity: f32,
-}
-
 /// A point this entity is trying to reach.
 #[derive(Clone, Component, Debug)]
 pub struct Destination(pub Vec3);
@@ -68,29 +50,6 @@ pub struct Destination(pub Vec3);
 /// A direction this entity wants to face.
 #[derive(Clone, Component, Debug)]
 pub struct Heading(pub Direction3d);
-
-fn linear_velocity(
-    time: Res<Time>,
-    mut query: Query<(&LinearVelocity, &mut Transform)>,
-) {
-    for (linear_velocity, mut transform) in &mut query {
-        transform.translation += linear_velocity.0 * time.delta_seconds();
-    }
-}
-
-fn angular_velocity(
-    time: Res<Time>,
-    mut query: Query<(&AngularVelocity, &mut Transform)>,
-) {
-    for (angular_velocity, mut transform) in &mut query {
-        transform.rotation = (transform.rotation
-            * Quat::from_axis_angle(
-                *angular_velocity.axis,
-                angular_velocity.velocity * time.delta_seconds(),
-            ))
-        .normalize();
-    }
-}
 
 fn destination_setup(
     mut commands: Commands,
