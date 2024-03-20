@@ -61,7 +61,7 @@ fn tinkering_zone_system(
     mut materials: ResMut<Assets<StandardMaterial>>,
     game_assets: Res<GameAssets>,
     mut spawn_events: EventWriter<
-        SpawnEvent<Config, (Handle<ActorConfig>, Vec3)>,
+        SpawnEvent<Config, (Handle<ActorConfig>, Mat4)>,
     >,
 ) {
     // ---- Camera ----
@@ -130,6 +130,13 @@ fn tinkering_zone_system(
         .unwrap();
     spawn_events.send(SpawnEvent::with_data(
         Config::Actor,
-        (guard_dog.clone_weak(), Vec3::ZERO),
+        (
+            guard_dog.clone_weak(),
+            Mat4::from_scale_rotation_translation(
+                Vec3::splat(0.0025), // TODO: Integrate scale into config?
+                Quat::from_rotation_y(std::f32::consts::PI),
+                Vec3::ZERO,
+            ),
+        ),
     ));
 }

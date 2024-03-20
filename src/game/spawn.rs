@@ -15,9 +15,9 @@ pub(super) struct SpawnPlugin;
 impl Plugin for SpawnPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins((
-            SpewPlugin::<Config, (Handle<ActorConfig>, Vec3)>::default(),
+            SpewPlugin::<Config, (Handle<ActorConfig>, Mat4)>::default(),
         ))
-        .add_spawner((Config::Actor, spawn_actor_from_config_at_position));
+        .add_spawner((Config::Actor, spawn_actor_from_config_with_matrix));
     }
 }
 
@@ -29,8 +29,8 @@ pub enum Config {
     SoundWave,
 }
 
-fn spawn_actor_from_config_at_position(
-    In((handle, position)): In<(Handle<ActorConfig>, Vec3)>,
+fn spawn_actor_from_config_with_matrix(
+    In((handle, matrix)): In<(Handle<ActorConfig>, Mat4)>,
     actor_configs: Res<Assets<ActorConfig>>,
     mut commands: Commands,
     asset_server: Res<AssetServer>,
@@ -105,13 +105,7 @@ fn spawn_actor_from_config_at_position(
             ComponentConfig::Scene(scene) => {
                 actor.insert(SceneBundle {
                     scene: asset_server.load(scene),
-                    transform: Transform::from_matrix(
-                        Mat4::from_scale_rotation_translation(
-                            Vec3::splat(0.0025), // TODO: Integrate scale into config?
-                            Quat::from_rotation_y(std::f32::consts::PI),
-                            position,
-                        ),
-                    ),
+                    transform: Transform::from_matrix(matrix),
                     ..default()
                 });
             },
