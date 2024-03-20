@@ -4,14 +4,12 @@
 use bevy::app::prelude::*;
 
 mod actors;
-mod level;
 mod mover;
 mod physics;
 mod status_effects;
 mod trigger;
 
 pub use actors::*;
-pub use level::*;
 pub use mover::*;
 pub use physics::*;
 pub use status_effects::*;

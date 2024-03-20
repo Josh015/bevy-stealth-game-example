@@ -9,11 +9,10 @@ components:
   - !Mover
   - !Physics { radius: 0.375 }
   - !Footsteps { sound_wave: Guard }
-  - !Animation3D
-    scene: models/animated/Fox.glb#Scene0
-    animations:
-      Idle: models/animated/Fox.glb#Animation2
-      Run: models/animated/Fox.glb#Animation0
-      Puzzled: models/animated/Fox.glb#Animation2
-      Shocked: models/animated/Fox.glb#Animation1
+  - !Scene models/animated/Fox.glb#Scene0
+  - !AnimationClips
+    Idle: models/animated/Fox.glb#Animation2
+    Run: models/animated/Fox.glb#Animation0
+    Puzzled: models/animated/Fox.glb#Animation2
+    Shocked: models/animated/Fox.glb#Animation1
 

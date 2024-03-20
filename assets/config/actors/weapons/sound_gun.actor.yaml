@@ -1,7 +1,6 @@
 name: Sound Gun
 components:
   - !Weapon
-  # - !Mesh3D
-  #   scene: <fill in later!>
+  # - !Scene models/animated/Fox.glb#Scene0
 
 # It shoots small ricocheting sounds to distract guards.

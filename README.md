@@ -5,10 +5,10 @@ My attempt to mimic the game mechanics of "SONAR" in the Bevy engine. It's gonna
 ## ToDo
 
 - [x] Load entities from YAML files rather than hard-coding them.
-- [ ] Spawning entities from config files.
+- [x] Spawning entities from config files.
 - [ ] Animated mesh entity.
 - [ ] Use Bevy animation demo fox model to test complex animating entities.
-- [ ] Make custom gltf level and load everything with scene-hooks.
+- [ ] Make custom glTF level and load everything with scene-hooks.
 - [ ] Automatic animation based on movement.
 - [ ] Smooth blended transitions between animations.
 - [ ] Player input movement.

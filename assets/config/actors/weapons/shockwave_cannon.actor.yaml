@@ -1,8 +1,7 @@
 name: Shockwave Cannon
 components:
   - !Weapon
-  # - !Mesh3D
-  #   scene: <fill in later!>
+  # - !Scene models/animated/Fox.glb#Scene0
 
 # It smashes glass barriers. Emits a HUGE soundwave in all directions to
 # alert nearby guards.

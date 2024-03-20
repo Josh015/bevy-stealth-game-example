@@ -2,5 +2,4 @@ name: Security Camera
 components:
   - !SecurityCamera
   - !Vision
-  # - !Mesh3D
-  #   scene: <fill in later!>
+  # - !Scene models/animated/Fox.glb#Scene0

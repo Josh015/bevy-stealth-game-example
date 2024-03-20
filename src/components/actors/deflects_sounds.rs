@@ -1,4 +1,7 @@
-/// Deflects and blocks sound waves.
+use bevy::ecs::prelude::*;
+
+/// A wall that can deflect sound waves.
+#[derive(Clone, Component, Debug, Default)]
 pub struct DeflectsSounds;
 
 // Ricocheting sound waves:

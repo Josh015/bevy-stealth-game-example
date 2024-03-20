@@ -1,6 +1,6 @@
 name: Alarm
 components:
-# - !Mesh3D
+# - !Scene models/animated/Fox.glb#Scene0
 
 # Activated by associated camera.
 # Alerts nearby guards to player's location at the moment alert was triggered.

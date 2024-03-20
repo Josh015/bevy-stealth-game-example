@@ -17,8 +17,9 @@ use bevy::{
 use bevy_sequential_actions::*;
 use bevy_tweening::*;
 use components::*;
-use game::GameState;
+use game::{ActorConfig, GameAssets, GameState, Spawn};
 use seldom_state::prelude::*;
+use spew::prelude::SpawnEvent;
 use util::Repeat;
 
 fn main() {
@@ -83,6 +84,10 @@ fn tinkering_zone_system(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
+    game_assets: Res<GameAssets>,
+    mut spawn_events: EventWriter<
+        SpawnEvent<Spawn, (Handle<ActorConfig>, Vec3)>,
+    >,
 ) {
     // ---- Camera ----
     // TODO: Follow player effect.
@@ -141,6 +146,16 @@ fn tinkering_zone_system(
             transform: Transform::from_xyz(0.25, PICKUP_HALF_SIZE + 0.1, 0.0),
             ..default()
         },
+    ));
+
+    //
+    let guard_dog = game_assets
+        .actors
+        .get("config/actors/enemies/guard_dog.actor.yaml")
+        .unwrap();
+    spawn_events.send(SpawnEvent::with_data(
+        Spawn::Actor,
+        (guard_dog.clone_weak(), Vec3::ZERO),
     ));
 
     // ---- AI ----

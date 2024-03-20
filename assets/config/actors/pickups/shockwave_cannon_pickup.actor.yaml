@@ -2,7 +2,6 @@ name: Shockwave Cannon Pickup
 components:
   - !Pickup
   - !DropShadow
-  # - !Mesh3D
-  #   scene: <fill in later!>
+  # - !Scene models/animated/Fox.glb#Scene0
 
 # Pickup that gives the player the corresponding gun.

@@ -4,7 +4,7 @@ components:
   - !Wall
   - !BlocksVision
   - !DeflectsSounds
-# - !Mesh3D
+# - !Scene models/animated/Fox.glb#Scene0
 
 #   States:
 #     Opening

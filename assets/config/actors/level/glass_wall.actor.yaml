@@ -6,4 +6,4 @@ components:
   - !Wall
   - !DeflectsSounds
   - !Shatterable
-# - !Mesh3D
+# - !Scene models/animated/Fox.glb#Scene0

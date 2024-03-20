@@ -2,5 +2,5 @@
 name: Grating Wall
 components:
   - !Wall
-# - !Mesh3D
+# - !Scene models/animated/Fox.glb#Scene0
 

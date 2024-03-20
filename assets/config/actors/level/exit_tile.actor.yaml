@@ -1,7 +1,7 @@
 name: Exit Tile
 components:
 # - !Trigger #Level complete.
-# - !Mesh3D
+# - !Scene models/animated/Fox.glb#Scene0
 
 # Encompasses one or more connected tiles in a rectangle.
 # Allows player to complete the stage.

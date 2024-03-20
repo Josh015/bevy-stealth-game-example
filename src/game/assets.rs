@@ -24,8 +24,8 @@ impl Plugin for AssetsPlugin {
         // .add_systems(
         //     OnExit(GameState::Loading),
         //     |game_assets: Res<GameAssets>| {
-        //         game_assets.sound_waves.iter().for_each(|s| {
-        //             println!("sound_wave: {}", s.0);
+        //         game_assets.actors.iter().for_each(|s| {
+        //             println!("actor: {}", s.0);
         //         });
         //     },
         // );
@@ -56,27 +56,13 @@ pub enum ComponentConfig {
     SecurityCamera,
     Pickup,
     Weapon,
-    Powerup {
-        file_name: String,
-    },
+    Powerup { file_name: String },
     //Trigger {} // Probably want to have a sub-enum with pre-allowed events?
     Door,
     Wall,
-    Animation3D {
-        scene: String,
-        // NOTE: Need to be able to remap and reuse animations for different keys!
-        animations: HashMap<String, String>,
-    },
-    Mesh3D {
-        scene: String,
-    },
     Mover, // TODO: Let them specify speeds?
-    Physics {
-        radius: f32,
-    },
-    Footsteps {
-        sound_wave: String,
-    },
+    Physics { radius: f32 },
+    Footsteps { sound_wave: String },
     DropShadow,
     Vision,
     Hearing,
@@ -84,6 +70,8 @@ pub enum ComponentConfig {
     BlocksVision,
     DeflectsSounds,
     Shatterable,
+    Scene(String),
+    AnimationClips(HashMap<String, String>),
 }
 
 /// Configs for spawnable entities.

@@ -12,6 +12,21 @@ impl Plugin for GuardPlugin {
 #[derive(Clone, Component, Debug, Default)]
 pub struct Guard;
 
+/// Required components for a [`Mover`] entity.
+#[derive(Bundle, Clone, Debug)]
+pub struct GuardBundle {
+    pub guard: Guard,
+}
+
+impl Default for GuardBundle {
+    fn default() -> Self {
+        // TODO: Set up state machine here.
+        // Check for special components in the transition checks for those states.
+
+        Self { guard: Guard }
+    }
+}
+
 // TODO: Retrieve starting location position and direction from marked entity.
 // TODO: All nodes of a specific patrol route children of one encompassing
 // entity?
