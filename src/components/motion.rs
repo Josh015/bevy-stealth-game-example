@@ -11,9 +11,11 @@ impl Plugin for MotionPlugin {
             (
                 linear_velocity,
                 angular_velocity,
-                translate_to_destination,
-                rotate_to_heading,
+                destination_setup,
+                destination_check_progress,
                 destination_cleanup,
+                heading_setup,
+                heading_check_progress,
                 heading_cleanup,
             )
                 .chain(),
@@ -90,46 +92,31 @@ fn angular_velocity(
     }
 }
 
-fn translate_to_destination(
+fn destination_setup(
     mut commands: Commands,
-    mut query: Query<(
-        Entity,
-        &mut Transform,
-        &Destination,
-        Option<&Heading>,
-        &LinearSpeed,
-        Has<LinearVelocity>,
-    )>,
+    query: Query<
+        (Entity, &Transform, &Destination, &LinearSpeed),
+        Added<Destination>,
+    >,
 ) {
-    for (
-        entity,
-        mut transform,
-        destination,
-        heading,
-        linear_speed,
-        has_linear_velocity,
-    ) in &mut query
-    {
-        let heading = match heading {
-            Some(heading) => *heading.0,
-            None => {
-                let heading =
-                    (destination.0 - transform.translation).normalize();
+    for (entity, transform, destination, linear_speed) in &query {
+        let heading = (destination.0 - transform.translation).normalize();
 
-                commands
-                    .entity(entity)
-                    .insert(Heading(Direction3d::new_unchecked(heading)));
-                heading
-            },
-        };
+        commands.entity(entity).insert((
+            Heading(Direction3d::new_unchecked(heading)),
+            LinearVelocity(heading * linear_speed.0),
+        ));
+    }
+}
 
-        if !has_linear_velocity {
-            commands
-                .entity(entity)
-                .insert(LinearVelocity(heading * linear_speed.0));
-        } else if (destination.0 - transform.translation)
+fn destination_check_progress(
+    mut commands: Commands,
+    mut query: Query<(Entity, &mut Transform, &Destination, &Heading)>,
+) {
+    for (entity, mut transform, destination, heading) in &mut query {
+        if (destination.0 - transform.translation)
             .normalize()
-            .dot(heading)
+            .dot(*heading.0)
             <= 0.0
         {
             transform.translation = destination.0;
@@ -143,56 +130,45 @@ fn translate_to_destination(
     }
 }
 
-fn rotate_to_heading(
-    mut commands: Commands,
-    query: Query<(
-        Entity,
-        &Transform,
-        &Heading,
-        Option<&Destination>,
-        &AngularSpeed,
-        Has<AngularVelocity>,
-    )>,
-) {
-    for (
-        entity,
-        transform,
-        heading,
-        destination,
-        angular_speed,
-        has_angular_velocity,
-    ) in &query
-    {
-        // Negate forward() because glTF models face POS_Z!
-        let forward = -*transform.forward();
-        let heading = *heading.0;
-        let mut entity = commands.entity(entity);
-
-        if forward.dot(heading).abs() < 1.0 - ANGULAR_VELOCITY_MARGIN_OF_ERROR {
-            if !has_angular_velocity {
-                entity.insert(AngularVelocity {
-                    axis: Direction3d::new_unchecked(
-                        forward.cross(heading).normalize(),
-                    ),
-                    velocity: angular_speed.0,
-                });
-            }
-        } else if has_angular_velocity {
-            if destination.is_some() {
-                entity.remove::<AngularVelocity>();
-            } else {
-                entity.remove::<(Heading, AngularVelocity)>();
-            }
-        }
-    }
-}
-
 fn destination_cleanup(
     mut commands: Commands,
     mut removed: RemovedComponents<Destination>,
 ) {
     for entity in removed.read() {
         commands.entity(entity).remove::<LinearVelocity>();
+    }
+}
+
+fn heading_setup(
+    mut commands: Commands,
+    query: Query<(Entity, &Transform, &Heading, &AngularSpeed), Added<Heading>>,
+) {
+    for (entity, transform, heading, angular_speed) in &query {
+        commands.entity(entity).insert(AngularVelocity {
+            axis: Direction3d::new_unchecked(
+                (-*transform.forward()).cross(*heading.0).normalize(),
+            ),
+            velocity: angular_speed.0,
+        });
+    }
+}
+
+fn heading_check_progress(
+    mut commands: Commands,
+    query: Query<(Entity, &Transform, &Heading, Has<Destination>)>,
+) {
+    for (entity, transform, heading, has_destination) in &query {
+        if (-*transform.forward()).dot(*heading.0).abs()
+            >= 1.0 - ANGULAR_VELOCITY_MARGIN_OF_ERROR
+        {
+            let mut entity = commands.entity(entity);
+
+            if has_destination {
+                entity.remove::<AngularVelocity>();
+            } else {
+                entity.remove::<(Heading, AngularVelocity)>();
+            }
+        }
     }
 }
 
