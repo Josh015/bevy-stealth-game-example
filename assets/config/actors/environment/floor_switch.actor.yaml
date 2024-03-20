@@ -1,5 +1,6 @@
 name: Floor Switch
 components:
+  - !FloorSwitch
 # - !Trigger
   # - !Scene models/animated/Fox.glb#Scene0
   # - !AnimationClips

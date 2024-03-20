@@ -3,8 +3,8 @@ use spew::prelude::*;
 
 use crate::{
     AnimationClips, Barrier, BlocksVision, DeflectsSounds, Door, DropShadow,
-    Ears, Eyes, GuardBundle, MoverBundle, Pickup, Player, SecurityCamera,
-    Shatterable, Stunnable, Weapon,
+    Ears, Eyes, FloorSwitch, GuardBundle, MoverBundle, Pickup, Player,
+    SecurityCamera, Shatterable, Stunnable, Weapon,
 };
 
 use super::{ActorConfig, ComponentConfig};
@@ -58,11 +58,14 @@ fn spawn_actor_from_config_at_position(
                 // TODO: Need a component for this one.
             },
             //Trigger {} // TODO: Probably want to have a sub-enum with pre-allowed events?
-            ComponentConfig::Door => {
-                actor.insert(Door::default());
+            ComponentConfig::FloorSwitch => {
+                actor.insert(FloorSwitch::default());
             },
             ComponentConfig::Barrier => {
                 actor.insert(Barrier::default());
+            },
+            ComponentConfig::Door => {
+                actor.insert(Door::default());
             },
             ComponentConfig::Mover => {
                 // TODO: Implement setting Linear and Angular Speed?
