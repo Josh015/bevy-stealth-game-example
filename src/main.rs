@@ -133,8 +133,8 @@ fn tinkering_zone_system(
         (
             guard_dog.clone_weak(),
             Mat4::from_scale_rotation_translation(
-                Vec3::splat(0.0025), // TODO: Integrate scale into config?
-                Quat::from_rotation_y(std::f32::consts::PI),
+                Vec3::splat(0.0025),
+                Quat::IDENTITY,
                 Vec3::ZERO,
             ),
         ),

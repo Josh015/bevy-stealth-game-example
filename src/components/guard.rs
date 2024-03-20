@@ -75,6 +75,8 @@ pub struct Hearing {
 #[derive(Clone, Component, Debug, Default)]
 pub struct Stunnable;
 
+const SPIN_DELAY_MILLIS: u64 = 400;
+
 #[derive(Clone, Component, Copy, Reflect)]
 #[component(storage = "SparseSet")]
 pub struct Ping;
@@ -89,14 +91,14 @@ fn ping(mut commands: Commands, query: Query<Entity, Added<Ping>>) {
             RepeatSequence::new(
                 Repeat::Times(2),
                 actions![
-                    MoveAction::new(MoveTo::Direction(Direction3d::X)),
-                    WaitAction::new(Duration::from_millis(400)),
-                    MoveAction::new(MoveTo::Direction(Direction3d::Z)),
-                    WaitAction::new(Duration::from_millis(400)),
                     MoveAction::new(MoveTo::Direction(Direction3d::NEG_X)),
-                    WaitAction::new(Duration::from_millis(400)),
+                    WaitAction::new(Duration::from_millis(SPIN_DELAY_MILLIS)),
                     MoveAction::new(MoveTo::Direction(Direction3d::NEG_Z)),
-                    WaitAction::new(Duration::from_millis(400)),
+                    WaitAction::new(Duration::from_millis(SPIN_DELAY_MILLIS)),
+                    MoveAction::new(MoveTo::Direction(Direction3d::X)),
+                    WaitAction::new(Duration::from_millis(SPIN_DELAY_MILLIS)),
+                    MoveAction::new(MoveTo::Direction(Direction3d::Z)),
+                    WaitAction::new(Duration::from_millis(SPIN_DELAY_MILLIS)),
                 ]
             ),
             StateDoneAction::new(Done::Success)
@@ -130,6 +132,8 @@ fn pong(mut commands: Commands, query: Query<Entity, Added<Ping>>) {
                 movement_range
             ))),
             MoveAction::new(MoveTo::Destination(Vec3::new(0.0, 0.0, 0.0))),
+            MoveAction::new(MoveTo::Direction(Direction3d::Z)),
+            WaitAction::new(Duration::from_millis(SPIN_DELAY_MILLIS)),
             StateDoneAction::new(Done::Success)
         ]);
     }
