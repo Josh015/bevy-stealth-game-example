@@ -51,7 +51,6 @@ pub enum ComponentConfig {
     Powerup { file_name: String },
     //Trigger {} // Probably want to have a sub-enum with pre-allowed events?
     FloorSwitch,
-    Barrier,
     Door,
     Glass,
     Mover, // TODO: Let them specify speeds?
@@ -61,6 +60,7 @@ pub enum ComponentConfig {
     Eyes,
     Ears,
     Stunnable,
+    Barrier,
     BlocksVision,
     DeflectsSounds,
     Scene(String),

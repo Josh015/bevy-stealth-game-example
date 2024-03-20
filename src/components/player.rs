@@ -1,5 +1,19 @@
 use bevy::prelude::*;
 
+/// Required components for a [`Player`] entity.
+#[derive(Bundle)]
+pub struct PlayerBundle {
+    pub player: Player,
+}
+
+impl Default for PlayerBundle {
+    fn default() -> Self {
+        // TODO: Set up player input mappings here.
+
+        Self { player: Player }
+    }
+}
+
 /// Entity that can be targeted by enemy units.
 #[derive(Clone, Component, Debug, Default)]
 pub struct Player;

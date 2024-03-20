@@ -2,9 +2,10 @@ use bevy::{ecs::prelude::*, prelude::*, utils::HashMap};
 use spew::prelude::*;
 
 use crate::{
-    AnimationClips, Barrier, BlocksVision, DeflectsSounds, Door, DropShadow,
-    Ears, Eyes, FloorSwitch, GlassBundle, GuardBundle, MoverBundle, Pickup,
-    Player, SecurityCamera, Stunnable, Weapon,
+    AnimationClips, Barrier, BlocksVision, DeflectsSounds, DoorBundle,
+    DropShadow, Ears, Eyes, FloorSwitchBundle, GlassBundle, GuardBundle,
+    MoverBundle, PickupBundle, PlayerBundle, SecurityCameraBundle, Stunnable,
+    Weapon,
 };
 
 use super::{ActorConfig, ComponentConfig};
@@ -40,16 +41,16 @@ fn spawn_actor_from_config_at_position(
     for component_config in &actor_config.components {
         match component_config {
             ComponentConfig::Player => {
-                actor.insert(Player::default());
+                actor.insert(PlayerBundle::default());
             },
             ComponentConfig::Guard => {
                 actor.insert(GuardBundle::default());
             },
             ComponentConfig::SecurityCamera => {
-                actor.insert(SecurityCamera::default());
+                actor.insert(SecurityCameraBundle::default());
             },
             ComponentConfig::Pickup => {
-                actor.insert(Pickup::default());
+                actor.insert(PickupBundle::default());
             },
             ComponentConfig::Weapon => {
                 actor.insert(Weapon::default());
@@ -59,13 +60,10 @@ fn spawn_actor_from_config_at_position(
             },
             //Trigger {} // TODO: Probably want to have a sub-enum with pre-allowed events?
             ComponentConfig::FloorSwitch => {
-                actor.insert(FloorSwitch::default());
-            },
-            ComponentConfig::Barrier => {
-                actor.insert(Barrier::default());
+                actor.insert(FloorSwitchBundle::default());
             },
             ComponentConfig::Door => {
-                actor.insert(Door::default());
+                actor.insert(DoorBundle::default());
             },
             ComponentConfig::Glass => {
                 actor.insert(GlassBundle::default());
@@ -93,6 +91,9 @@ fn spawn_actor_from_config_at_position(
             },
             ComponentConfig::Stunnable => {
                 actor.insert(Stunnable::default());
+            },
+            ComponentConfig::Barrier => {
+                actor.insert(Barrier::default());
             },
             ComponentConfig::BlocksVision => {
                 actor.insert(BlocksVision::default());
