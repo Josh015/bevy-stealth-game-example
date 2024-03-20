@@ -64,10 +64,6 @@ pub enum GameState {
     Paused,
 }
 
-/// Tags an entity to only exist in its associated game states.
-#[derive(Clone, Component, Debug)]
-pub struct ForStates<S: States>(pub Vec<S>);
-
 /// Systems that are always running after everything is loaded.
 #[derive(Clone, Debug, Eq, Hash, PartialEq, SystemSet)]
 pub struct LoadedSet;
@@ -79,6 +75,10 @@ pub struct PausableSet;
 /// Systems that only run during gameplay.
 #[derive(Clone, Debug, Eq, Hash, PartialEq, SystemSet)]
 pub struct PlayableSet;
+
+/// Tags an entity to only exist in its associated game states.
+#[derive(Clone, Component, Debug)]
+pub struct ForStates<S: States>(pub Vec<S>);
 
 fn despawn_invalid_entities_for_state<S: States>(
     mut commands: Commands,
