@@ -28,20 +28,27 @@ pub struct GuardBundle {
 
 impl Default for GuardBundle {
     fn default() -> Self {
+        // ChasePlayer
+        // SearchForPlayer
+        // InvestigateSound
+        // Patrol
+
+        // Guard location
+        // Patrol
+        // Chase player
+        // Search for player
+        // Investigate noise
+        // Stun response
+        // Camera panning
+        // Alarm response
+
         // TODO: Check for special components in the transition checks for those states.
         Self {
             guard: Guard,
             actions_bundle: ActionsBundle::new(),
             state_machine: StateMachine::default()
-            // Whenever the player presses jump, jump
-            .trans::<Ping, _>(
-                done(None),
-                Pong,
-            )
-            .trans::<Pong, _>(
-                done(None),
-                Ping,
-            ),
+                .trans::<Ping, _>(done(None), Pong)
+                .trans::<Pong, _>(done(None), Ping),
             ping: Ping,
         }
     }
@@ -51,20 +58,20 @@ impl Default for GuardBundle {
 #[derive(Clone, Component, Debug, Default)]
 pub struct Guard;
 
-/// Entities that can see the player.
+/// A [`Guard`] that can see the player.
 #[derive(Clone, Component, Debug, Default)]
 pub struct Vision {
     pub distance: f32,
     pub fov: f32,
 }
 
-/// Entities that can hear and respond to sound waves.
+/// A [`Guard`] that can hear and respond to sound waves.
 #[derive(Clone, Component, Debug, Default)]
 pub struct Hearing {
     pub radius: f32,
 }
 
-/// A guard that's able to be stunned by the Stun Gun.
+/// A [`Guard`] that's able to be stunned.
 #[derive(Clone, Component, Debug, Default)]
 pub struct Stunnable;
 
