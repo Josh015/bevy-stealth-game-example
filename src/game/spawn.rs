@@ -35,7 +35,7 @@ fn spawn_actor_from_config_at_position(
     asset_server: Res<AssetServer>,
 ) {
     let actor_config = actor_configs.get(handle).unwrap();
-    let mut actor = commands.spawn(());
+    let mut actor = commands.spawn_empty();
 
     for component_config in &actor_config.components {
         match component_config {
