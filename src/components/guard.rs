@@ -99,9 +99,13 @@ fn ping(mut commands: Commands, query: Query<Entity, Added<Ping>>) {
                     TurnToAction::new(Direction3d::X),
                     WaitAction::new(Duration::from_millis(SPIN_DELAY_MILLIS)),
                     TurnToAction::new(Direction3d::Z),
-                    WaitAction::new(Duration::from_millis(SPIN_DELAY_MILLIS)),
+                    WaitAction::new(Duration::from_millis(SPIN_DELAY_MILLIS))
                 ]
             ),
+            |agent: Entity, world: &mut World| -> bool {
+                world.entity_mut(agent).remove::<Stunnable>();
+                true
+            },
             StateDoneAction::new(Done::Success)
         ]);
     }
@@ -119,6 +123,10 @@ fn pong(mut commands: Commands, query: Query<Entity, Added<Ping>>) {
             MoveToAction::new(Vec3::new(0.0, 0.0, 0.0)),
             TurnToAction::new(Direction3d::Z),
             WaitAction::new(Duration::from_millis(SPIN_DELAY_MILLIS)),
+            |agent: Entity, world: &mut World| -> bool {
+                world.entity_mut(agent).insert(Stunnable::default());
+                true
+            },
             StateDoneAction::new(Done::Success)
         ]);
     }
