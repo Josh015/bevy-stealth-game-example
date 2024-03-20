@@ -1,12 +1,17 @@
-use bevy::ecs::prelude::*;
+use bevy::prelude::*;
 use bevy_sequential_actions::*;
 use derive_new::new;
 
-use crate::{MoveTo, Mover};
+use crate::{Destination, Heading};
+
+/// Specifies the desired movement type.
+#[derive(Clone, Copy, Debug)]
+pub enum MoveTo {
+    Destination(Vec3),
+    Heading(Direction3d),
+}
 
 /// Move an entity.
-///
-/// **NOTE:** Requires [`Mover`] component.
 #[derive(new)]
 pub struct MoveAction {
     move_to: MoveTo,
@@ -14,19 +19,23 @@ pub struct MoveAction {
 
 impl Action for MoveAction {
     fn is_finished(&self, agent: Entity, world: &World) -> bool {
-        let Some(mover) = world.entity(agent).get::<Mover>() else {
-            return true;
-        };
+        let entity = world.entity(agent);
 
-        mover.is_finished()
+        !entity.contains::<Destination>() && !entity.contains::<Heading>()
     }
 
     fn on_start(&mut self, agent: Entity, world: &mut World) -> bool {
-        let Some(mut mover) = world.get_mut::<Mover>(agent) else {
-            return true;
-        };
+        let mut entity = world.entity_mut(agent);
 
-        mover.start(self.move_to);
+        match self.move_to {
+            MoveTo::Destination(destination) => {
+                entity.insert(Destination(destination));
+            },
+            MoveTo::Heading(direction) => {
+                entity.insert(Heading(direction));
+            },
+        }
+
         false
     }
 
@@ -36,10 +45,6 @@ impl Action for MoveAction {
         world: &mut World,
         _reason: StopReason,
     ) {
-        let Some(mut mover) = world.get_mut::<Mover>(agent) else {
-            return;
-        };
-
-        mover.stop();
+        world.entity_mut(agent).remove::<(Destination, Heading)>();
     }
 }

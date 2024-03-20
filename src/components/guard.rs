@@ -4,9 +4,10 @@ use seldom_state::prelude::*;
 use std::time::Duration;
 
 use crate::{
-    actions::{MoveAction, RepeatSequence, StateDoneAction, WaitAction},
+    actions::{
+        MoveAction, MoveTo, RepeatSequence, StateDoneAction, WaitAction,
+    },
     util::Repeat,
-    MoveTo,
 };
 
 pub(super) struct GuardPlugin;
@@ -91,13 +92,13 @@ fn ping(mut commands: Commands, query: Query<Entity, Added<Ping>>) {
             RepeatSequence::new(
                 Repeat::Times(2),
                 actions![
-                    MoveAction::new(MoveTo::Direction(Direction3d::NEG_X)),
+                    MoveAction::new(MoveTo::Heading(Direction3d::NEG_X)),
                     WaitAction::new(Duration::from_millis(SPIN_DELAY_MILLIS)),
-                    MoveAction::new(MoveTo::Direction(Direction3d::NEG_Z)),
+                    MoveAction::new(MoveTo::Heading(Direction3d::NEG_Z)),
                     WaitAction::new(Duration::from_millis(SPIN_DELAY_MILLIS)),
-                    MoveAction::new(MoveTo::Direction(Direction3d::X)),
+                    MoveAction::new(MoveTo::Heading(Direction3d::X)),
                     WaitAction::new(Duration::from_millis(SPIN_DELAY_MILLIS)),
-                    MoveAction::new(MoveTo::Direction(Direction3d::Z)),
+                    MoveAction::new(MoveTo::Heading(Direction3d::Z)),
                     WaitAction::new(Duration::from_millis(SPIN_DELAY_MILLIS)),
                 ]
             ),
@@ -132,7 +133,7 @@ fn pong(mut commands: Commands, query: Query<Entity, Added<Ping>>) {
                 movement_range
             ))),
             MoveAction::new(MoveTo::Destination(Vec3::new(0.0, 0.0, 0.0))),
-            MoveAction::new(MoveTo::Direction(Direction3d::Z)),
+            MoveAction::new(MoveTo::Heading(Direction3d::Z)),
             WaitAction::new(Duration::from_millis(SPIN_DELAY_MILLIS)),
             StateDoneAction::new(Done::Success)
         ]);

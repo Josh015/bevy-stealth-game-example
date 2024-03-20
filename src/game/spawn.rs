@@ -4,7 +4,7 @@ use spew::prelude::*;
 use crate::{
     AnimationClips, Barrier, BlocksVision, DeflectsSounds, DoorBundle,
     DropShadow, FloorSwitchBundle, GlassBundle, GuardBundle, Hearing,
-    MoverBundle, PickupBundle, PlayerBundle, SecurityCameraBundle, Stunnable,
+    MotionBundle, PickupBundle, PlayerBundle, SecurityCameraBundle, Stunnable,
     Vision, Weapon,
 };
 
@@ -67,7 +67,7 @@ fn spawn_actor_from_config_with_matrix(
             },
             ComponentConfig::Mover => {
                 // TODO: Implement setting Linear and Angular Speed?
-                actor.insert(MoverBundle::default());
+                actor.insert(MotionBundle::default());
             },
             ComponentConfig::Physics { radius } => {
                 // TODO: Need a component for this one.

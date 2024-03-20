@@ -1,3 +1,8 @@
+use bevy::prelude::*;
+
+/// glTF models face +Z, so we have to account for that.
+pub const FORWARD_DIRECTION: Vec3 = Vec3::Z;
+
 /// Controls how many times a thing can repeat.
 pub enum Repeat {
     Forever,
