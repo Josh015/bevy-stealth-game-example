@@ -17,6 +17,23 @@ impl Plugin for GuardPlugin {
     }
 }
 
+/// Entities that can see the player.
+#[derive(Clone, Component, Debug, Default)]
+pub struct Eyes {
+    pub distance: f32,
+    pub fov: f32,
+}
+
+/// Entities that can hear and respond to sound waves.
+#[derive(Clone, Component, Debug, Default)]
+pub struct Ears {
+    pub radius: f32,
+}
+
+/// A guard that's able to be stunned by the Stun Gun.
+#[derive(Clone, Component, Debug, Default)]
+pub struct Stunnable;
+
 /// Designates a guard entity.
 #[derive(Clone, Component, Debug, Default)]
 pub struct Guard;
