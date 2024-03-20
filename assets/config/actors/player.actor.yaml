@@ -1,7 +1,8 @@
 name: Player
 components:
   - !Player
-  - !Mover
+  - !LinearSpeed 1.0
+  - !AngularSpeed 360
   - !Physics { radius: 0.375 }
   - !Footsteps { sound_wave: Player }
   - !DropShadow

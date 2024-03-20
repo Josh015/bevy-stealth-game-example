@@ -23,7 +23,7 @@ impl Plugin for MotionPlugin {
     }
 }
 
-/// Required components for a [`Mover`] entity.
+/// Required components for motion.
 #[derive(Bundle, Clone, Debug, Default)]
 pub struct MotionBundle {
     pub linear_speed: LinearSpeed,

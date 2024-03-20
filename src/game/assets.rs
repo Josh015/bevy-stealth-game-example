@@ -52,7 +52,8 @@ pub enum ComponentConfig {
     FloorSwitch,
     Door,
     Glass,
-    Mover, // TODO: Let them specify speeds?
+    LinearSpeed(f32),  // meters/second
+    AngularSpeed(f32), // degrees/second
     Physics { radius: f32 },
     Footsteps { sound_wave: String },
     DropShadow,
