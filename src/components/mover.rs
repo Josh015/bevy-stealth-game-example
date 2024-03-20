@@ -1,7 +1,8 @@
 use bevy::prelude::*;
 
 pub const FORWARD_DIRECTION: Vec3 = Vec3::NEG_Z;
-pub const MOTION_MARGIN_OF_ERROR: f32 = 0.01;
+pub const LINEAR_VELOCITY_MARGIN_OF_ERROR: f32 = 0.001;
+pub const ANGULAR_VELOCITY_MARGIN_OF_ERROR: f32 = 0.0001;
 
 pub(super) struct MoverPlugin;
 
@@ -169,7 +170,7 @@ fn mover(
                     if has_linear_velocity {
                         if let MoveTo::Destination(destination) = move_to {
                             if destination.distance(transform.translation)
-                                <= MOTION_MARGIN_OF_ERROR
+                                <= LINEAR_VELOCITY_MARGIN_OF_ERROR
                             {
                                 entity.remove::<LinearVelocity>();
                                 transform.translation = destination;
@@ -179,7 +180,7 @@ fn mover(
 
                     if has_angular_velocity
                         && transform.forward().dot(heading).abs()
-                            >= 1.0 - MOTION_MARGIN_OF_ERROR
+                            >= 1.0 - ANGULAR_VELOCITY_MARGIN_OF_ERROR
                     {
                         entity.remove::<AngularVelocity>();
                     }
