@@ -1,8 +1,7 @@
-use std::time::Duration;
-
 use bevy::{app::prelude::*, prelude::*};
 use bevy_sequential_actions::*;
 use seldom_state::prelude::*;
+use std::time::Duration;
 
 use crate::{
     actions::{MoveAction, RepeatSequence, StateDoneAction, WaitAction},
@@ -22,7 +21,7 @@ impl Plugin for GuardPlugin {
 #[derive(Clone, Component, Debug, Default)]
 pub struct Guard;
 
-/// Required components for a [`Mover`] entity.
+/// Required components for a [`Guard`] entity.
 #[derive(Bundle)]
 pub struct GuardBundle {
     pub guard: Guard,
@@ -60,7 +59,6 @@ pub struct Ping;
 #[component(storage = "SparseSet")]
 pub struct Pong;
 
-#[allow(dead_code)]
 fn ping(mut commands: Commands, query: Query<Entity, Added<Ping>>) {
     for entity in &query {
         commands.actions(entity).add_many(actions![
@@ -82,7 +80,6 @@ fn ping(mut commands: Commands, query: Query<Entity, Added<Ping>>) {
     }
 }
 
-#[allow(dead_code)]
 fn pong(mut commands: Commands, query: Query<Entity, Added<Ping>>) {
     let movement_range = 0.5;
 

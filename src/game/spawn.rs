@@ -1,8 +1,4 @@
-use bevy::{
-    ecs::prelude::*,
-    prelude::*,
-    utils::{petgraph::adj::NodeIndex, HashMap},
-};
+use bevy::{ecs::prelude::*, prelude::*, utils::HashMap};
 use spew::prelude::*;
 
 use crate::{
