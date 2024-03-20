@@ -1,7 +1,7 @@
 name: Guard
 components:
   - !Guard
-  - !Vision
+  - !Eyes
   - !Hearing
   - !Stunnable
   - !Mover

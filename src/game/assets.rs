@@ -56,7 +56,7 @@ pub enum ComponentConfig {
     Physics { radius: f32 },
     Footsteps { sound_wave: String },
     DropShadow,
-    Vision,
+    Eyes,
     Hearing,
     Stunnable,
     BlocksVision,

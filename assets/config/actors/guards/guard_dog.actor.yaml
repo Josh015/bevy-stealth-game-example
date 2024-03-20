@@ -3,7 +3,7 @@
 name: Guard Dog
 components:
   - !Guard
-  - !Vision
+  - !Eyes
   - !Hearing
   - !Stunnable
   - !Mover

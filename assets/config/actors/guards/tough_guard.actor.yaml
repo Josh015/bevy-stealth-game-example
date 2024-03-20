@@ -1,7 +1,7 @@
 name: Tough Guard
 components:
   - !Guard
-  - !Vision
+  - !Eyes
   - !Hearing
   - !Mover
   - !Physics { radius: 0.375 }

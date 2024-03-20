@@ -1,7 +1,7 @@
 name: Advanced Guard
 components:
   - !Guard
-  - !Vision
+  - !Eyes
   - !Hearing
   - !Stunnable
   - !Mover

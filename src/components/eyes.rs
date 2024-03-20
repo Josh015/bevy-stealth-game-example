@@ -8,9 +8,9 @@ impl Plugin for VisionPlugin {
     }
 }
 
-/// A vision cone that can trigger a [`SawPlayerEvent`](crate::events::SawPlayerEvent).
+/// Entities that can see the player.
 #[derive(Clone, Component, Debug, Default)]
-pub struct Vision {
+pub struct Eyes {
     pub distance: f32,
     pub fov: f32,
 }
