@@ -2,9 +2,9 @@ use bevy::{ecs::prelude::*, prelude::*, utils::HashMap};
 use spew::prelude::*;
 
 use crate::{
-    AnimationClips, BlocksVision, DeflectsSounds, Door, DropShadow,
+    AnimationClips, Barrier, BlocksVision, DeflectsSounds, Door, DropShadow,
     GuardBundle, Hearing, MoverBundle, Pickup, Player, SecurityCamera,
-    Shatterable, Stunnable, Vision, Wall, Weapon,
+    Shatterable, Stunnable, Vision, Weapon,
 };
 
 use super::{ActorConfig, ComponentConfig};
@@ -59,8 +59,8 @@ fn spawn_actor_from_config_at_position(
             ComponentConfig::Door => {
                 actor.insert(Door::default());
             },
-            ComponentConfig::Wall => {
-                actor.insert(Wall::default());
+            ComponentConfig::Barrier => {
+                actor.insert(Barrier::default());
             },
             ComponentConfig::Mover => {
                 // TODO: Implement setting Linear and Angular Speed?

@@ -3,7 +3,7 @@
 name: Glass Wall
 components:
   - !Door
-  - !Wall
+  - !Barrier
   - !DeflectsSounds
   - !Shatterable
 # - !Scene models/animated/Fox.glb#Scene0

@@ -1,7 +1,7 @@
 name: Door Wall
 components:
   - !Door
-  - !Wall
+  - !Barrier
   - !BlocksVision
   - !DeflectsSounds
 # - !Scene models/animated/Fox.glb#Scene0

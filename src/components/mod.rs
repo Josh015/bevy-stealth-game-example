@@ -1,6 +1,7 @@
 use bevy::app::prelude::*;
 
 mod animation_clips;
+mod barrier;
 mod blocks_vision;
 mod deflects_sounds;
 mod door;
@@ -23,11 +24,11 @@ mod start_location;
 mod stunnable;
 mod trigger;
 mod vision;
-mod wall;
 mod waypoint;
 mod weapon;
 
 pub use animation_clips::*;
+pub use barrier::*;
 pub use blocks_vision::*;
 pub use deflects_sounds::*;
 pub use door::*;
@@ -50,7 +51,6 @@ pub use start_location::*;
 pub use stunnable::*;
 pub use trigger::*;
 pub use vision::*;
-pub use wall::*;
 pub use waypoint::*;
 pub use weapon::*;
 

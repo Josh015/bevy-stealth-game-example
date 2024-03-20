@@ -59,7 +59,7 @@ pub enum ComponentConfig {
     Powerup { file_name: String },
     //Trigger {} // Probably want to have a sub-enum with pre-allowed events?
     Door,
-    Wall,
+    Barrier,
     Mover, // TODO: Let them specify speeds?
     Physics { radius: f32 },
     Footsteps { sound_wave: String },

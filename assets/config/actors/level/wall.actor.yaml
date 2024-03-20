@@ -1,6 +1,6 @@
 name: Wall
 components:
-  - !Wall
+  - !Barrier
   - !BlocksVision
   - !DeflectsSounds
 # - !Scene models/animated/Fox.glb#Scene0
