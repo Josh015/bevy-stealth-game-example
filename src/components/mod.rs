@@ -6,11 +6,11 @@ mod blocks_vision;
 mod deflects_sounds;
 mod door;
 mod drop_shadow;
+mod ears;
 mod equipped_firearm;
 mod eyes;
 mod footsteps;
 mod guard;
-mod hearing;
 mod invisibility;
 mod mover;
 mod panning;
@@ -33,11 +33,11 @@ pub use blocks_vision::*;
 pub use deflects_sounds::*;
 pub use door::*;
 pub use drop_shadow::*;
+pub use ears::*;
 pub use equipped_firearm::*;
 pub use eyes::*;
 pub use footsteps::*;
 pub use guard::*;
-pub use hearing::*;
 pub use invisibility::*;
 pub use mover::*;
 pub use panning::*;
@@ -60,10 +60,10 @@ impl Plugin for ComponentsPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins((
             GuardPlugin,
-            HearingPlugin,
+            EarsPlugin,
             MoverPlugin,
             PhysicsPlugin,
-            VisionPlugin,
+            EyesPlugin,
         ));
     }
 }

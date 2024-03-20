@@ -1,15 +1,15 @@
 use bevy::{app::prelude::*, ecs::prelude::*};
 
-pub(super) struct HearingPlugin;
+pub(super) struct EarsPlugin;
 
-impl Plugin for HearingPlugin {
+impl Plugin for EarsPlugin {
     fn build(&self, app: &mut App) {
         // app.add_plugins((movement::MovementPlugin,));
     }
 }
 
-/// A hearing radius that can trigger a [`HeardSoundEvent`](crate::events::HeardSoundEvent).
+/// Entities that can hear and respond to sound waves.
 #[derive(Clone, Component, Debug, Default)]
-pub struct Hearing {
+pub struct Ears {
     pub radius: f32,
 }

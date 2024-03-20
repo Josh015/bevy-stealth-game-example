@@ -1,8 +1,8 @@
 use bevy::{app::prelude::*, ecs::prelude::*};
 
-pub(super) struct VisionPlugin;
+pub(super) struct EyesPlugin;
 
-impl Plugin for VisionPlugin {
+impl Plugin for EyesPlugin {
     fn build(&self, app: &mut App) {
         // app.add_plugins((movement::MovementPlugin,));
     }

@@ -57,7 +57,7 @@ pub enum ComponentConfig {
     Footsteps { sound_wave: String },
     DropShadow,
     Eyes,
-    Hearing,
+    Ears,
     Stunnable,
     BlocksVision,
     DeflectsSounds,

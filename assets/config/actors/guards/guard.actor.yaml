@@ -2,7 +2,7 @@ name: Guard
 components:
   - !Guard
   - !Eyes
-  - !Hearing
+  - !Ears
   - !Stunnable
   - !Mover
   - !Physics { radius: 0.375 }
