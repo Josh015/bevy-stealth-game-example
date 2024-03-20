@@ -14,15 +14,15 @@ pub(super) struct SpawnPlugin;
 impl Plugin for SpawnPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins((
-            SpewPlugin::<Spawn, (Handle<ActorConfig>, Vec3)>::default(),
+            SpewPlugin::<Config, (Handle<ActorConfig>, Vec3)>::default(),
         ))
-        .add_spawner((Spawn::Actor, spawn_actor_from_config_at_position));
+        .add_spawner((Config::Actor, spawn_actor_from_config_at_position));
     }
 }
 
-// Entities that can be spawned.
+/// Entities that can be spawned from config files.
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
-pub enum Spawn {
+pub enum Config {
     Actor,
 }
 

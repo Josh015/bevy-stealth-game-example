@@ -14,7 +14,7 @@ use bevy::{
 use bevy_sequential_actions::*;
 use bevy_tweening::*;
 use components::*;
-use game::{ActorConfig, GameAssets, GameState, Spawn};
+use game::{ActorConfig, Config, GameAssets, GameState};
 use seldom_state::prelude::*;
 use spew::prelude::SpawnEvent;
 
@@ -61,7 +61,7 @@ fn tinkering_zone_system(
     mut materials: ResMut<Assets<StandardMaterial>>,
     game_assets: Res<GameAssets>,
     mut spawn_events: EventWriter<
-        SpawnEvent<Spawn, (Handle<ActorConfig>, Vec3)>,
+        SpawnEvent<Config, (Handle<ActorConfig>, Vec3)>,
     >,
 ) {
     // ---- Camera ----
@@ -129,7 +129,7 @@ fn tinkering_zone_system(
         .get("config/actors/enemies/guard_dog.actor.yaml")
         .unwrap();
     spawn_events.send(SpawnEvent::with_data(
-        Spawn::Actor,
+        Config::Actor,
         (guard_dog.clone_weak(), Vec3::ZERO),
     ));
 }
