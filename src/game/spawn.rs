@@ -24,6 +24,8 @@ impl Plugin for SpawnPlugin {
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
 pub enum Config {
     Actor,
+    Level,
+    SoundWave,
 }
 
 fn spawn_actor_from_config_at_position(
