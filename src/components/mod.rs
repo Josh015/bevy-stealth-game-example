@@ -8,7 +8,7 @@ mod floor_switch;
 mod footsteps;
 mod glass;
 mod guard;
-mod motion;
+mod movement;
 mod physics;
 mod pickup;
 mod player;
@@ -28,7 +28,7 @@ pub use floor_switch::*;
 pub use footsteps::*;
 pub use glass::*;
 pub use guard::*;
-pub use motion::*;
+pub use movement::*;
 pub use physics::*;
 pub use pickup::*;
 pub use player::*;
@@ -46,7 +46,7 @@ impl Plugin for ComponentsPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins((
             GuardPlugin,
-            MotionPlugin,
+            MovementPlugin,
             PhysicsPlugin,
             VelocityPlugin,
         ));

@@ -4,10 +4,11 @@ use crate::{AngularVelocity, LinearVelocity};
 
 const ANGULAR_VELOCITY_MARGIN_OF_ERROR: f32 = 0.0001;
 
-pub(super) struct MotionPlugin;
+pub(super) struct MovementPlugin;
 
-impl Plugin for MotionPlugin {
+impl Plugin for MovementPlugin {
     fn build(&self, app: &mut App) {
+        // The order is important for correct rotations, so don't mess with it!
         app.add_systems(
             Update,
             (
