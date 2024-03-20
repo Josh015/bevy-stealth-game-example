@@ -2,6 +2,7 @@ use bevy::app::prelude::*;
 
 mod animation_clips;
 mod barrier;
+mod door;
 mod drop_shadow;
 mod floor_switch;
 mod footsteps;
@@ -19,6 +20,7 @@ mod weapon;
 
 pub use animation_clips::*;
 pub use barrier::*;
+pub use door::*;
 pub use drop_shadow::*;
 pub use floor_switch::*;
 pub use footsteps::*;
