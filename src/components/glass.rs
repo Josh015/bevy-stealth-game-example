@@ -2,40 +2,44 @@ use bevy::{ecs::prelude::*, prelude::*};
 use bevy_sequential_actions::*;
 use seldom_state::prelude::*;
 
-/// A wall that can be shattered by the Shockwave Cannon.
-#[derive(Clone, Component, Debug, Default)]
-pub struct Glass;
-
-/// [`Glass`] entity AI states.
-#[derive(
-    Clone, Component, Copy, Debug, Default, Eq, Hash, PartialEq, Reflect,
-)]
-#[component(storage = "SparseSet")]
-pub enum GlassState {
-    #[default]
-    Solid,
-    Shattered,
-}
-
 /// Required components for a [`Glass`] entity.
 #[derive(Bundle)]
 pub struct GlassBundle {
     pub glass: Glass,
     pub actions_bundle: ActionsBundle,
     pub state_machine: StateMachine,
-    pub glass_state: GlassState,
+    pub solid: Solid,
 }
 
 impl Default for GlassBundle {
     fn default() -> Self {
+        // TODO: Use a state machine and actions to remove its Barrier and spawn a
+        // particle effect.
+
         Self {
             glass: Glass,
             actions_bundle: ActionsBundle::new(),
             state_machine: StateMachine::default(),
-            glass_state: GlassState::default(),
+            solid: Solid,
         }
     }
 }
 
-// TODO: Use a state machine and actions to remove its Barrier and spawn a
-// particle effect.
+/// A wall that can be shattered by the Shockwave Cannon.
+#[derive(Clone, Component, Debug, Default)]
+pub struct Glass;
+
+/// [`Glass`] state where it's still intact.
+#[derive(Clone, Component, Copy, Reflect)]
+#[component(storage = "SparseSet")]
+pub struct Solid;
+
+/// [`Glass`] state where it's being shattered by the player.
+#[derive(Clone, Component, Copy, Reflect)]
+#[component(storage = "SparseSet")]
+pub struct Shattering;
+
+/// [`Glass`] state after it's been shattered.
+#[derive(Clone, Component, Copy, Reflect)]
+#[component(storage = "SparseSet")]
+pub struct Shattered;

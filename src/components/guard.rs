@@ -17,10 +17,6 @@ impl Plugin for GuardPlugin {
     }
 }
 
-/// Designates a guard entity.
-#[derive(Clone, Component, Debug, Default)]
-pub struct Guard;
-
 /// Required components for a [`Guard`] entity.
 #[derive(Bundle)]
 pub struct GuardBundle {
@@ -50,6 +46,10 @@ impl Default for GuardBundle {
         }
     }
 }
+
+/// Designates a guard entity.
+#[derive(Clone, Component, Debug, Default)]
+pub struct Guard;
 
 /// Entities that can see the player.
 #[derive(Clone, Component, Debug, Default)]
