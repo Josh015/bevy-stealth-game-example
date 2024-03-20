@@ -1,4 +1,4 @@
-name: Exit Tile
+name: Exit
 components:
 # - !Trigger #Level complete.
 # - !Scene models/animated/Fox.glb#Scene0
