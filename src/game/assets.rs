@@ -48,7 +48,6 @@ pub enum ComponentConfig {
     SecurityCamera,
     Pickup,
     Weapon,
-    Powerup { file_name: String },
     //Trigger {} // Probably want to have a sub-enum with pre-allowed events?
     FloorSwitch,
     Door,

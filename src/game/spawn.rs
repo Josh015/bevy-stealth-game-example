@@ -55,9 +55,6 @@ fn spawn_actor_from_config_at_position(
             ComponentConfig::Weapon => {
                 actor.insert(Weapon::default());
             },
-            ComponentConfig::Powerup { file_name } => {
-                // TODO: Need a component for this one.
-            },
             //Trigger {} // TODO: Probably want to have a sub-enum with pre-allowed events?
             ComponentConfig::FloorSwitch => {
                 actor.insert(FloorSwitchBundle::default());
