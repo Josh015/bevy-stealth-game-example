@@ -21,14 +21,6 @@ impl Plugin for AssetsPlugin {
                 LoadingStateConfig::new(GameState::Loading)
                     .load_collection::<GameAssets>(),
             );
-        // .add_systems(
-        //     OnExit(GameState::Loading),
-        //     |game_assets: Res<GameAssets>| {
-        //         game_assets.actors.iter().for_each(|s| {
-        //             println!("actor: {}", s.0);
-        //         });
-        //     },
-        // );
     }
 }
 

@@ -1,8 +1,7 @@
-# A translucent wall that can be shattered by being in the Shockwave Cannon's
+# A translucent barrier that gets shattered by being in the Shockwave Cannon's
 # area of effect when it's fired. Doesn't block vision.
-name: Glass Wall
+name: Glass
 components:
-  - !Door
   - !Barrier
   - !DeflectsSounds
   - !Shatterable

@@ -1,4 +1,4 @@
-name: Door Wall
+name: Door
 components:
   - !Door
   - !Barrier

@@ -1,4 +1,4 @@
-name: Floor Switch Tile
+name: Floor Switch
 components:
 # - !Trigger
   # - !Scene models/animated/Fox.glb#Scene0
