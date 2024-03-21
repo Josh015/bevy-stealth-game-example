@@ -28,10 +28,6 @@ impl Plugin for AnimationsPlugin {
 #[derive(Clone, Component, Debug, Default)]
 pub struct Animations(pub HashMap<String, Handle<AnimationClip>>);
 
-/// Stores currently running animation for later restoration.
-#[derive(Clone, Component, Debug, Default)]
-pub struct StoredAnimation(pub Handle<AnimationClip>);
-
 /// Allows a parent entity to access the [`AnimationPlayer`] entity buried
 /// within its [`Scene`] hierarchy.
 #[derive(Component, Debug)]

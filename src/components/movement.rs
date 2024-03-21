@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::{AngularVelocity, LinearVelocity, StoredAnimation};
+use crate::{AngularVelocity, LinearVelocity};
 
 use super::Animator;
 
@@ -54,6 +54,10 @@ pub struct Destination(pub Vec3);
 /// A direction this entity wants to face.
 #[derive(Clone, Component, Debug)]
 pub struct Heading(pub Direction3d);
+
+/// Stores currently running animation for later restoration.
+#[derive(Clone, Component, Debug, Default)]
+pub struct StoredAnimation(pub Handle<AnimationClip>);
 
 fn destination_setup(
     mut commands: Commands,
