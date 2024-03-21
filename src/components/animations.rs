@@ -44,11 +44,11 @@ impl<'w, 's> Animator<'w, 's> {
     /// Looks up and plays an animation clip on a given entity.
     pub fn play_animation_name(
         &mut self,
-        target: Entity,
+        entity: Entity,
         animation_clip_name: &str,
     ) {
         if let Ok((animations, animation_entity_link)) =
-            self.query.get_mut(target)
+            self.query.get_mut(entity)
         {
             if let Some(animation) = animations.0.get(animation_clip_name) {
                 if let Ok(mut animation_player) =
@@ -70,10 +70,10 @@ impl<'w, 's> Animator<'w, 's> {
     /// Plays an animation clip on a given entity.
     pub fn play_animation_handle(
         &mut self,
-        target: Entity,
+        entity: Entity,
         animation_clip_handle: Handle<AnimationClip>,
     ) {
-        if let Ok((_, animation_entity_link)) = self.query.get_mut(target) {
+        if let Ok((_, animation_entity_link)) = self.query.get_mut(entity) {
             if let Ok(mut animation_player) =
                 self.animation_players.get_mut(animation_entity_link.0)
             {
@@ -92,9 +92,9 @@ impl<'w, 's> Animator<'w, 's> {
     /// Gets the handle for this entity's currently playing animation.
     pub fn get_current_animation(
         &self,
-        target: Entity,
+        entity: Entity,
     ) -> Option<Handle<AnimationClip>> {
-        let Ok((_, animation_entity_link)) = self.query.get(target) else {
+        let Ok((_, animation_entity_link)) = self.query.get(entity) else {
             return None;
         };
         let Ok(animation_player) =
