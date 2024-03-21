@@ -12,6 +12,8 @@ impl Plugin for AnimationPlugin {
 #[derive(Clone, Component, Debug, Default)]
 pub struct AnimationClips(pub HashMap<String, Handle<AnimationClip>>);
 
+/// Allows a parent entity to find the [`AnimationPlayer`] entity buried
+/// within its [`Scene`] hierarchy.
 #[derive(Component, Debug)]
 pub struct AnimationEntityLink(pub Entity);
 
