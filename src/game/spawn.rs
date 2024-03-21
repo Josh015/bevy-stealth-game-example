@@ -101,8 +101,13 @@ fn spawn_actor_from_config_with_matrix(
                 actor.insert(DeflectsSounds::default());
             },
             ComponentConfig::AnimationClips(clips) => {
-                // TODO: Load animations and store indices.
-                actor.insert(AnimationClips(HashMap::default()));
+                let mut clips_map = HashMap::default();
+
+                for (k, v) in clips {
+                    clips_map.insert(k.to_string(), asset_server.load(v));
+                }
+
+                actor.insert(AnimationClips(clips_map));
             },
             ComponentConfig::Scene(scene) => {
                 actor.insert(SceneBundle {

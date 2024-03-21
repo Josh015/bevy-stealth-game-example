@@ -1,6 +1,10 @@
+use std::time::Duration;
+
 use bevy::prelude::*;
 
-use crate::{AngularVelocity, LinearVelocity};
+use crate::{
+    AngularVelocity, AnimationClips, AnimationEntityLink, LinearVelocity,
+};
 
 const ANGULAR_VELOCITY_MARGIN_OF_ERROR: f32 = 0.0001;
 
@@ -13,6 +17,7 @@ impl Plugin for MovementPlugin {
             Update,
             (
                 destination_setup,
+                destination_animation_setup,
                 destination_check_progress,
                 destination_cleanup,
                 heading_setup,
@@ -54,12 +59,12 @@ pub struct Heading(pub Direction3d);
 
 fn destination_setup(
     mut commands: Commands,
-    query: Query<
+    mut query: Query<
         (Entity, &Transform, &Destination, &LinearSpeed),
         Added<Destination>,
     >,
 ) {
-    for (entity, transform, destination, linear_speed) in &query {
+    for (entity, transform, destination, linear_speed) in &mut query {
         let heading = (destination.0 - transform.translation).normalize();
 
         commands.entity(entity).insert((
@@ -69,9 +74,34 @@ fn destination_setup(
     }
 }
 
+fn destination_animation_setup(
+    mut query: Query<
+        (&AnimationClips, &AnimationEntityLink),
+        Added<Destination>,
+    >,
+    mut animation_players: Query<&mut AnimationPlayer>,
+) {
+    // for (animation_clips, animation_entity_link) in &mut query {
+    //     if let Some(animation) = animation_clips.0.get("Run") {
+    //         if let Ok(mut animation_player) =
+    //             animation_players.get_mut(animation_entity_link.0)
+    //         {
+    //             animation_player
+    //                 .play_with_transition(
+    //                     animation.clone_weak(),
+    //                     Duration::from_secs(1),
+    //                 )
+    //                 .repeat();
+    //         }
+    //     }
+    // }
+}
+
 fn destination_check_progress(
     mut commands: Commands,
     mut query: Query<(Entity, &mut Transform, &Destination, &Heading)>,
+    // mut a_query: Query<&AnimationEntityLink>,
+    // mut animation_players: Query<&mut AnimationPlayer>,
 ) {
     for (entity, mut transform, destination, heading) in &mut query {
         if (destination.0 - transform.translation)
@@ -86,6 +116,14 @@ fn destination_check_progress(
                 Heading,
                 AngularVelocity,
             )>();
+
+            // if let Ok(animation_entity_link) = a_query.get_mut(entity) {
+            //     if let Ok(mut animation_player) =
+            //         animation_players.get_mut(animation_entity_link.0)
+            //     {
+            //         animation_player.pause();
+            //     }
+            // }
         }
     }
 }

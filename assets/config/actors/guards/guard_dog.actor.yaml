@@ -12,8 +12,8 @@ components:
   - !Footsteps { sound_wave: Guard }
   - !Scene models/animated/Fox.glb#Scene0
   - !AnimationClips
-    Idle: models/animated/Fox.glb#Animation2
-    Run: models/animated/Fox.glb#Animation0
-    Puzzled: models/animated/Fox.glb#Animation2
+    Idle: models/animated/Fox.glb#Animation0
+    Run: models/animated/Fox.glb#Animation2
+    Puzzled: models/animated/Fox.glb#Animation0
     Shocked: models/animated/Fox.glb#Animation1
 
