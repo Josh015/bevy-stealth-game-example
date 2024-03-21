@@ -1,8 +1,8 @@
-use bevy::ecs::prelude::*;
+use bevy::ecs::{prelude::*, system::SystemState};
 use bevy_sequential_actions::*;
 use derive_new::new;
 
-use crate::CurrentAnimation;
+use crate::components::Animator;
 
 /// Plays an animation.
 #[derive(new)]
@@ -16,9 +16,10 @@ impl Action for AnimationAction {
     }
 
     fn on_start(&mut self, agent: Entity, world: &mut World) -> bool {
-        world
-            .entity_mut(agent)
-            .insert(CurrentAnimation(self.animation_name.to_owned()));
+        let mut system_state: SystemState<Animator> = SystemState::new(world);
+        let mut animator = system_state.get_mut(world);
+
+        animator.play_animation_for_entity(agent, &self.animation_name);
         true
     }
 

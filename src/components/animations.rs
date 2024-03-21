@@ -1,10 +1,15 @@
 use std::time::Duration;
 
-use bevy::{ecs::prelude::*, prelude::*, utils::HashMap};
+use bevy::{
+    ecs::{prelude::*, system::SystemParam},
+    prelude::*,
+    utils::HashMap,
+};
 
 use crate::game::LoadedSet;
 
 const ANIMATION_TRANSITION_DELAY_MILLIS: u64 = 500;
+const DEFAULT_ANIMATION: &str = "idle";
 
 pub(super) struct AnimationsPlugin;
 
@@ -12,24 +17,10 @@ impl Plugin for AnimationsPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(
             Update,
-            (link_animations, start_animating).in_set(LoadedSet),
+            (start_default_animation, link_animations)
+                .chain()
+                .in_set(LoadedSet),
         );
-    }
-}
-
-/// Required components for an [`Animations`] entity.
-#[derive(Bundle)]
-pub struct AnimationsBundle {
-    pub animations: Animations,
-    pub current_animation: CurrentAnimation,
-}
-
-impl Default for AnimationsBundle {
-    fn default() -> Self {
-        Self {
-            animations: Animations::default(),
-            current_animation: CurrentAnimation("idle".to_owned()),
-        }
     }
 }
 
@@ -37,37 +28,51 @@ impl Default for AnimationsBundle {
 #[derive(Clone, Component, Debug, Default)]
 pub struct Animations(pub HashMap<String, Handle<AnimationClip>>);
 
-/// An entity that is currently playing an animation.
-#[derive(Clone, Component, Debug, Default)]
-pub struct CurrentAnimation(pub String);
-
 /// Allows a parent entity to access the [`AnimationPlayer`] entity buried
 /// within its [`Scene`] hierarchy.
 #[derive(Component, Debug)]
 pub struct AnimationEntityLink(pub Entity);
 
-fn start_animating(
-    query: Query<
-        (&CurrentAnimation, &Animations, &AnimationEntityLink),
-        Added<CurrentAnimation>,
-    >,
-    mut animation_players: Query<&mut AnimationPlayer>,
-) {
-    for (current_animation, animations, animation_entity_link) in &query {
-        if let Some(animation) = animations.0.get(&current_animation.0) {
-            if let Ok(mut animation_player) =
-                animation_players.get_mut(animation_entity_link.0)
-            {
-                animation_player
-                    .play_with_transition(
-                        animation.clone_weak(),
-                        Duration::from_millis(
-                            ANIMATION_TRANSITION_DELAY_MILLIS,
-                        ),
-                    )
-                    .repeat();
+/// Allows animations to easily be played on entities that support them.
+#[derive(SystemParam)]
+pub struct Animator<'w, 's> {
+    query: Query<'w, 's, (&'static Animations, &'static AnimationEntityLink)>,
+    animation_players: Query<'w, 's, &'static mut AnimationPlayer>,
+}
+
+impl<'w, 's> Animator<'w, 's> {
+    pub fn play_animation_for_entity(
+        &mut self,
+        target: Entity,
+        animation_name: &str,
+    ) {
+        if let Ok((animations, animation_entity_link)) =
+            self.query.get_mut(target)
+        {
+            if let Some(animation) = animations.0.get(animation_name) {
+                if let Ok(mut animation_player) =
+                    self.animation_players.get_mut(animation_entity_link.0)
+                {
+                    animation_player
+                        .play_with_transition(
+                            animation.clone_weak(),
+                            Duration::from_millis(
+                                ANIMATION_TRANSITION_DELAY_MILLIS,
+                            ),
+                        )
+                        .repeat();
+                }
             }
         }
+    }
+}
+
+fn start_default_animation(
+    mut animator: Animator,
+    query: Query<Entity, (With<Animations>, Added<AnimationEntityLink>)>,
+) {
+    for entity in &query {
+        animator.play_animation_for_entity(entity, DEFAULT_ANIMATION);
     }
 }
 
@@ -109,5 +114,6 @@ fn get_top_parent(
             break;
         }
     }
+
     current_entity
 }

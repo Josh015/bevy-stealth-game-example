@@ -1,8 +1,11 @@
 use bevy::prelude::*;
 
-use crate::{AngularVelocity, CurrentAnimation, LinearVelocity};
+use crate::{AngularVelocity, LinearVelocity};
+
+use super::Animator;
 
 const ANGULAR_VELOCITY_MARGIN_OF_ERROR: f32 = 0.0001;
+const MOVING_ANIMATION: &str = "moving";
 
 pub(super) struct MovementPlugin;
 
@@ -54,6 +57,7 @@ pub struct Heading(pub Direction3d);
 
 fn destination_setup(
     mut commands: Commands,
+    mut animator: Animator,
     mut query: Query<
         (Entity, &Transform, &Destination, &LinearSpeed),
         Added<Destination>,
@@ -63,14 +67,12 @@ fn destination_setup(
         let heading = (destination.0 - transform.translation).normalize();
 
         // NOTE: It's SUPER important to remove old animation FIRST!
-        commands
-            .entity(entity)
-            .remove::<CurrentAnimation>()
-            .insert((
-                Heading(Direction3d::new_unchecked(heading)),
-                LinearVelocity(heading * linear_speed.0),
-                CurrentAnimation("moving".to_owned()),
-            ));
+        commands.entity(entity).insert((
+            Heading(Direction3d::new_unchecked(heading)),
+            LinearVelocity(heading * linear_speed.0),
+        ));
+
+        animator.play_animation_for_entity(entity, MOVING_ANIMATION);
     }
 }
 
@@ -90,7 +92,6 @@ fn destination_check_progress(
                 LinearVelocity,
                 Heading,
                 AngularVelocity,
-                CurrentAnimation,
             )>();
         }
     }
@@ -103,28 +104,25 @@ fn destination_cleanup(
     for entity in removed.read() {
         commands
             .entity(entity)
-            .remove::<(LinearVelocity, Heading, CurrentAnimation)>();
+            .remove::<(LinearVelocity, Heading)>();
     }
 }
 
 fn heading_setup(
     mut commands: Commands,
+    mut animator: Animator,
     query: Query<(Entity, &Transform, &Heading, &AngularSpeed), Added<Heading>>,
 ) {
     for (entity, transform, heading, angular_speed) in &query {
         // NOTE: It's SUPER important to remove old animation FIRST!
-        commands
-            .entity(entity)
-            .remove::<CurrentAnimation>()
-            .insert((
-                AngularVelocity {
-                    axis: Direction3d::new_unchecked(
-                        (-*transform.forward()).cross(*heading.0).normalize(),
-                    ),
-                    velocity: angular_speed.0,
-                },
-                CurrentAnimation("moving".to_owned()),
-            ));
+        commands.entity(entity).insert((AngularVelocity {
+            axis: Direction3d::new_unchecked(
+                (-*transform.forward()).cross(*heading.0).normalize(),
+            ),
+            velocity: angular_speed.0,
+        },));
+
+        animator.play_animation_for_entity(entity, MOVING_ANIMATION);
     }
 }
 
@@ -142,7 +140,7 @@ fn heading_check_progress(
             if has_destination {
                 entity.remove::<AngularVelocity>();
             } else {
-                entity.remove::<(Heading, AngularVelocity, CurrentAnimation)>();
+                entity.remove::<(Heading, AngularVelocity)>();
             }
         }
     }
@@ -151,15 +149,8 @@ fn heading_check_progress(
 fn heading_cleanup(
     mut commands: Commands,
     mut removed: RemovedComponents<Heading>,
-    query: Query<Has<Destination>>,
 ) {
     for entity in removed.read() {
         commands.entity(entity).remove::<AngularVelocity>();
-
-        if let Ok(has_destination) = query.get(entity) {
-            if !has_destination {
-                commands.entity(entity).remove::<CurrentAnimation>();
-            }
-        }
     }
 }
