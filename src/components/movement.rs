@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::{AngularVelocity, Animating, LinearVelocity};
+use crate::{AngularVelocity, CurrentAnimation, LinearVelocity};
 
 const ANGULAR_VELOCITY_MARGIN_OF_ERROR: f32 = 0.0001;
 
@@ -12,7 +12,6 @@ impl Plugin for MovementPlugin {
         app.add_systems(
             Update,
             (
-                moving_animation_setup,
                 destination_setup,
                 destination_check_progress,
                 destination_cleanup,
@@ -53,17 +52,6 @@ pub struct Destination(pub Vec3);
 #[derive(Clone, Component, Debug)]
 pub struct Heading(pub Direction3d);
 
-fn moving_animation_setup(
-    mut commands: Commands,
-    query: Query<Entity, Or<(Added<Destination>, Added<Heading>)>>,
-) {
-    for entity in &query {
-        commands.entity(entity).insert(Animating {
-            animation_name: "Run".to_owned(),
-        });
-    }
-}
-
 fn destination_setup(
     mut commands: Commands,
     mut query: Query<
@@ -74,10 +62,15 @@ fn destination_setup(
     for (entity, transform, destination, linear_speed) in &mut query {
         let heading = (destination.0 - transform.translation).normalize();
 
-        commands.entity(entity).insert((
-            Heading(Direction3d::new_unchecked(heading)),
-            LinearVelocity(heading * linear_speed.0),
-        ));
+        // NOTE: It's SUPER important to remove old animation FIRST!
+        commands
+            .entity(entity)
+            .remove::<CurrentAnimation>()
+            .insert((
+                Heading(Direction3d::new_unchecked(heading)),
+                LinearVelocity(heading * linear_speed.0),
+                CurrentAnimation("moving".to_owned()),
+            ));
     }
 }
 
@@ -97,7 +90,7 @@ fn destination_check_progress(
                 LinearVelocity,
                 Heading,
                 AngularVelocity,
-                Animating,
+                CurrentAnimation,
             )>();
         }
     }
@@ -110,7 +103,7 @@ fn destination_cleanup(
     for entity in removed.read() {
         commands
             .entity(entity)
-            .remove::<(LinearVelocity, Heading, Animating)>();
+            .remove::<(LinearVelocity, Heading, CurrentAnimation)>();
     }
 }
 
@@ -119,12 +112,19 @@ fn heading_setup(
     query: Query<(Entity, &Transform, &Heading, &AngularSpeed), Added<Heading>>,
 ) {
     for (entity, transform, heading, angular_speed) in &query {
-        commands.entity(entity).insert(AngularVelocity {
-            axis: Direction3d::new_unchecked(
-                (-*transform.forward()).cross(*heading.0).normalize(),
-            ),
-            velocity: angular_speed.0,
-        });
+        // NOTE: It's SUPER important to remove old animation FIRST!
+        commands
+            .entity(entity)
+            .remove::<CurrentAnimation>()
+            .insert((
+                AngularVelocity {
+                    axis: Direction3d::new_unchecked(
+                        (-*transform.forward()).cross(*heading.0).normalize(),
+                    ),
+                    velocity: angular_speed.0,
+                },
+                CurrentAnimation("moving".to_owned()),
+            ));
     }
 }
 
@@ -142,7 +142,7 @@ fn heading_check_progress(
             if has_destination {
                 entity.remove::<AngularVelocity>();
             } else {
-                entity.remove::<(Heading, AngularVelocity, Animating)>();
+                entity.remove::<(Heading, AngularVelocity, CurrentAnimation)>();
             }
         }
     }
@@ -151,10 +151,15 @@ fn heading_check_progress(
 fn heading_cleanup(
     mut commands: Commands,
     mut removed: RemovedComponents<Heading>,
+    query: Query<Has<Destination>>,
 ) {
     for entity in removed.read() {
-        commands
-            .entity(entity)
-            .remove::<(AngularVelocity, Animating)>();
+        commands.entity(entity).remove::<AngularVelocity>();
+
+        if let Ok(has_destination) = query.get(entity) {
+            if !has_destination {
+                commands.entity(entity).remove::<CurrentAnimation>();
+            }
+        }
     }
 }

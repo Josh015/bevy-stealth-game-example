@@ -2,7 +2,7 @@ use bevy::{ecs::prelude::*, prelude::*, utils::HashMap};
 use spew::prelude::*;
 
 use crate::{
-    AngularSpeed, Animations, Barrier, BlocksVision, DefaultAnimation,
+    AngularSpeed, Animations, AnimationsBundle, Barrier, BlocksVision,
     DeflectsSounds, DoorBundle, DropShadow, FloorSwitchBundle, GlassBundle,
     GuardBundle, Hearing, LinearSpeed, PickupBundle, PlayerBundle,
     SecurityCameraBundle, Stunnable, Vision, Weapon,
@@ -107,10 +107,10 @@ fn spawn_actor_from_config_with_matrix(
                     loaded_clips.insert(k.to_string(), asset_server.load(v));
                 }
 
-                actor.insert(Animations(loaded_clips));
-            },
-            ComponentConfig::DefaultAnimation(default_animation) => {
-                actor.insert(DefaultAnimation(default_animation.to_owned()));
+                actor.insert(AnimationsBundle {
+                    animations: Animations(loaded_clips),
+                    ..default()
+                });
             },
             ComponentConfig::Scene(scene) => {
                 actor.insert(SceneBundle {

@@ -5,7 +5,8 @@ use std::time::Duration;
 
 use crate::{
     actions::{
-        MoveToAction, RepeatSequence, StateDoneAction, TurnToAction, WaitAction,
+        AnimationAction, MoveToAction, RepeatSequence, StateDoneAction,
+        TurnToAction, WaitAction,
     },
     game::LoadedSet,
     util::Repeat,
@@ -77,6 +78,7 @@ pub struct Hearing {
 #[derive(Clone, Component, Debug, Default)]
 pub struct Stunnable;
 
+const IDLE_DELAY_MILLIS: u64 = 1_000;
 const SPIN_DELAY_MILLIS: u64 = 400;
 
 #[derive(Clone, Component, Copy, Reflect)]
@@ -90,6 +92,8 @@ pub struct Pong;
 fn ping(mut commands: Commands, query: Query<Entity, Added<Ping>>) {
     for entity in &query {
         commands.actions(entity).add_many(actions![
+            AnimationAction::new("idle".to_owned()),
+            WaitAction::new(Duration::from_millis(IDLE_DELAY_MILLIS)),
             RepeatSequence::new(
                 Repeat::Times(2),
                 actions![
@@ -117,6 +121,8 @@ fn pong(mut commands: Commands, query: Query<Entity, Added<Ping>>) {
 
     for entity in &query {
         commands.actions(entity).add_many(actions![
+            AnimationAction::new("idle".to_owned()),
+            WaitAction::new(Duration::from_millis(IDLE_DELAY_MILLIS)),
             MoveToAction::new(Vec3::new(movement_range, 0.0, movement_range)),
             MoveToAction::new(Vec3::new(movement_range, 0.0, -movement_range)),
             MoveToAction::new(Vec3::new(-movement_range, 0.0, -movement_range)),
