@@ -28,6 +28,10 @@ impl Plugin for AnimationsPlugin {
 #[derive(Clone, Component, Debug, Default)]
 pub struct Animations(pub HashMap<String, Handle<AnimationClip>>);
 
+/// Stores currently running animation for later restoration.
+#[derive(Clone, Component, Debug, Default)]
+pub struct StoredAnimation(pub Handle<AnimationClip>);
+
 /// Allows a parent entity to access the [`AnimationPlayer`] entity buried
 /// within its [`Scene`] hierarchy.
 #[derive(Component, Debug)]
@@ -41,15 +45,16 @@ pub struct Animator<'w, 's> {
 }
 
 impl<'w, 's> Animator<'w, 's> {
-    pub fn play_animation_for_entity(
+    /// Looks up and plays an animation clip on a given entity.
+    pub fn play_animation_name(
         &mut self,
         target: Entity,
-        animation_name: &str,
+        animation_clip_name: &str,
     ) {
         if let Ok((animations, animation_entity_link)) =
             self.query.get_mut(target)
         {
-            if let Some(animation) = animations.0.get(animation_name) {
+            if let Some(animation) = animations.0.get(animation_clip_name) {
                 if let Ok(mut animation_player) =
                     self.animation_players.get_mut(animation_entity_link.0)
                 {
@@ -65,6 +70,45 @@ impl<'w, 's> Animator<'w, 's> {
             }
         }
     }
+
+    /// Plays an animation clip on a given entity.
+    pub fn play_animation_handle(
+        &mut self,
+        target: Entity,
+        animation_clip_handle: Handle<AnimationClip>,
+    ) {
+        if let Ok((_, animation_entity_link)) = self.query.get_mut(target) {
+            if let Ok(mut animation_player) =
+                self.animation_players.get_mut(animation_entity_link.0)
+            {
+                animation_player
+                    .play_with_transition(
+                        animation_clip_handle.clone_weak(),
+                        Duration::from_millis(
+                            ANIMATION_TRANSITION_DELAY_MILLIS,
+                        ),
+                    )
+                    .repeat();
+            }
+        }
+    }
+
+    /// Gets the handle for this entity's currently playing animation.
+    pub fn get_current_animation(
+        &self,
+        target: Entity,
+    ) -> Option<Handle<AnimationClip>> {
+        let Ok((_, animation_entity_link)) = self.query.get(target) else {
+            return None;
+        };
+        let Ok(animation_player) =
+            self.animation_players.get(animation_entity_link.0)
+        else {
+            return None;
+        };
+
+        Some(animation_player.animation_clip().clone())
+    }
 }
 
 fn start_default_animation(
@@ -72,7 +116,7 @@ fn start_default_animation(
     query: Query<Entity, (With<Animations>, Added<AnimationEntityLink>)>,
 ) {
     for entity in &query {
-        animator.play_animation_for_entity(entity, DEFAULT_ANIMATION);
+        animator.play_animation_name(entity, DEFAULT_ANIMATION);
     }
 }
 

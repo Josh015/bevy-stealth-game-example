@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::{AngularVelocity, LinearVelocity};
+use crate::{AngularVelocity, LinearVelocity, StoredAnimation};
 
 use super::Animator;
 
@@ -65,14 +65,19 @@ fn destination_setup(
 ) {
     for (entity, transform, destination, linear_speed) in &mut query {
         let heading = (destination.0 - transform.translation).normalize();
+        let mut entity_commands = commands.entity(entity);
 
-        // NOTE: It's SUPER important to remove old animation FIRST!
-        commands.entity(entity).insert((
+        entity_commands.insert((
             Heading(Direction3d::new_unchecked(heading)),
             LinearVelocity(heading * linear_speed.0),
         ));
 
-        animator.play_animation_for_entity(entity, MOVING_ANIMATION);
+        if let Some(current_animation) = animator.get_current_animation(entity)
+        {
+            entity_commands.insert(StoredAnimation(current_animation));
+        }
+
+        animator.play_animation_name(entity, MOVING_ANIMATION);
     }
 }
 
@@ -87,42 +92,62 @@ fn destination_check_progress(
             <= 0.0
         {
             transform.translation = destination.0;
-            commands.entity(entity).remove::<(
-                Destination,
-                LinearVelocity,
-                Heading,
-                AngularVelocity,
-            )>();
+            commands
+                .entity(entity)
+                .remove::<(Destination, LinearVelocity)>();
         }
     }
 }
 
 fn destination_cleanup(
     mut commands: Commands,
+    mut animator: Animator,
     mut removed: RemovedComponents<Destination>,
+    query: Query<&StoredAnimation>,
 ) {
     for entity in removed.read() {
-        commands
-            .entity(entity)
-            .remove::<(LinearVelocity, Heading)>();
+        commands.entity(entity).remove::<LinearVelocity>();
+
+        if let Ok(stored_animation) = query.get(entity) {
+            animator
+                .play_animation_handle(entity, stored_animation.0.clone_weak())
+        }
     }
 }
 
 fn heading_setup(
     mut commands: Commands,
     mut animator: Animator,
-    query: Query<(Entity, &Transform, &Heading, &AngularSpeed), Added<Heading>>,
+    query: Query<
+        (
+            Entity,
+            &Transform,
+            &Heading,
+            &AngularSpeed,
+            Has<Destination>,
+        ),
+        Added<Heading>,
+    >,
 ) {
-    for (entity, transform, heading, angular_speed) in &query {
-        // NOTE: It's SUPER important to remove old animation FIRST!
-        commands.entity(entity).insert((AngularVelocity {
+    for (entity, transform, heading, angular_speed, has_destination) in &query {
+        let mut entity_commands = commands.entity(entity);
+
+        entity_commands.insert((AngularVelocity {
             axis: Direction3d::new_unchecked(
                 (-*transform.forward()).cross(*heading.0).normalize(),
             ),
             velocity: angular_speed.0,
         },));
 
-        animator.play_animation_for_entity(entity, MOVING_ANIMATION);
+        if !has_destination {
+            if let Some(current_animation) =
+                animator.get_current_animation(entity)
+            {
+                entity_commands.insert(StoredAnimation(current_animation));
+            }
+        }
+
+        animator.play_animation_name(entity, MOVING_ANIMATION);
     }
 }
 
@@ -135,12 +160,12 @@ fn heading_check_progress(
         if (-*transform.forward()).dot(*heading.0).abs()
             >= 1.0 - ANGULAR_VELOCITY_MARGIN_OF_ERROR
         {
-            let mut entity = commands.entity(entity);
+            let mut entity_commands = commands.entity(entity);
 
             if has_destination {
-                entity.remove::<AngularVelocity>();
+                entity_commands.remove::<AngularVelocity>();
             } else {
-                entity.remove::<(Heading, AngularVelocity)>();
+                entity_commands.remove::<(Heading, AngularVelocity)>();
             }
         }
     }
@@ -148,9 +173,16 @@ fn heading_check_progress(
 
 fn heading_cleanup(
     mut commands: Commands,
+    mut animator: Animator,
     mut removed: RemovedComponents<Heading>,
+    query: Query<Option<&StoredAnimation>, Without<Destination>>,
 ) {
     for entity in removed.read() {
         commands.entity(entity).remove::<AngularVelocity>();
+
+        if let Ok(Some(stored_animation)) = query.get(entity) {
+            animator
+                .play_animation_handle(entity, stored_animation.0.clone_weak());
+        }
     }
 }

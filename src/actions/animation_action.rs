@@ -19,7 +19,7 @@ impl Action for AnimationAction {
         let mut system_state: SystemState<Animator> = SystemState::new(world);
         let mut animator = system_state.get_mut(world);
 
-        animator.play_animation_for_entity(agent, &self.animation_name);
+        animator.play_animation_name(agent, &self.animation_name);
         true
     }
 

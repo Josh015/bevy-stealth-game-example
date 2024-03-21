@@ -111,6 +111,7 @@ fn ping(mut commands: Commands, query: Query<Entity, Added<Ping>>) {
                 world.entity_mut(agent).remove::<Stunnable>();
                 true
             },
+            WaitAction::new(Duration::from_millis(IDLE_DELAY_MILLIS)),
             StateDoneAction::new(Done::Success)
         ]);
     }
