@@ -1,10 +1,6 @@
-use std::time::Duration;
-
 use bevy::prelude::*;
 
-use crate::{
-    AngularVelocity, AnimationClips, AnimationEntityLink, LinearVelocity,
-};
+use crate::{AngularVelocity, Animating, AnimationEntityLink, LinearVelocity};
 
 const ANGULAR_VELOCITY_MARGIN_OF_ERROR: f32 = 0.0001;
 
@@ -16,8 +12,8 @@ impl Plugin for MovementPlugin {
         app.add_systems(
             Update,
             (
+                moving_animation_setup,
                 destination_setup,
-                destination_animation_setup,
                 destination_check_progress,
                 destination_cleanup,
                 heading_setup,
@@ -74,34 +70,22 @@ fn destination_setup(
     }
 }
 
-fn destination_animation_setup(
-    mut query: Query<
-        (&AnimationClips, &AnimationEntityLink),
-        Added<Destination>,
-    >,
-    mut animation_players: Query<&mut AnimationPlayer>,
+fn moving_animation_setup(
+    mut commands: Commands,
+    query: Query<Entity, Or<(Added<Destination>, Added<Heading>)>>,
 ) {
-    // for (animation_clips, animation_entity_link) in &mut query {
-    //     if let Some(animation) = animation_clips.0.get("Run") {
-    //         if let Ok(mut animation_player) =
-    //             animation_players.get_mut(animation_entity_link.0)
-    //         {
-    //             animation_player
-    //                 .play_with_transition(
-    //                     animation.clone_weak(),
-    //                     Duration::from_secs(1),
-    //                 )
-    //                 .repeat();
-    //         }
-    //     }
-    // }
+    for entity in &query {
+        commands
+            .entity(entity)
+            .insert(Animating::from_animation_clip_name("Run".to_owned()));
+    }
 }
 
 fn destination_check_progress(
     mut commands: Commands,
     mut query: Query<(Entity, &mut Transform, &Destination, &Heading)>,
-    // mut a_query: Query<&AnimationEntityLink>,
-    // mut animation_players: Query<&mut AnimationPlayer>,
+    mut a_query: Query<&AnimationEntityLink>,
+    mut animation_players: Query<&mut AnimationPlayer>,
 ) {
     for (entity, mut transform, destination, heading) in &mut query {
         if (destination.0 - transform.translation)
@@ -115,15 +99,8 @@ fn destination_check_progress(
                 LinearVelocity,
                 Heading,
                 AngularVelocity,
+                Animating,
             )>();
-
-            // if let Ok(animation_entity_link) = a_query.get_mut(entity) {
-            //     if let Ok(mut animation_player) =
-            //         animation_players.get_mut(animation_entity_link.0)
-            //     {
-            //         animation_player.pause();
-            //     }
-            // }
         }
     }
 }
@@ -135,7 +112,7 @@ fn destination_cleanup(
     for entity in removed.read() {
         commands
             .entity(entity)
-            .remove::<(LinearVelocity, Heading)>();
+            .remove::<(LinearVelocity, Heading, Animating)>();
     }
 }
 
@@ -167,7 +144,7 @@ fn heading_check_progress(
             if has_destination {
                 entity.remove::<AngularVelocity>();
             } else {
-                entity.remove::<(Heading, AngularVelocity)>();
+                entity.remove::<(Heading, AngularVelocity, Animating)>();
             }
         }
     }
@@ -178,6 +155,8 @@ fn heading_cleanup(
     mut removed: RemovedComponents<Heading>,
 ) {
     for entity in removed.read() {
-        commands.entity(entity).remove::<AngularVelocity>();
+        commands
+            .entity(entity)
+            .remove::<(AngularVelocity, Animating)>();
     }
 }
