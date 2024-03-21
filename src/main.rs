@@ -47,7 +47,7 @@ fn main() {
         .insert_resource(Msaa::default())
         .insert_resource(ClearColor(Color::rgba(0.7, 0.9, 1.0, 1.0)))
         .add_systems(Update, bevy::window::close_on_esc)
-        .add_systems(OnExit(GameState::Loading), tinkering_zone_system)
+        .add_systems(OnEnter(GameState::StartMenu), tinkering_zone_system)
         .run();
 }
 
