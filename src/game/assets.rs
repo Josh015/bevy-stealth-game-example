@@ -64,7 +64,8 @@ pub enum ComponentConfig {
     BlocksVision,
     DeflectsSounds,
     Scene(String),
-    AnimationClips(HashMap<String, String>),
+    Animations(HashMap<String, String>),
+    DefaultAnimation(String),
 }
 
 /// Configs for spawnable entities.

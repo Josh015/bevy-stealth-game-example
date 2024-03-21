@@ -58,9 +58,9 @@ fn moving_animation_setup(
     query: Query<Entity, Or<(Added<Destination>, Added<Heading>)>>,
 ) {
     for entity in &query {
-        commands
-            .entity(entity)
-            .insert(Animating::from_animation_clip_name("Run".to_owned()));
+        commands.entity(entity).insert(Animating {
+            animation_name: "Run".to_owned(),
+        });
     }
 }
 

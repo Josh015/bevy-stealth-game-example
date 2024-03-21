@@ -2,10 +2,10 @@ use bevy::{ecs::prelude::*, prelude::*, utils::HashMap};
 use spew::prelude::*;
 
 use crate::{
-    AngularSpeed, AnimationClips, Barrier, BlocksVision, DeflectsSounds,
-    DoorBundle, DropShadow, FloorSwitchBundle, GlassBundle, GuardBundle,
-    Hearing, LinearSpeed, PickupBundle, PlayerBundle, SecurityCameraBundle,
-    Stunnable, Vision, Weapon,
+    AngularSpeed, Animations, Barrier, BlocksVision, DefaultAnimation,
+    DeflectsSounds, DoorBundle, DropShadow, FloorSwitchBundle, GlassBundle,
+    GuardBundle, Hearing, LinearSpeed, PickupBundle, PlayerBundle,
+    SecurityCameraBundle, Stunnable, Vision, Weapon,
 };
 
 use super::{ActorConfig, ComponentConfig};
@@ -100,14 +100,17 @@ fn spawn_actor_from_config_with_matrix(
             ComponentConfig::DeflectsSounds => {
                 actor.insert(DeflectsSounds::default());
             },
-            ComponentConfig::AnimationClips(clips) => {
-                let mut clips_map = HashMap::default();
+            ComponentConfig::Animations(clips) => {
+                let mut loaded_clips = HashMap::default();
 
                 for (k, v) in clips {
-                    clips_map.insert(k.to_string(), asset_server.load(v));
+                    loaded_clips.insert(k.to_string(), asset_server.load(v));
                 }
 
-                actor.insert(AnimationClips(clips_map));
+                actor.insert(Animations(loaded_clips));
+            },
+            ComponentConfig::DefaultAnimation(default_animation) => {
+                actor.insert(DefaultAnimation(default_animation.to_owned()));
             },
             ComponentConfig::Scene(scene) => {
                 actor.insert(SceneBundle {

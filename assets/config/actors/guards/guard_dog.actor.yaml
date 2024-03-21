@@ -11,7 +11,8 @@ components:
   - !Physics { radius: 0.375 }
   - !Footsteps { sound_wave: Guard }
   - !Scene models/animated/Fox.glb#Scene0
-  - !AnimationClips
+  - !DefaultAnimation Idle
+  - !Animations
     Idle: models/animated/Fox.glb#Animation0
     Run: models/animated/Fox.glb#Animation2
     Puzzled: models/animated/Fox.glb#Animation0
