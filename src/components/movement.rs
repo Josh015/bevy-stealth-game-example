@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::{AngularVelocity, Animating, AnimationEntityLink, LinearVelocity};
+use crate::{AngularVelocity, Animating, LinearVelocity};
 
 const ANGULAR_VELOCITY_MARGIN_OF_ERROR: f32 = 0.0001;
 
@@ -53,6 +53,17 @@ pub struct Destination(pub Vec3);
 #[derive(Clone, Component, Debug)]
 pub struct Heading(pub Direction3d);
 
+fn moving_animation_setup(
+    mut commands: Commands,
+    query: Query<Entity, Or<(Added<Destination>, Added<Heading>)>>,
+) {
+    for entity in &query {
+        commands
+            .entity(entity)
+            .insert(Animating::from_animation_clip_name("Run".to_owned()));
+    }
+}
+
 fn destination_setup(
     mut commands: Commands,
     mut query: Query<
@@ -70,22 +81,9 @@ fn destination_setup(
     }
 }
 
-fn moving_animation_setup(
-    mut commands: Commands,
-    query: Query<Entity, Or<(Added<Destination>, Added<Heading>)>>,
-) {
-    for entity in &query {
-        commands
-            .entity(entity)
-            .insert(Animating::from_animation_clip_name("Run".to_owned()));
-    }
-}
-
 fn destination_check_progress(
     mut commands: Commands,
     mut query: Query<(Entity, &mut Transform, &Destination, &Heading)>,
-    mut a_query: Query<&AnimationEntityLink>,
-    mut animation_players: Query<&mut AnimationPlayer>,
 ) {
     for (entity, mut transform, destination, heading) in &mut query {
         if (destination.0 - transform.translation)
