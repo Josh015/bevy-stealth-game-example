@@ -1,4 +1,4 @@
-use crate::game::GameState;
+use crate::game::{ActiveWhenPausedSet, GameState};
 use bevy::prelude::*;
 use bevy_sequential_actions::{ActionQueue, ActionsProxy, ModifyActions};
 
@@ -28,13 +28,17 @@ pub(super) struct ActionsPlugin;
 
 impl Plugin for ActionsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(OnEnter(GameState::Paused), pause_actions)
-            .add_systems(OnExit(GameState::Paused), unpause_actions)
+        app.add_systems(OnEnter(GameState::Paused), pause_all_actions)
+            .add_systems(OnExit(GameState::Paused), unpause_all_actions)
+            .add_systems(
+                Update,
+                pause_actions_added_while_paused.in_set(ActiveWhenPausedSet),
+            )
             .add_plugins(WaitActionPlugin);
     }
 }
 
-fn pause_actions(
+fn pause_all_actions(
     mut commands: Commands,
     query: Query<Entity, With<ActionQueue>>,
 ) {
@@ -43,11 +47,20 @@ fn pause_actions(
     }
 }
 
-fn unpause_actions(
+fn unpause_all_actions(
     mut commands: Commands,
     query: Query<Entity, With<ActionQueue>>,
 ) {
     for entity in &query {
         commands.actions(entity).execute();
+    }
+}
+
+fn pause_actions_added_while_paused(
+    mut commands: Commands,
+    query: Query<Entity, Added<ActionQueue>>,
+) {
+    for entity in &query {
+        commands.actions(entity).pause();
     }
 }

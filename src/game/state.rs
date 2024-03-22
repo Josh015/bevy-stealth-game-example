@@ -13,7 +13,13 @@ impl Plugin for StatePlugin {
             )
             .configure_sets(
                 Update,
-                PausableSet
+                ActiveWhenPausedSet
+                    .in_set(LoadedSet)
+                    .run_if(in_state(GameState::Paused)),
+            )
+            .configure_sets(
+                Update,
+                StoppedWhenPausedSet
                     .in_set(LoadedSet)
                     .run_if(not(in_state(GameState::Paused))),
             )
@@ -21,7 +27,7 @@ impl Plugin for StatePlugin {
                 Update,
                 PlayableSet
                     .in_set(LoadedSet)
-                    .after(PausableSet)
+                    .after(StoppedWhenPausedSet)
                     .before(SpewSystemSet)
                     .run_if(in_state(GameState::Playing)),
             )
@@ -31,7 +37,7 @@ impl Plugin for StatePlugin {
             )
             .configure_sets(
                 PostUpdate,
-                PausableSet
+                StoppedWhenPausedSet
                     .in_set(LoadedSet)
                     .run_if(not(in_state(GameState::Paused))),
             )
@@ -39,7 +45,7 @@ impl Plugin for StatePlugin {
                 PostUpdate,
                 PlayableSet
                     .in_set(LoadedSet)
-                    .after(PausableSet)
+                    .after(StoppedWhenPausedSet)
                     .run_if(in_state(GameState::Playing)),
             );
 
@@ -70,7 +76,11 @@ pub struct LoadedSet;
 
 /// Systems that stop when the game is paused.
 #[derive(Clone, Debug, Eq, Hash, PartialEq, SystemSet)]
-pub struct PausableSet;
+pub struct StoppedWhenPausedSet;
+
+/// Systems that are active when the game is paused.
+#[derive(Clone, Debug, Eq, Hash, PartialEq, SystemSet)]
+pub struct ActiveWhenPausedSet;
 
 /// Systems that only run during gameplay.
 #[derive(Clone, Debug, Eq, Hash, PartialEq, SystemSet)]

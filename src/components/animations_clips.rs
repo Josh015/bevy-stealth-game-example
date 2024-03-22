@@ -1,6 +1,6 @@
 use bevy::{ecs::prelude::*, prelude::*, utils::HashMap};
 
-use crate::game::{Animations, GameState, LoadedSet};
+use crate::game::{ActiveWhenPausedSet, Animations, GameState};
 
 const DEFAULT_ANIMATION: &str = "idle";
 
@@ -8,13 +8,15 @@ pub(super) struct AnimationClipsPlugin;
 
 impl Plugin for AnimationClipsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(OnEnter(GameState::Paused), pause_animations)
-            .add_systems(OnExit(GameState::Paused), unpause_animations)
+        app.add_systems(OnEnter(GameState::Paused), pause_all_animations)
+            .add_systems(OnExit(GameState::Paused), unpause_all_animations)
             .add_systems(
                 Update,
-                (start_default_animation, link_animation_players)
-                    .chain()
-                    .in_set(LoadedSet),
+                (
+                    pause_animations_added_while_paused
+                        .in_set(ActiveWhenPausedSet),
+                    (start_default_animation, link_animation_players).chain(),
+                ),
             );
     }
 }
@@ -28,15 +30,23 @@ pub struct AnimationClips(pub HashMap<String, Handle<AnimationClip>>);
 #[derive(Component, Debug)]
 pub struct AnimationEntityLink(pub Entity);
 
-fn pause_animations(mut animation_players: Query<&mut AnimationPlayer>) {
+fn pause_all_animations(mut animation_players: Query<&mut AnimationPlayer>) {
     for mut animation_player in &mut animation_players {
         animation_player.pause();
     }
 }
 
-fn unpause_animations(mut animation_players: Query<&mut AnimationPlayer>) {
+fn unpause_all_animations(mut animation_players: Query<&mut AnimationPlayer>) {
     for mut animation_player in &mut animation_players {
         animation_player.resume();
+    }
+}
+
+fn pause_animations_added_while_paused(
+    mut animation_players: Query<&mut AnimationPlayer, Added<AnimationPlayer>>,
+) {
+    for mut animation_player in &mut animation_players {
+        animation_player.pause();
     }
 }
 

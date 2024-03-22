@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::game::{Animations, PausableSet};
+use crate::game::{Animations, StoppedWhenPausedSet};
 
 const DESTINATION_MARGIN_OF_ERROR: f32 = 0.01;
 const HEADING_MARGIN_OF_ERROR: f32 = 0.001;
@@ -15,7 +15,7 @@ impl Plugin for MovementPlugin {
             Update,
             (movement_setup, movement_check_progress, destination_cleanup)
                 .chain()
-                .in_set(PausableSet),
+                .in_set(StoppedWhenPausedSet),
         );
     }
 }
