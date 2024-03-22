@@ -5,8 +5,6 @@ use derive_new::new;
 use crate::Movement;
 
 /// Move an entity to a point.
-///
-/// **WARNING:** Can't be used in parallel with [`TurnToAction`](super::turn_to_action::TurnToAction).
 #[derive(new)]
 pub struct MoveAction {
     movement: Movement,

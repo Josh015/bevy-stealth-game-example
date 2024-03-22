@@ -2,7 +2,7 @@ use bevy::prelude::*;
 
 use super::Animations;
 
-const DESTINATION_MARGIN_OF_ERROR: f32 = 0.001;
+const DESTINATION_MARGIN_OF_ERROR: f32 = 0.01;
 const HEADING_MARGIN_OF_ERROR: f32 = 0.001;
 const MOVING_ANIMATION: &str = "moving";
 
@@ -88,16 +88,16 @@ fn movement_check_progress(
                 let direction_vector = *destination - transform.translation;
                 let heading = direction_vector.normalize();
                 let distance = direction_vector.dot(direction_vector).sqrt();
-                let end_condition = distance <= DESTINATION_MARGIN_OF_ERROR;
+                let end_destination = distance <= DESTINATION_MARGIN_OF_ERROR;
 
-                if end_condition {
+                if end_destination {
                     transform.translation = *destination;
                 } else {
                     transform.translation +=
                         heading * linear_speed.0 * time.delta_seconds();
                 }
 
-                (heading, end_condition)
+                (heading, end_destination)
             },
             Movement::Heading(heading) => (**heading, true),
         };
