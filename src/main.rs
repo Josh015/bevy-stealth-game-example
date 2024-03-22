@@ -4,7 +4,6 @@ pub mod actions;
 pub mod components;
 pub mod game;
 pub mod ui;
-pub mod util;
 
 use bevy::{
     prelude::*,

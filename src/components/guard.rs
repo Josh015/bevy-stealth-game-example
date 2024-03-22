@@ -8,8 +8,7 @@ use crate::{
         AnimationAction, MoveAction, RepeatSequence, StateDoneAction,
         WaitAction,
     },
-    game::StoppedWhenPausedSet,
-    util::Repeat,
+    game::{Repeat, StoppedWhenPausedSet},
     Movement,
 };
 

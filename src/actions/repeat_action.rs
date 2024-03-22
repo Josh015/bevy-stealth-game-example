@@ -1,4 +1,4 @@
-use crate::util::Repeat;
+use crate::game::Repeat;
 use bevy::ecs::prelude::*;
 use bevy_sequential_actions::*;
 use derive_new::new;

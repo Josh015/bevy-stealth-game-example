@@ -5,12 +5,14 @@ mod events;
 mod spawn;
 mod state;
 mod system_params;
+mod util;
 
 pub use assets::*;
 pub use events::*;
 pub use spawn::*;
 pub use state::*;
 pub use system_params::*;
+pub use util::*;
 
 pub(super) struct GamePlugin;
 
