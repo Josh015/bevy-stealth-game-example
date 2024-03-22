@@ -3,10 +3,12 @@ use bevy::prelude::*;
 mod assets;
 mod spawn;
 mod state;
+mod system_params;
 
 pub use assets::*;
 pub use spawn::*;
 pub use state::*;
+pub use system_params::*;
 
 pub(super) struct GamePlugin;
 

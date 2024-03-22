@@ -1,6 +1,6 @@
 use bevy::app::prelude::*;
 
-mod animations;
+mod animations_clips;
 mod barrier;
 mod door;
 mod drop_shadow;
@@ -20,7 +20,7 @@ mod velocity;
 mod waypoint;
 mod weapon;
 
-pub use animations::*;
+pub use animations_clips::*;
 pub use barrier::*;
 pub use door::*;
 pub use drop_shadow::*;
@@ -45,7 +45,7 @@ pub(super) struct ComponentsPlugin;
 impl Plugin for ComponentsPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins((
-            AnimationsPlugin,
+            AnimationClipsPlugin,
             GuardPlugin,
             MovementPlugin,
             PhysicsPlugin,

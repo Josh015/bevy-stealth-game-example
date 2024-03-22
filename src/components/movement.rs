@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use super::Animations;
+use crate::game::Animations;
 
 const DESTINATION_MARGIN_OF_ERROR: f32 = 0.01;
 const HEADING_MARGIN_OF_ERROR: f32 = 0.001;
