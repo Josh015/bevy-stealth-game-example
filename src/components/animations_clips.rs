@@ -1,6 +1,6 @@
 use bevy::{ecs::prelude::*, prelude::*, utils::HashMap};
 
-use crate::game::{Animations, LoadedSet};
+use crate::game::{Animations, GameState, LoadedSet};
 
 const DEFAULT_ANIMATION: &str = "idle";
 
@@ -8,12 +8,14 @@ pub(super) struct AnimationClipsPlugin;
 
 impl Plugin for AnimationClipsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(
-            Update,
-            (start_default_animation, link_animation_players)
-                .chain()
-                .in_set(LoadedSet),
-        );
+        app.add_systems(OnEnter(GameState::Paused), pause_animations)
+            .add_systems(OnExit(GameState::Paused), unpause_animations)
+            .add_systems(
+                Update,
+                (start_default_animation, link_animation_players)
+                    .chain()
+                    .in_set(LoadedSet),
+            );
     }
 }
 
@@ -25,6 +27,32 @@ pub struct AnimationClips(pub HashMap<String, Handle<AnimationClip>>);
 /// within its [`Scene`] hierarchy.
 #[derive(Component, Debug)]
 pub struct AnimationEntityLink(pub Entity);
+
+fn pause_animations(
+    query: Query<&AnimationEntityLink>,
+    mut animation_players: Query<&mut AnimationPlayer>,
+) {
+    for animation_entity_link in &query {
+        if let Ok(mut animation_player) =
+            animation_players.get_mut(animation_entity_link.0)
+        {
+            animation_player.pause();
+        }
+    }
+}
+
+fn unpause_animations(
+    query: Query<&AnimationEntityLink>,
+    mut animation_players: Query<&mut AnimationPlayer>,
+) {
+    for animation_entity_link in &query {
+        if let Ok(mut animation_player) =
+            animation_players.get_mut(animation_entity_link.0)
+        {
+            animation_player.resume();
+        }
+    }
+}
 
 fn start_default_animation(
     mut animations: Animations,
