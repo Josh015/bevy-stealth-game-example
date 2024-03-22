@@ -2,7 +2,6 @@
 
 pub mod actions;
 pub mod components;
-pub mod events;
 pub mod game;
 pub mod ui;
 pub mod util;
@@ -41,7 +40,6 @@ fn main() {
         .add_plugins((
             actions::ActionsPlugin,
             components::ComponentsPlugin,
-            events::EventsPlugin,
             game::GamePlugin,
         ))
         .insert_resource(Msaa::default())
