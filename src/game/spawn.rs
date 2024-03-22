@@ -2,10 +2,10 @@ use bevy::{ecs::prelude::*, prelude::*, utils::HashMap};
 use spew::prelude::*;
 
 use crate::{
-    AngularSpeed, AnimationClips, Barrier, BlocksVision, DeflectsSounds,
-    DoorBundle, DropShadow, FloorSwitchBundle, GlassBundle, GuardBundle,
-    Hearing, LinearSpeed, PickupBundle, PlayerBundle, SecurityCameraBundle,
-    Stunnable, Vision, Weapon,
+    AnimationClips, Barrier, BlocksVision, DeflectsSounds, DoorBundle,
+    DropShadow, FloorSwitchBundle, GlassBundle, GuardBundle, Hearing, Movement,
+    PickupBundle, PlayerBundle, SecurityCameraBundle, Stunnable, Vision,
+    Weapon,
 };
 
 use super::{ActorConfig, ComponentConfig};
@@ -66,11 +66,14 @@ fn spawn_actor_from_config_with_matrix(
             ComponentConfig::Glass => {
                 actor.insert(GlassBundle::default());
             },
-            ComponentConfig::LinearSpeed(linear_speed) => {
-                actor.insert(LinearSpeed(*linear_speed));
-            },
-            ComponentConfig::AngularSpeed(angular_speed) => {
-                actor.insert(AngularSpeed(angular_speed.to_radians()));
+            ComponentConfig::Movement {
+                linear_speed,
+                angular_speed,
+            } => {
+                actor.insert(Movement {
+                    linear_speed: *linear_speed,
+                    angular_speed: *angular_speed,
+                });
             },
             ComponentConfig::Physics { radius } => {
                 // TODO: Need a component for this one.

@@ -13,15 +13,34 @@ impl Plugin for MovementPlugin {
         // The order is important for correct rotations, so don't mess with it!
         app.add_systems(
             Update,
-            (movement_setup, movement_check_progress, destination_cleanup)
+            (move_to_setup, move_to_check_progress, move_to_cleanup)
                 .chain()
                 .in_set(StoppedWhenPausedSet),
         );
     }
 }
 
+/// All stats relevant to movement.
 #[derive(Clone, Component, Debug)]
-pub enum Movement {
+pub struct Movement {
+    /// Linear speed in `meters/second`.
+    pub linear_speed: f32,
+
+    /// Angular speed in `radians/second`.
+    pub angular_speed: f32,
+}
+
+impl Default for Movement {
+    fn default() -> Self {
+        Self {
+            linear_speed: 1.0,
+            angular_speed: std::f32::consts::TAU,
+        }
+    }
+}
+
+#[derive(Clone, Component, Debug)]
+pub enum MoveTo {
     /// A point this entity is trying to reach.
     Destination(Vec3),
 
@@ -29,34 +48,14 @@ pub enum Movement {
     Heading(Direction3d),
 }
 
-/// Linear speed in `meters/second`.
-#[derive(Clone, Component, Debug)]
-pub struct LinearSpeed(pub f32);
-
-impl Default for LinearSpeed {
-    fn default() -> Self {
-        Self(1.0)
-    }
-}
-
-/// Angular speed in `radians/second`.
-#[derive(Clone, Component, Debug)]
-pub struct AngularSpeed(pub f32);
-
-impl Default for AngularSpeed {
-    fn default() -> Self {
-        Self(std::f32::consts::TAU)
-    }
-}
-
 /// Stores currently running animation for later restoration.
 #[derive(Clone, Component, Debug, Default)]
 pub struct StoredAnimation(pub Handle<AnimationClip>);
 
-fn movement_setup(
+fn move_to_setup(
     mut commands: Commands,
     mut animations: Animations,
-    mut query: Query<Entity, Added<Movement>>,
+    mut query: Query<Entity, Added<MoveTo>>,
 ) {
     for entity in &mut query {
         let mut entity_commands = commands.entity(entity);
@@ -69,23 +68,15 @@ fn movement_setup(
     }
 }
 
-fn movement_check_progress(
+fn move_to_check_progress(
     time: Res<Time>,
     mut commands: Commands,
-    mut query: Query<(
-        Entity,
-        &mut Transform,
-        &Movement,
-        &LinearSpeed,
-        &AngularSpeed,
-    )>,
+    mut query: Query<(Entity, &mut Transform, &MoveTo, &Movement)>,
 ) {
-    for (entity, mut transform, movement, linear_speed, angular_speed) in
-        &mut query
-    {
+    for (entity, mut transform, move_to, movement) in &mut query {
         let mut entity_commands = commands.entity(entity);
-        let (heading, end_translation) = match movement {
-            Movement::Destination(destination) => {
+        let (heading, end_translation) = match move_to {
+            MoveTo::Destination(destination) => {
                 let direction_vector = *destination - transform.translation;
                 let heading = direction_vector.normalize();
                 let distance = direction_vector.dot(direction_vector).sqrt();
@@ -95,12 +86,12 @@ fn movement_check_progress(
                     transform.translation = *destination;
                 } else {
                     transform.translation +=
-                        heading * linear_speed.0 * time.delta_seconds();
+                        heading * movement.linear_speed * time.delta_seconds();
                 }
 
                 (heading, end_translation)
             },
-            Movement::Heading(heading) => (**heading, true),
+            MoveTo::Heading(heading) => (**heading, true),
         };
 
         // Negate forward() because glTF models typically face +Z axis.
@@ -112,21 +103,21 @@ fn movement_check_progress(
             transform.rotation = (transform.rotation
                 * Quat::from_axis_angle(
                     forward.cross(heading).normalize(),
-                    angular_speed.0 * time.delta_seconds(),
+                    movement.angular_speed * time.delta_seconds(),
                 ))
             .normalize();
         }
 
         if end_translation && end_rotation {
-            entity_commands.remove::<Movement>();
+            entity_commands.remove::<MoveTo>();
         }
     }
 }
 
-fn destination_cleanup(
+fn move_to_cleanup(
     mut commands: Commands,
     mut animations: Animations,
-    mut removed: RemovedComponents<Movement>,
+    mut removed: RemovedComponents<MoveTo>,
     query: Query<&StoredAnimation>,
 ) {
     for entity in removed.read() {

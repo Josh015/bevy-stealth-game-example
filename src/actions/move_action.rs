@@ -2,21 +2,21 @@ use bevy::prelude::*;
 use bevy_sequential_actions::*;
 use derive_new::new;
 
-use crate::Movement;
+use crate::MoveTo;
 
 /// Move an entity to a point.
 #[derive(new)]
 pub struct MoveAction {
-    movement: Movement,
+    move_to: MoveTo,
 }
 
 impl Action for MoveAction {
     fn is_finished(&self, agent: Entity, world: &World) -> bool {
-        !world.entity(agent).contains::<Movement>()
+        !world.entity(agent).contains::<MoveTo>()
     }
 
     fn on_start(&mut self, agent: Entity, world: &mut World) -> bool {
-        world.entity_mut(agent).insert(self.movement.clone());
+        world.entity_mut(agent).insert(self.move_to.clone());
         false
     }
 
@@ -26,6 +26,6 @@ impl Action for MoveAction {
         world: &mut World,
         _reason: StopReason,
     ) {
-        world.entity_mut(agent).remove::<Movement>();
+        world.entity_mut(agent).remove::<MoveTo>();
     }
 }

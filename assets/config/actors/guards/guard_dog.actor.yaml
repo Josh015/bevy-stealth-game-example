@@ -6,10 +6,11 @@ components:
   - !Vision
   - !Hearing
   - !Stunnable
-  - !LinearSpeed 0.5
-  - !AngularSpeed 270
   - !Physics { radius: 0.375 }
   - !Footsteps { sound_wave: Guard }
+  - !Movement
+    linear_speed: 0.5
+    angular_speed: 4.712
   - !Scene models/animated/Fox.glb#Scene0
   - !AnimationClips
     idle: models/animated/Fox.glb#Animation0
