@@ -34,13 +34,11 @@ pub struct Animations<'w, 's> {
 
 impl<'w, 's> Animations<'w, 's> {
     /// Looks up an animation clip by name and plays it on an entity.
-    pub fn play_clip(&mut self, entity: Entity, animation_clip_name: &str) {
+    pub fn play_clip(&mut self, entity: Entity, clip_name: &str) {
         if let Ok((animation_clips, animation_entity_link)) =
             self.query.get_mut(entity)
         {
-            if let Some(animation_clip) =
-                animation_clips.0.get(animation_clip_name)
-            {
+            if let Some(animation_clip) = animation_clips.0.get(clip_name) {
                 if let Ok(mut animation_player) =
                     self.animation_players.get_mut(animation_entity_link.0)
                 {
@@ -61,7 +59,7 @@ impl<'w, 's> Animations<'w, 's> {
     pub fn play_clip_handle(
         &mut self,
         entity: Entity,
-        animation_clip_handle: Handle<AnimationClip>,
+        clip_handle: Handle<AnimationClip>,
     ) {
         if let Ok((_, animation_entity_link)) = self.query.get_mut(entity) {
             if let Ok(mut animation_player) =
@@ -69,7 +67,7 @@ impl<'w, 's> Animations<'w, 's> {
             {
                 animation_player
                     .play_with_transition(
-                        animation_clip_handle.clone_weak(),
+                        clip_handle.clone_weak(),
                         Duration::from_millis(
                             ANIMATION_TRANSITION_DELAY_MILLIS,
                         ),

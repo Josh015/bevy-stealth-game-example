@@ -7,7 +7,7 @@ use crate::components::Animations;
 /// Plays an animation.
 #[derive(new)]
 pub struct AnimationAction {
-    animation_name: String,
+    clip_name: String,
 }
 
 impl Action for AnimationAction {
@@ -19,7 +19,7 @@ impl Action for AnimationAction {
         let mut system_state: SystemState<Animations> = SystemState::new(world);
         let mut animations = system_state.get_mut(world);
 
-        animations.play_clip(agent, &self.animation_name);
+        animations.play_clip(agent, &self.clip_name);
         true
     }
 

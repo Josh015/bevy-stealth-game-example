@@ -83,31 +83,31 @@ fn movement_check_progress(
         &mut query
     {
         let mut entity_commands = commands.entity(entity);
-        let (heading, end_destination) = match movement {
+        let (heading, end_translation) = match movement {
             Movement::Destination(destination) => {
                 let direction_vector = *destination - transform.translation;
                 let heading = direction_vector.normalize();
                 let distance = direction_vector.dot(direction_vector).sqrt();
-                let end_destination = distance <= DESTINATION_MARGIN_OF_ERROR;
+                let end_translation = distance <= DESTINATION_MARGIN_OF_ERROR;
 
-                if end_destination {
+                if end_translation {
                     transform.translation = *destination;
                 } else {
                     transform.translation +=
                         heading * linear_speed.0 * time.delta_seconds();
                 }
 
-                (heading, end_destination)
+                (heading, end_translation)
             },
             Movement::Heading(heading) => (**heading, true),
         };
 
         // Negate forward() because glTF models typically face +Z axis.
         let forward = -*transform.forward();
-        let end_heading =
+        let end_rotation =
             forward.dot(heading).abs() >= 1.0 - HEADING_MARGIN_OF_ERROR;
 
-        if !end_heading {
+        if !end_rotation {
             transform.rotation = (transform.rotation
                 * Quat::from_axis_angle(
                     forward.cross(heading).normalize(),
@@ -116,7 +116,7 @@ fn movement_check_progress(
             .normalize();
         }
 
-        if end_destination && end_heading {
+        if end_translation && end_rotation {
             entity_commands.remove::<Movement>();
         }
     }
