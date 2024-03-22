@@ -2,7 +2,7 @@ use bevy::{ecs::prelude::*, prelude::*, utils::HashMap};
 use spew::prelude::*;
 
 use crate::{
-    AngularSpeed, Animations, Barrier, BlocksVision, DeflectsSounds,
+    AngularSpeed, AnimationClips, Barrier, BlocksVision, DeflectsSounds,
     DoorBundle, DropShadow, FloorSwitchBundle, GlassBundle, GuardBundle,
     Hearing, LinearSpeed, PickupBundle, PlayerBundle, SecurityCameraBundle,
     Stunnable, Vision, Weapon,
@@ -100,14 +100,14 @@ fn spawn_actor_from_config_with_matrix(
             ComponentConfig::DeflectsSounds => {
                 actor.insert(DeflectsSounds::default());
             },
-            ComponentConfig::Animations(clips) => {
+            ComponentConfig::AnimationClips(clips) => {
                 let mut loaded_clips = HashMap::default();
 
                 for (k, v) in clips {
                     loaded_clips.insert(k.to_string(), asset_server.load(v));
                 }
 
-                actor.insert(Animations(loaded_clips));
+                actor.insert(AnimationClips(loaded_clips));
             },
             ComponentConfig::Scene(scene) => {
                 actor.insert(SceneBundle {

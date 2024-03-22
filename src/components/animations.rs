@@ -26,7 +26,7 @@ impl Plugin for AnimationsPlugin {
 
 /// Stores human-friendly names mapped to [`AnimationClip`] handles.
 #[derive(Clone, Component, Debug, Default)]
-pub struct Animations(pub HashMap<String, Handle<AnimationClip>>);
+pub struct AnimationClips(pub HashMap<String, Handle<AnimationClip>>);
 
 /// Allows a parent entity to access the [`AnimationPlayer`] entity buried
 /// within its [`Scene`] hierarchy.
@@ -36,7 +36,8 @@ pub struct AnimationEntityLink(pub Entity);
 /// Allows animations to easily be played on entities that support them.
 #[derive(SystemParam)]
 pub struct Animator<'w, 's> {
-    query: Query<'w, 's, (&'static Animations, &'static AnimationEntityLink)>,
+    query:
+        Query<'w, 's, (&'static AnimationClips, &'static AnimationEntityLink)>,
     animation_players: Query<'w, 's, &'static mut AnimationPlayer>,
 }
 
@@ -47,16 +48,18 @@ impl<'w, 's> Animator<'w, 's> {
         entity: Entity,
         animation_clip_name: &str,
     ) {
-        if let Ok((animations, animation_entity_link)) =
+        if let Ok((animation_clips, animation_entity_link)) =
             self.query.get_mut(entity)
         {
-            if let Some(animation) = animations.0.get(animation_clip_name) {
+            if let Some(animation_clip) =
+                animation_clips.0.get(animation_clip_name)
+            {
                 if let Ok(mut animation_player) =
                     self.animation_players.get_mut(animation_entity_link.0)
                 {
                     animation_player
                         .play_with_transition(
-                            animation.clone_weak(),
+                            animation_clip.clone_weak(),
                             Duration::from_millis(
                                 ANIMATION_TRANSITION_DELAY_MILLIS,
                             ),
@@ -109,7 +112,7 @@ impl<'w, 's> Animator<'w, 's> {
 
 fn start_default_animation(
     mut animator: Animator,
-    query: Query<Entity, (With<Animations>, Added<AnimationEntityLink>)>,
+    query: Query<Entity, (With<AnimationClips>, Added<AnimationEntityLink>)>,
 ) {
     for entity in &query {
         animator.play_animation_name(entity, DEFAULT_ANIMATION);
