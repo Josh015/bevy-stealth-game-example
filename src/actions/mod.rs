@@ -28,17 +28,17 @@ pub(super) struct ActionsPlugin;
 
 impl Plugin for ActionsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(OnEnter(GameState::Paused), pause_all_actions)
-            .add_systems(OnExit(GameState::Paused), unpause_all_actions)
+        app.add_systems(OnEnter(GameState::Paused), pause_all_action_queues)
+            .add_systems(OnExit(GameState::Paused), resume_all_action_queues)
             .add_systems(
                 Update,
-                pause_actions_added_while_paused.in_set(ActiveWhenPausedSet),
+                pause_added_action_queues.in_set(ActiveWhenPausedSet),
             )
             .add_plugins(WaitActionPlugin);
     }
 }
 
-fn pause_all_actions(
+fn pause_all_action_queues(
     mut commands: Commands,
     query: Query<Entity, With<ActionQueue>>,
 ) {
@@ -47,7 +47,7 @@ fn pause_all_actions(
     }
 }
 
-fn unpause_all_actions(
+fn resume_all_action_queues(
     mut commands: Commands,
     query: Query<Entity, With<ActionQueue>>,
 ) {
@@ -56,7 +56,7 @@ fn unpause_all_actions(
     }
 }
 
-fn pause_actions_added_while_paused(
+fn pause_added_action_queues(
     mut commands: Commands,
     query: Query<Entity, Added<ActionQueue>>,
 ) {
