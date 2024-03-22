@@ -1,12 +1,17 @@
-use bevy::{ecs::prelude::*, math::prelude::*};
+use bevy::{ecs::prelude::*, math::prelude::*, prelude::*};
 
-use crate::AngularVelocity;
+pub(super) struct PickupPlugin;
+
+impl Plugin for PickupPlugin {
+    fn build(&self, app: &mut App) {
+        app.add_systems(Update, spinning_pickup_item);
+    }
+}
 
 /// Required components for a [`Pickup`] entity.
 #[derive(Bundle, Clone, Debug)]
 pub struct PickupBundle {
     pub pickup: Pickup,
-    pub angular_velocity: AngularVelocity,
 }
 
 impl Default for PickupBundle {
@@ -14,16 +19,24 @@ impl Default for PickupBundle {
         // TODO: Need states to represent it being visible, disappearing, disappeared, and
         // reappearing after a set delay.
 
-        Self {
-            pickup: Pickup,
-            angular_velocity: AngularVelocity {
-                axis: Direction3d::Y,
-                velocity: 90f32.to_radians(),
-            },
-        }
+        Self { pickup: Pickup }
     }
 }
 
 /// Items that player can pick up by colliding with them.
 #[derive(Clone, Component, Debug, Default)]
 pub struct Pickup;
+
+fn spinning_pickup_item(
+    time: Res<Time>,
+    mut query: Query<&mut Transform, With<Pickup>>,
+) {
+    for mut transform in &mut query {
+        transform.rotation = (transform.rotation
+            * Quat::from_axis_angle(
+                Vec3::Y,
+                std::f32::consts::FRAC_PI_2 * time.delta_seconds(),
+            ))
+        .normalize();
+    }
+}
