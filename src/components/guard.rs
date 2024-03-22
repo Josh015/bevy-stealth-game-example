@@ -8,7 +8,7 @@ use crate::{
         AnimationAction, MoveAction, RepeatSequence, StateDoneAction,
         WaitAction,
     },
-    game::LoadedSet,
+    game::PausableSet,
     util::Repeat,
     Movement,
 };
@@ -17,7 +17,7 @@ pub(super) struct GuardPlugin;
 
 impl Plugin for GuardPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, (ping, pong).chain().in_set(LoadedSet));
+        app.add_systems(Update, (ping, pong).chain().in_set(PausableSet));
     }
 }
 

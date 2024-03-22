@@ -1,4 +1,6 @@
-use bevy::app::prelude::*;
+use crate::game::GameState;
+use bevy::prelude::*;
+use bevy_sequential_actions::{ActionQueue, ActionsProxy, ModifyActions};
 
 mod action_sequence;
 mod animation_action;
@@ -26,6 +28,26 @@ pub(super) struct ActionsPlugin;
 
 impl Plugin for ActionsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugins(WaitActionPlugin);
+        app.add_systems(OnEnter(GameState::Paused), pause_actions)
+            .add_systems(OnExit(GameState::Paused), unpause_actions)
+            .add_plugins(WaitActionPlugin);
+    }
+}
+
+fn pause_actions(
+    mut commands: Commands,
+    query: Query<Entity, With<ActionQueue>>,
+) {
+    for entity in &query {
+        commands.actions(entity).pause();
+    }
+}
+
+fn unpause_actions(
+    mut commands: Commands,
+    query: Query<Entity, With<ActionQueue>>,
+) {
+    for entity in &query {
+        commands.actions(entity).execute();
     }
 }
