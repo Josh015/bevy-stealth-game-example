@@ -25,6 +25,7 @@ impl Plugin for SpawnPlugin {
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
 pub enum Config {
     Actor,
+    Emote,
     Level,
     SoundWave,
 }

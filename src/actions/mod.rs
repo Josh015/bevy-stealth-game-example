@@ -2,7 +2,7 @@ use bevy::app::prelude::*;
 
 mod action_sequence;
 mod animation_action;
-mod dialog_bubble_action;
+mod emote_action;
 mod move_action;
 mod parallel_actions;
 mod repeat_action;
@@ -13,7 +13,7 @@ mod wait_action;
 
 pub use action_sequence::*;
 pub use animation_action::*;
-pub use dialog_bubble_action::*;
+pub use emote_action::*;
 pub use move_action::*;
 pub use parallel_actions::*;
 pub use repeat_action::*;

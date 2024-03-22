@@ -2,14 +2,14 @@ use bevy::ecs::prelude::*;
 use bevy_sequential_actions::*;
 use derive_new::new;
 
-/// Pops up a temporary dialog bubble in the UI layer that stays over the head of
-/// the entity that made it.
+/// Pops up a temporary emote image sprite that hovers over the head of the
+/// entity that spawned it.
 #[derive(new)]
-pub struct DialogBubbleAction;
+pub struct EmoteAction;
 // image_handle: Handle<Image>
 // duration: Duration
 
-impl Action for DialogBubbleAction {
+impl Action for EmoteAction {
     fn is_finished(&self, _agent: Entity, _world: &World) -> bool {
         true
     }
