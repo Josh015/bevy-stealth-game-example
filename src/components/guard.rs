@@ -5,11 +5,12 @@ use std::time::Duration;
 
 use crate::{
     actions::{
-        AnimationAction, MoveToAction, RepeatSequence, StateDoneAction,
-        TurnToAction, WaitAction,
+        AnimationAction, MoveAction, RepeatSequence, StateDoneAction,
+        WaitAction,
     },
     game::LoadedSet,
     util::Repeat,
+    Movement,
 };
 
 pub(super) struct GuardPlugin;
@@ -97,13 +98,13 @@ fn ping(mut commands: Commands, query: Query<Entity, Added<Ping>>) {
             RepeatSequence::new(
                 Repeat::Times(2),
                 actions![
-                    TurnToAction::new(Direction3d::NEG_X),
+                    MoveAction::new(Movement::Heading(Direction3d::NEG_X)),
                     WaitAction::new(Duration::from_millis(SPIN_DELAY_MILLIS)),
-                    TurnToAction::new(Direction3d::NEG_Z),
+                    MoveAction::new(Movement::Heading(Direction3d::NEG_Z)),
                     WaitAction::new(Duration::from_millis(SPIN_DELAY_MILLIS)),
-                    TurnToAction::new(Direction3d::X),
+                    MoveAction::new(Movement::Heading(Direction3d::X)),
                     WaitAction::new(Duration::from_millis(SPIN_DELAY_MILLIS)),
-                    TurnToAction::new(Direction3d::Z),
+                    MoveAction::new(Movement::Heading(Direction3d::Z)),
                     WaitAction::new(Duration::from_millis(SPIN_DELAY_MILLIS))
                 ]
             ),
@@ -124,12 +125,28 @@ fn pong(mut commands: Commands, query: Query<Entity, Added<Ping>>) {
         commands.actions(entity).add_many(actions![
             AnimationAction::new("idle".to_owned()),
             WaitAction::new(Duration::from_millis(IDLE_DELAY_MILLIS)),
-            MoveToAction::new(Vec3::new(movement_range, 0.0, movement_range)),
-            MoveToAction::new(Vec3::new(movement_range, 0.0, -movement_range)),
-            MoveToAction::new(Vec3::new(-movement_range, 0.0, -movement_range)),
-            MoveToAction::new(Vec3::new(-movement_range, 0.0, movement_range)),
-            MoveToAction::new(Vec3::new(0.0, 0.0, 0.0)),
-            TurnToAction::new(Direction3d::Z),
+            MoveAction::new(Movement::Destination(Vec3::new(
+                movement_range,
+                0.0,
+                movement_range
+            ))),
+            MoveAction::new(Movement::Destination(Vec3::new(
+                movement_range,
+                0.0,
+                -movement_range
+            ))),
+            MoveAction::new(Movement::Destination(Vec3::new(
+                -movement_range,
+                0.0,
+                -movement_range
+            ))),
+            MoveAction::new(Movement::Destination(Vec3::new(
+                -movement_range,
+                0.0,
+                movement_range
+            ))),
+            MoveAction::new(Movement::Destination(Vec3::new(0.0, 0.0, 0.0))),
+            MoveAction::new(Movement::Heading(Direction3d::Z)),
             WaitAction::new(Duration::from_millis(SPIN_DELAY_MILLIS)),
             |agent: Entity, world: &mut World| -> bool {
                 world.entity_mut(agent).insert(Stunnable::default());

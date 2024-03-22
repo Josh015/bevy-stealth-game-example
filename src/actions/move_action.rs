@@ -2,25 +2,23 @@ use bevy::prelude::*;
 use bevy_sequential_actions::*;
 use derive_new::new;
 
-use crate::Destination;
+use crate::Movement;
 
 /// Move an entity to a point.
 ///
 /// **WARNING:** Can't be used in parallel with [`TurnToAction`](super::turn_to_action::TurnToAction).
 #[derive(new)]
-pub struct MoveToAction {
-    destination: Vec3,
+pub struct MoveAction {
+    movement: Movement,
 }
 
-impl Action for MoveToAction {
+impl Action for MoveAction {
     fn is_finished(&self, agent: Entity, world: &World) -> bool {
-        !world.entity(agent).contains::<Destination>()
+        !world.entity(agent).contains::<Movement>()
     }
 
     fn on_start(&mut self, agent: Entity, world: &mut World) -> bool {
-        world
-            .entity_mut(agent)
-            .insert(Destination(self.destination));
+        world.entity_mut(agent).insert(self.movement.clone());
         false
     }
 
@@ -30,6 +28,6 @@ impl Action for MoveToAction {
         world: &mut World,
         _reason: StopReason,
     ) {
-        world.entity_mut(agent).remove::<Destination>();
+        world.entity_mut(agent).remove::<Movement>();
     }
 }

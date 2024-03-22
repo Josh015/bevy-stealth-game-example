@@ -1,10 +1,9 @@
 use bevy::prelude::*;
 
-use crate::{AngularVelocity, LinearVelocity};
-
 use super::Animations;
 
-const ANGULAR_VELOCITY_MARGIN_OF_ERROR: f32 = 0.0001;
+const DESTINATION_MARGIN_OF_ERROR: f32 = 0.001;
+const HEADING_MARGIN_OF_ERROR: f32 = 0.001;
 const MOVING_ANIMATION: &str = "moving";
 
 pub(super) struct MovementPlugin;
@@ -14,17 +13,19 @@ impl Plugin for MovementPlugin {
         // The order is important for correct rotations, so don't mess with it!
         app.add_systems(
             Update,
-            (
-                destination_setup,
-                destination_check_progress,
-                destination_cleanup,
-                heading_setup,
-                heading_check_progress,
-                heading_cleanup,
-            )
+            (movement_setup, movement_check_progress, destination_cleanup)
                 .chain(),
         );
     }
+}
+
+#[derive(Clone, Component, Debug)]
+pub enum Movement {
+    /// A point this entity is trying to reach.
+    Destination(Vec3),
+
+    /// A direction this entity wants to face.
+    Heading(Direction3d),
 }
 
 /// Linear speed in `meters/second`.
@@ -47,34 +48,17 @@ impl Default for AngularSpeed {
     }
 }
 
-/// A point this entity is trying to reach.
-#[derive(Clone, Component, Debug)]
-pub struct Destination(pub Vec3);
-
-/// A direction this entity wants to face.
-#[derive(Clone, Component, Debug)]
-pub struct Heading(pub Direction3d);
-
 /// Stores currently running animation for later restoration.
 #[derive(Clone, Component, Debug, Default)]
 pub struct StoredAnimation(pub Handle<AnimationClip>);
 
-fn destination_setup(
+fn movement_setup(
     mut commands: Commands,
     mut animations: Animations,
-    mut query: Query<
-        (Entity, &Transform, &Destination, &LinearSpeed),
-        Added<Destination>,
-    >,
+    mut query: Query<Entity, Added<Movement>>,
 ) {
-    for (entity, transform, destination, linear_speed) in &mut query {
-        let heading = (destination.0 - transform.translation).normalize();
+    for entity in &mut query {
         let mut entity_commands = commands.entity(entity);
-
-        entity_commands.insert((
-            Heading(Direction3d::new_unchecked(heading)),
-            LinearVelocity(heading * linear_speed.0),
-        ));
 
         if let Some(current_animation) = animations.get_current_clip(entity) {
             entity_commands.insert(StoredAnimation(current_animation));
@@ -84,20 +68,56 @@ fn destination_setup(
     }
 }
 
-fn destination_check_progress(
+fn movement_check_progress(
+    time: Res<Time>,
     mut commands: Commands,
-    mut query: Query<(Entity, &mut Transform, &Destination, &Heading)>,
+    mut query: Query<(
+        Entity,
+        &mut Transform,
+        &Movement,
+        &LinearSpeed,
+        &AngularSpeed,
+    )>,
 ) {
-    for (entity, mut transform, destination, heading) in &mut query {
-        if (destination.0 - transform.translation)
-            .normalize()
-            .dot(*heading.0)
-            <= 0.0
-        {
-            transform.translation = destination.0;
-            commands
-                .entity(entity)
-                .remove::<(Destination, LinearVelocity)>();
+    for (entity, mut transform, movement, linear_speed, angular_speed) in
+        &mut query
+    {
+        let mut entity_commands = commands.entity(entity);
+        let (heading, end_destination) = match movement {
+            Movement::Destination(destination) => {
+                let direction_vector = *destination - transform.translation;
+                let heading = direction_vector.normalize();
+                let distance = direction_vector.dot(direction_vector).sqrt();
+                let end_condition = distance <= DESTINATION_MARGIN_OF_ERROR;
+
+                if end_condition {
+                    transform.translation = *destination;
+                } else {
+                    transform.translation +=
+                        heading * linear_speed.0 * time.delta_seconds();
+                }
+
+                (heading, end_condition)
+            },
+            Movement::Heading(heading) => (**heading, true),
+        };
+
+        // Negate forward() because glTF models typically face +Z axis.
+        let forward = -*transform.forward();
+        let end_heading =
+            forward.dot(heading).abs() >= 1.0 - HEADING_MARGIN_OF_ERROR;
+
+        if !end_heading {
+            transform.rotation = (transform.rotation
+                * Quat::from_axis_angle(
+                    forward.cross(heading).normalize(),
+                    angular_speed.0 * time.delta_seconds(),
+                ))
+            .normalize();
+        }
+
+        if end_destination && end_heading {
+            entity_commands.remove::<Movement>();
         }
     }
 }
@@ -105,85 +125,14 @@ fn destination_check_progress(
 fn destination_cleanup(
     mut commands: Commands,
     mut animations: Animations,
-    mut removed: RemovedComponents<Destination>,
+    mut removed: RemovedComponents<Movement>,
     query: Query<&StoredAnimation>,
 ) {
     for entity in removed.read() {
-        commands.entity(entity).remove::<LinearVelocity>();
-
         if let Ok(stored_animation) = query.get(entity) {
-            animations.play_clip_handle(entity, stored_animation.0.clone_weak())
-        }
-    }
-}
-
-fn heading_setup(
-    mut commands: Commands,
-    mut animations: Animations,
-    query: Query<
-        (
-            Entity,
-            &Transform,
-            &Heading,
-            &AngularSpeed,
-            Has<Destination>,
-        ),
-        Added<Heading>,
-    >,
-) {
-    for (entity, transform, heading, angular_speed, has_destination) in &query {
-        let mut entity_commands = commands.entity(entity);
-
-        entity_commands.insert((AngularVelocity {
-            axis: Direction3d::new_unchecked(
-                (-*transform.forward()).cross(*heading.0).normalize(),
-            ),
-            velocity: angular_speed.0,
-        },));
-
-        if !has_destination {
-            if let Some(current_animation) = animations.get_current_clip(entity)
-            {
-                entity_commands.insert(StoredAnimation(current_animation));
-            }
-        }
-
-        animations.play_clip(entity, MOVING_ANIMATION);
-    }
-}
-
-fn heading_check_progress(
-    mut commands: Commands,
-    query: Query<(Entity, &Transform, &Heading, Has<Destination>)>,
-) {
-    for (entity, transform, heading, has_destination) in &query {
-        // Negate forward() because glTF models typically face +Z axis.
-        if (-*transform.forward()).dot(*heading.0).abs()
-            >= 1.0 - ANGULAR_VELOCITY_MARGIN_OF_ERROR
-        {
-            let mut entity_commands = commands.entity(entity);
-
-            if has_destination {
-                entity_commands.remove::<AngularVelocity>();
-            } else {
-                entity_commands.remove::<(Heading, AngularVelocity)>();
-            }
-        }
-    }
-}
-
-fn heading_cleanup(
-    mut commands: Commands,
-    mut animations: Animations,
-    mut removed: RemovedComponents<Heading>,
-    query: Query<Option<&StoredAnimation>, Without<Destination>>,
-) {
-    for entity in removed.read() {
-        commands.entity(entity).remove::<AngularVelocity>();
-
-        if let Ok(Some(stored_animation)) = query.get(entity) {
             animations
                 .play_clip_handle(entity, stored_animation.0.clone_weak());
+            commands.entity(entity).remove::<StoredAnimation>();
         }
     }
 }
