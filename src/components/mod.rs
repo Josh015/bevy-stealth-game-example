@@ -6,6 +6,7 @@ mod door;
 mod drop_shadow;
 mod floor_switch;
 mod footsteps;
+mod for_state;
 mod glass;
 mod guard;
 mod movement;
@@ -26,6 +27,7 @@ pub use door::*;
 pub use drop_shadow::*;
 pub use floor_switch::*;
 pub use footsteps::*;
+pub use for_state::*;
 pub use glass::*;
 pub use guard::*;
 pub use movement::*;
@@ -46,6 +48,7 @@ impl Plugin for ComponentsPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins((
             AnimationClipsPlugin,
+            ForStatePlugin,
             GuardPlugin,
             MovementPlugin,
             PhysicsPlugin,

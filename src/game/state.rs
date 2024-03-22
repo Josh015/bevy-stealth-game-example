@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 use spew::prelude::SpewSystemSet;
-use strum::{EnumIter, IntoEnumIterator};
+use strum::EnumIter;
 
 pub(super) struct StatePlugin;
 
@@ -48,13 +48,6 @@ impl Plugin for StatePlugin {
                     .after(StoppedWhenPausedSet)
                     .run_if(in_state(GameState::Playing)),
             );
-
-        for state in GameState::iter() {
-            app.add_systems(
-                OnEnter(state),
-                despawn_invalid_entities_for_state::<GameState>,
-            );
-        }
     }
 }
 
@@ -85,19 +78,3 @@ pub struct ActiveWhenPausedSet;
 /// Systems that only run during gameplay.
 #[derive(Clone, Debug, Eq, Hash, PartialEq, SystemSet)]
 pub struct PlayableSet;
-
-/// Tags an entity to only exist in its associated game states.
-#[derive(Clone, Component, Debug)]
-pub struct ForStates<S: States>(pub Vec<S>);
-
-fn despawn_invalid_entities_for_state<S: States>(
-    mut commands: Commands,
-    game_state: Res<State<S>>,
-    query: Query<(Entity, &ForStates<S>)>,
-) {
-    for (entity, for_states) in &query {
-        if !for_states.0.contains(game_state.get()) {
-            commands.entity(entity).despawn_recursive();
-        }
-    }
-}
