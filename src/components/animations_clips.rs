@@ -28,29 +28,15 @@ pub struct AnimationClips(pub HashMap<String, Handle<AnimationClip>>);
 #[derive(Component, Debug)]
 pub struct AnimationEntityLink(pub Entity);
 
-fn pause_animations(
-    query: Query<&AnimationEntityLink>,
-    mut animation_players: Query<&mut AnimationPlayer>,
-) {
-    for animation_entity_link in &query {
-        if let Ok(mut animation_player) =
-            animation_players.get_mut(animation_entity_link.0)
-        {
-            animation_player.pause();
-        }
+fn pause_animations(mut animation_players: Query<&mut AnimationPlayer>) {
+    for mut animation_player in &mut animation_players {
+        animation_player.pause();
     }
 }
 
-fn unpause_animations(
-    query: Query<&AnimationEntityLink>,
-    mut animation_players: Query<&mut AnimationPlayer>,
-) {
-    for animation_entity_link in &query {
-        if let Ok(mut animation_player) =
-            animation_players.get_mut(animation_entity_link.0)
-        {
-            animation_player.resume();
-        }
+fn unpause_animations(mut animation_players: Query<&mut AnimationPlayer>) {
+    for mut animation_player in &mut animation_players {
+        animation_player.resume();
     }
 }
 
