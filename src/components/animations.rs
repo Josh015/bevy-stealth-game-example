@@ -17,37 +17,24 @@ impl Plugin for AnimationsPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(
             Update,
-            (start_default_animation, link_animations)
+            (start_default_animation, link_animation_players)
                 .chain()
                 .in_set(LoadedSet),
         );
     }
 }
 
-/// Stores human-friendly names mapped to [`AnimationClip`] handles.
-#[derive(Clone, Component, Debug, Default)]
-pub struct AnimationClips(pub HashMap<String, Handle<AnimationClip>>);
-
-/// Allows a parent entity to access the [`AnimationPlayer`] entity buried
-/// within its [`Scene`] hierarchy.
-#[derive(Component, Debug)]
-pub struct AnimationEntityLink(pub Entity);
-
 /// Allows animations to easily be played on entities that support them.
 #[derive(SystemParam)]
-pub struct Animator<'w, 's> {
+pub struct Animations<'w, 's> {
     query:
         Query<'w, 's, (&'static AnimationClips, &'static AnimationEntityLink)>,
     animation_players: Query<'w, 's, &'static mut AnimationPlayer>,
 }
 
-impl<'w, 's> Animator<'w, 's> {
-    /// Looks up and plays an animation clip on a given entity.
-    pub fn play_animation_name(
-        &mut self,
-        entity: Entity,
-        animation_clip_name: &str,
-    ) {
+impl<'w, 's> Animations<'w, 's> {
+    /// Looks up an animation clip by name and plays it on an entity.
+    pub fn play_clip(&mut self, entity: Entity, animation_clip_name: &str) {
         if let Ok((animation_clips, animation_entity_link)) =
             self.query.get_mut(entity)
         {
@@ -70,8 +57,8 @@ impl<'w, 's> Animator<'w, 's> {
         }
     }
 
-    /// Plays an animation clip on a given entity.
-    pub fn play_animation_handle(
+    /// Plays an animation clip on an entity.
+    pub fn play_clip_handle(
         &mut self,
         entity: Entity,
         animation_clip_handle: Handle<AnimationClip>,
@@ -93,7 +80,7 @@ impl<'w, 's> Animator<'w, 's> {
     }
 
     /// Gets the handle for this entity's currently playing animation.
-    pub fn get_current_animation(
+    pub fn get_current_clip(
         &self,
         entity: Entity,
     ) -> Option<Handle<AnimationClip>> {
@@ -110,16 +97,25 @@ impl<'w, 's> Animator<'w, 's> {
     }
 }
 
+/// Stores human-friendly names mapped to [`AnimationClip`] handles.
+#[derive(Clone, Component, Debug, Default)]
+pub struct AnimationClips(pub HashMap<String, Handle<AnimationClip>>);
+
+/// Allows a parent entity to access the [`AnimationPlayer`] entity buried
+/// within its [`Scene`] hierarchy.
+#[derive(Component, Debug)]
+pub struct AnimationEntityLink(pub Entity);
+
 fn start_default_animation(
-    mut animator: Animator,
+    mut animations: Animations,
     query: Query<Entity, (With<AnimationClips>, Added<AnimationEntityLink>)>,
 ) {
     for entity in &query {
-        animator.play_animation_name(entity, DEFAULT_ANIMATION);
+        animations.play_clip(entity, DEFAULT_ANIMATION);
     }
 }
 
-fn link_animations(
+fn link_animation_players(
     mut commands: Commands,
     animation_players_query: Query<Entity, Added<AnimationPlayer>>,
     all_entities_with_parents_query: Query<&Parent>,

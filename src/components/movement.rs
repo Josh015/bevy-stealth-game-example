@@ -2,7 +2,7 @@ use bevy::prelude::*;
 
 use crate::{AngularVelocity, LinearVelocity};
 
-use super::Animator;
+use super::Animations;
 
 const ANGULAR_VELOCITY_MARGIN_OF_ERROR: f32 = 0.0001;
 const MOVING_ANIMATION: &str = "moving";
@@ -61,7 +61,7 @@ pub struct StoredAnimation(pub Handle<AnimationClip>);
 
 fn destination_setup(
     mut commands: Commands,
-    mut animator: Animator,
+    mut animations: Animations,
     mut query: Query<
         (Entity, &Transform, &Destination, &LinearSpeed),
         Added<Destination>,
@@ -76,12 +76,11 @@ fn destination_setup(
             LinearVelocity(heading * linear_speed.0),
         ));
 
-        if let Some(current_animation) = animator.get_current_animation(entity)
-        {
+        if let Some(current_animation) = animations.get_current_clip(entity) {
             entity_commands.insert(StoredAnimation(current_animation));
         }
 
-        animator.play_animation_name(entity, MOVING_ANIMATION);
+        animations.play_clip(entity, MOVING_ANIMATION);
     }
 }
 
@@ -105,7 +104,7 @@ fn destination_check_progress(
 
 fn destination_cleanup(
     mut commands: Commands,
-    mut animator: Animator,
+    mut animations: Animations,
     mut removed: RemovedComponents<Destination>,
     query: Query<&StoredAnimation>,
 ) {
@@ -113,15 +112,14 @@ fn destination_cleanup(
         commands.entity(entity).remove::<LinearVelocity>();
 
         if let Ok(stored_animation) = query.get(entity) {
-            animator
-                .play_animation_handle(entity, stored_animation.0.clone_weak())
+            animations.play_clip_handle(entity, stored_animation.0.clone_weak())
         }
     }
 }
 
 fn heading_setup(
     mut commands: Commands,
-    mut animator: Animator,
+    mut animations: Animations,
     query: Query<
         (
             Entity,
@@ -144,14 +142,13 @@ fn heading_setup(
         },));
 
         if !has_destination {
-            if let Some(current_animation) =
-                animator.get_current_animation(entity)
+            if let Some(current_animation) = animations.get_current_clip(entity)
             {
                 entity_commands.insert(StoredAnimation(current_animation));
             }
         }
 
-        animator.play_animation_name(entity, MOVING_ANIMATION);
+        animations.play_clip(entity, MOVING_ANIMATION);
     }
 }
 
@@ -177,7 +174,7 @@ fn heading_check_progress(
 
 fn heading_cleanup(
     mut commands: Commands,
-    mut animator: Animator,
+    mut animations: Animations,
     mut removed: RemovedComponents<Heading>,
     query: Query<Option<&StoredAnimation>, Without<Destination>>,
 ) {
@@ -185,8 +182,8 @@ fn heading_cleanup(
         commands.entity(entity).remove::<AngularVelocity>();
 
         if let Ok(Some(stored_animation)) = query.get(entity) {
-            animator
-                .play_animation_handle(entity, stored_animation.0.clone_weak());
+            animations
+                .play_clip_handle(entity, stored_animation.0.clone_weak());
         }
     }
 }
