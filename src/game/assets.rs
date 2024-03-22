@@ -14,11 +14,11 @@ impl Plugin for AssetsPlugin {
                 "sound_wave.yaml",
             ]))
             .add_loading_state(
-                LoadingState::new(GameState::Loading)
+                LoadingState::new(GameState::AssetLoading)
                     .continue_to_state(GameState::StartMenu),
             )
             .configure_loading_state(
-                LoadingStateConfig::new(GameState::Loading)
+                LoadingStateConfig::new(GameState::AssetLoading)
                     .load_collection::<GameAssets>(),
             );
     }

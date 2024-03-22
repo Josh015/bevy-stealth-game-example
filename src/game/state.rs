@@ -9,44 +9,46 @@ impl Plugin for StatePlugin {
         app.init_state::<GameState>()
             .configure_sets(
                 Update,
-                LoadedSet.run_if(not(in_state(GameState::Loading))),
+                PostAssetLoadingSet
+                    .run_if(not(in_state(GameState::AssetLoading))),
             )
             .configure_sets(
                 Update,
                 ActiveWhenPausedSet
-                    .in_set(LoadedSet)
+                    .in_set(PostAssetLoadingSet)
                     .run_if(in_state(GameState::Paused)),
             )
             .configure_sets(
                 Update,
                 StoppedWhenPausedSet
-                    .in_set(LoadedSet)
+                    .in_set(PostAssetLoadingSet)
                     .run_if(not(in_state(GameState::Paused))),
             )
             .configure_sets(
                 Update,
-                PlayableSet
-                    .in_set(LoadedSet)
+                GameplaySet
+                    .in_set(PostAssetLoadingSet)
                     .after(StoppedWhenPausedSet)
                     .before(SpewSystemSet)
-                    .run_if(in_state(GameState::Playing)),
+                    .run_if(in_state(GameState::Gameplay)),
             )
             .configure_sets(
                 PostUpdate,
-                LoadedSet.run_if(not(in_state(GameState::Loading))),
+                PostAssetLoadingSet
+                    .run_if(not(in_state(GameState::AssetLoading))),
             )
             .configure_sets(
                 PostUpdate,
                 StoppedWhenPausedSet
-                    .in_set(LoadedSet)
+                    .in_set(PostAssetLoadingSet)
                     .run_if(not(in_state(GameState::Paused))),
             )
             .configure_sets(
                 PostUpdate,
-                PlayableSet
-                    .in_set(LoadedSet)
+                GameplaySet
+                    .in_set(PostAssetLoadingSet)
                     .after(StoppedWhenPausedSet)
-                    .run_if(in_state(GameState::Playing)),
+                    .run_if(in_state(GameState::Gameplay)),
             );
     }
 }
@@ -57,15 +59,15 @@ impl Plugin for StatePlugin {
 )]
 pub enum GameState {
     #[default]
-    Loading,
+    AssetLoading,
     StartMenu,
-    Playing,
+    Gameplay,
     Paused,
 }
 
-/// Systems that are always running after everything is loaded.
+/// Systems that run outside the loading state.
 #[derive(Clone, Debug, Eq, Hash, PartialEq, SystemSet)]
-pub struct LoadedSet;
+pub struct PostAssetLoadingSet;
 
 /// Systems that stop when the game is paused.
 #[derive(Clone, Debug, Eq, Hash, PartialEq, SystemSet)]
@@ -77,4 +79,4 @@ pub struct ActiveWhenPausedSet;
 
 /// Systems that only run during gameplay.
 #[derive(Clone, Debug, Eq, Hash, PartialEq, SystemSet)]
-pub struct PlayableSet;
+pub struct GameplaySet;
