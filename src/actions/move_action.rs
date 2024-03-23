@@ -4,7 +4,7 @@ use derive_new::new;
 
 use crate::MoveTo;
 
-/// Move an entity to a point.
+/// Moves an entity.
 #[derive(new)]
 pub struct MoveAction {
     move_to: MoveTo,

@@ -39,6 +39,7 @@ impl Default for Movement {
     }
 }
 
+/// Makes an entity transform in a specified way.
 #[derive(Clone, Component, Debug)]
 pub enum MoveTo {
     /// A point this entity is trying to reach.
