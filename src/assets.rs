@@ -25,10 +25,10 @@ impl Plugin for AssetsPlugin {
 
 #[derive(AssetCollection, Resource)]
 pub struct GameAssets {
-    #[asset(path = "config/actors", collection(typed, mapped))]
+    #[asset(path = "actors", collection(typed, mapped))]
     pub actors: HashMap<String, Handle<ActorConfig>>,
 
-    #[asset(path = "config/sound_waves", collection(typed))]
+    #[asset(path = "sound_waves", collection(typed))]
     pub sound_waves: Vec<Handle<SoundWaveConfig>>,
 }
 

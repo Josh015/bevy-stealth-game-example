@@ -125,7 +125,7 @@ fn tinkering_zone_system(
     // ---- Pickup ----
     let birthday_cake = game_assets
         .actors
-        .get("config/actors/pickups/birthday_cake_pickup.actor.ron")
+        .get("actors/pickups/birthday_cake_pickup.actor.ron")
         .unwrap();
     spawn_events.send(SpawnEvent::with_data(
         Config::Actor,
@@ -142,7 +142,7 @@ fn tinkering_zone_system(
     // ---- Actor ----
     let guard_dog = game_assets
         .actors
-        .get("config/actors/guards/guard_dog.actor.ron")
+        .get("actors/guards/guard_dog.actor.ron")
         .unwrap();
     spawn_events.send(SpawnEvent::with_data(
         Config::Actor,
