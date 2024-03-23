@@ -1,4 +1,4 @@
-use super::state::*;
+use super::states::*;
 use bevy::{prelude::*, reflect::TypePath, utils::HashMap};
 use bevy_asset_loader::prelude::*;
 use bevy_common_assets::ron::RonAssetPlugin;

@@ -1,4 +1,4 @@
-use crate::state::*;
+use crate::states::*;
 use bevy::{ecs::prelude::*, prelude::*};
 use strum::IntoEnumIterator;
 

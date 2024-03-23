@@ -5,8 +5,9 @@ mod assets;
 mod components;
 mod events;
 mod spawners;
-mod state;
+mod states;
 mod system_params;
+mod system_sets;
 mod ui;
 mod util;
 
@@ -23,7 +24,8 @@ use events::*;
 use seldom_state::prelude::*;
 use spawners::*;
 use spew::prelude::SpawnEvent;
-use state::*;
+use states::*;
+use system_sets::*;
 
 fn main() {
     App::new()
@@ -52,12 +54,13 @@ fn main() {
             EventsPlugin,
             SpawnersPlugin,
             StatePlugin,
+            SystemSetsPlugin,
         ))
         .insert_resource(Msaa::default())
         .insert_resource(ClearColor(Color::rgba(0.7, 0.9, 1.0, 1.0)))
         .add_systems(Update, bevy::window::close_on_esc)
         .add_systems(
-            OnExit(state::GameState::AssetLoading),
+            OnExit(states::GameState::AssetLoading),
             tinkering_zone_system,
         )
         .run();
