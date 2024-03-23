@@ -1,4 +1,0 @@
-name: Security Camera
-components:
-  - !SecurityCamera
-  # - !Scene models/animated/Fox.glb#Scene0

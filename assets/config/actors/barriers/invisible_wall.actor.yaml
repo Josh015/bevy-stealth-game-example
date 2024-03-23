@@ -1,7 +1,0 @@
-# Translucent walls whose backs face the camera.
-name: Invisible Wall
-components:
-  - !Barrier
-  - !BlocksVision
-  - !DeflectsSounds
-# - !Scene models/animated/Fox.glb#Scene0

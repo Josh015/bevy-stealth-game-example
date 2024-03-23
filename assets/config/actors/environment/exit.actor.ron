@@ -1,0 +1,9 @@
+// Encompasses one or more connected tiles in a rectangle.
+// Allows player to complete the stage.
+(
+  name: "Exit",
+  components: [
+    // Trigger, // Level complete.
+    // Scene("models/animated/Fox.glb#Scene0"),
+  ]
+)

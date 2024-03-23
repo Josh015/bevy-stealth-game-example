@@ -1,0 +1,12 @@
+// A temporary barrier that stops blocking player, guards, vision, and sound
+// waves when it's open!
+(
+  name: "Door",
+  components: [
+    Door,
+    Barrier,
+    BlocksVision,
+    DeflectsSounds,
+    // Scene("models/animated/Fox.glb#Scene0"),
+  ]
+)

@@ -123,7 +123,7 @@ fn tinkering_zone_system(
     // ---- Actor ----
     let guard_dog = game_assets
         .actors
-        .get("config/actors/guards/guard_dog.actor.yaml")
+        .get("config/actors/guards/guard_dog.actor.ron")
         .unwrap();
     spawn_events.send(SpawnEvent::with_data(
         Config::Actor,

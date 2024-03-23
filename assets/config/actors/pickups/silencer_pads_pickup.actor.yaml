@@ -1,5 +1,0 @@
-name: Silencer Pads Pickup
-components:
-  - !Pickup
-  - !DropShadow
-  # - !Scene models/animated/Fox.glb#Scene0

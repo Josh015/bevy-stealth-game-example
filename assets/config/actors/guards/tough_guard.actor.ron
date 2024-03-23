@@ -1,0 +1,23 @@
+// Slightly shorter vision cone than Advanced Guard.
+(
+  name: "Tough Guard",
+  components: [
+    Guard,
+    Vision,
+    Hearing,
+    Stunnable,
+    Physics(radius: 0.375),
+    Footsteps(sound_wave: "Guard"),
+    Movement(
+      linear_speed: 0.5,
+      angular_speed: 6.2832
+    ),
+    // Scene("models/animated/Fox.glb#Scene0"),
+    // AnimationClips({
+    //   "idle": "models/animated/Fox.glb#Animation0",
+    //   "moving": "models/animated/Fox.glb#Animation2",
+    //   "puzzled": "models/animated/Fox.glb#Animation0",
+    //   "shocked": "models/animated/Fox.glb#Animation1",
+    // })
+  ]
+)

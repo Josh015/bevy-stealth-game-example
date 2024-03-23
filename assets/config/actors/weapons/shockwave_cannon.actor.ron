@@ -1,0 +1,9 @@
+// It smashes glass barriers and stuns guards. Emits a HUGE soundwave in all
+// directions to alert nearby guards.
+(
+  name: "Shockwave Cannon",
+  components: [
+    Weapon,
+    //Scene("models/animated/Fox.glb#Scene0"),
+  ]
+)

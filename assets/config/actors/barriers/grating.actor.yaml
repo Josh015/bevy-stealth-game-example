@@ -1,6 +1,0 @@
-# Doesn't block vision or sound, but can't be passed or removed.
-name: Grating
-components:
-  - !Barrier
-# - !Scene models/animated/Fox.glb#Scene0
-

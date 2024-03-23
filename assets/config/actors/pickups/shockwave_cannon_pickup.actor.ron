@@ -1,0 +1,9 @@
+// Pickup that gives the player the corresponding gun.
+(
+  name: "Shockwave Cannon Pickup",
+  components: [
+    Pickup,
+    DropShadow,
+    //Scene("models/animated/Fox.glb#Scene0"),
+  ]
+)

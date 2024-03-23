@@ -1,6 +1,6 @@
 use bevy::{prelude::*, reflect::TypePath, utils::HashMap};
 use bevy_asset_loader::prelude::*;
-use bevy_common_assets::yaml::YamlAssetPlugin;
+use bevy_common_assets::ron::RonAssetPlugin;
 use serde::Deserialize;
 
 use super::state::GameState;
@@ -9,9 +9,9 @@ pub(super) struct AssetsPlugin;
 
 impl Plugin for AssetsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugins(YamlAssetPlugin::<ActorConfig>::new(&["actor.yaml"]))
-            .add_plugins(YamlAssetPlugin::<SoundWaveConfig>::new(&[
-                "sound_wave.yaml",
+        app.add_plugins(RonAssetPlugin::<ActorConfig>::new(&["actor.ron"]))
+            .add_plugins(RonAssetPlugin::<SoundWaveConfig>::new(&[
+                "sound_wave.ron",
             ]))
             .add_loading_state(
                 LoadingState::new(GameState::AssetLoading)

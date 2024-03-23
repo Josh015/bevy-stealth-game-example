@@ -1,0 +1,14 @@
+(
+  name: "Security Camera",
+  components: [
+    SecurityCamera,
+    // Trigger,
+    // Scene("models/animated/Fox.glb#Scene0"),
+    // AnimationClips({
+    //   "idle": "models/animated/Fox.glb#Animation0",
+    //   "moving": "models/animated/Fox.glb#Animation2",
+    //   "puzzled": "models/animated/Fox.glb#Animation0",
+    //   "shocked": "models/animated/Fox.glb#Animation1",
+    // })
+  ]
+)

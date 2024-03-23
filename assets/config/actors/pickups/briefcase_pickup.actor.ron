@@ -1,0 +1,11 @@
+// Triggers temporary wall blocking exit to open.
+// Triggers unique "Acquired" message along the top.
+// Triggers story dialog along the bottom.
+(
+  name: "Briefcase Pickup",
+  components: [
+    Pickup,
+    DropShadow,
+    //Scene("models/animated/Fox.glb#Scene0"),
+  ]
+)
