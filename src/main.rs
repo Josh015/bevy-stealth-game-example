@@ -4,8 +4,8 @@ mod actions;
 mod assets;
 mod components;
 mod events;
+mod game_state;
 mod spawners;
-mod states;
 mod system_params;
 mod system_sets;
 mod ui;
@@ -21,10 +21,10 @@ use bevy_sequential_actions::*;
 use bevy_tweening::*;
 use components::*;
 use events::*;
+use game_state::*;
 use seldom_state::prelude::*;
 use spawners::*;
 use spew::prelude::SpawnEvent;
-use states::*;
 use system_sets::*;
 
 fn main() {
@@ -51,16 +51,16 @@ fn main() {
             ActionsPlugin,
             AssetsPlugin,
             ComponentsPlugin,
+            GameStatePlugin,
             EventsPlugin,
             SpawnersPlugin,
-            StatePlugin,
             SystemSetsPlugin,
         ))
         .insert_resource(Msaa::default())
         .insert_resource(ClearColor(Color::rgba(0.7, 0.9, 1.0, 1.0)))
         .add_systems(Update, bevy::window::close_on_esc)
         .add_systems(
-            OnExit(states::GameState::AssetLoading),
+            OnExit(game_state::GameState::AssetLoading),
             tinkering_zone_system,
         )
         .run();

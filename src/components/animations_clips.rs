@@ -1,4 +1,4 @@
-use crate::{states::*, system_params::*, system_sets::*};
+use crate::{game_state::*, system_params::*, system_sets::*};
 use bevy::{ecs::prelude::*, prelude::*, utils::HashMap};
 
 const DEFAULT_ANIMATION: &str = "idle";

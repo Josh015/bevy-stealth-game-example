@@ -1,9 +1,9 @@
 use bevy::prelude::*;
 use strum::EnumIter;
 
-pub(super) struct StatePlugin;
+pub(super) struct GameStatePlugin;
 
-impl Plugin for StatePlugin {
+impl Plugin for GameStatePlugin {
     fn build(&self, app: &mut App) {
         app.init_state::<GameState>();
     }
