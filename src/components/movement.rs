@@ -13,7 +13,7 @@ impl Plugin for MovementPlugin {
         // The order is important for correct rotations, so don't mess with it!
         app.add_systems(
             Update,
-            (move_to_setup, move_to_check_progress, move_to_cleanup)
+            (move_to_setup, move_to_update, move_to_cleanup)
                 .chain()
                 .in_set(StoppedWhenPausedSet),
         );
@@ -68,7 +68,7 @@ fn move_to_setup(
     }
 }
 
-fn move_to_check_progress(
+fn move_to_update(
     time: Res<Time>,
     mut commands: Commands,
     mut query: Query<(Entity, &mut Transform, &MoveTo, &Movement)>,
