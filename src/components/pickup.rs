@@ -32,11 +32,17 @@ fn spinning_pickup_item(
     mut query: Query<&mut Transform, With<Pickup>>,
 ) {
     for mut transform in &mut query {
+        // Rotate in place at a fixed speed.
         transform.rotation = (transform.rotation
             * Quat::from_axis_angle(
                 Vec3::Y,
                 std::f32::consts::FRAC_PI_2 * time.delta_seconds(),
             ))
         .normalize();
+
+        // TODO: Need to optimize this by storing Rotation as a component!
+        // Up and Down hover effect (assumes Up=+Y).
+        let rotation_angle = transform.rotation.to_euler(EulerRot::XYZ).1;
+        transform.translation.y = (rotation_angle).sin() * 0.1 + 0.2
     }
 }
