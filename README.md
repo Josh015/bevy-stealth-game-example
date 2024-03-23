@@ -10,18 +10,18 @@ My attempt to mimic the game mechanics of "SONAR" in the Bevy engine. It's gonna
 - [x] Use Bevy animation demo fox model to test complex animating entities.
 - [x] Automatic animation based on movement.
 - [x] Smooth blended transitions between animations.
-- [ ] Make custom glTF level and load everything with scene-hooks.
-- [ ] Player input movement.
-- [ ] Use smooth-bevy-cameras to make camera follow the player.
 - [ ] Use vleue_navigator for nav-mesh pathing.
+- [ ] Use bevy_rapier character controller integration.
 - [ ] Waypoint patrolling.
-- [ ] bevy_rapier integration?
+- [ ] Use leafwing-input-manager to add Player input movement.
+- [ ] Use smooth-bevy-cameras to make camera follow the player.
+- [ ] Make custom level format and load from it.
 - [ ] Multiple level loading.
 - [ ] Pickup implementation.
 - [ ] Weapons implementation.
+- [ ] Emote effects.
 - [ ] Enemy vision.
-- [ ] Dialog bubble effects.
 - [ ] Sound wave physics and logic.
+- [ ] Use bevy_fluent to implement localization support and migrate all user-facing strings.
 - [ ] Basic UI.
-- [ ] Implement localization support and migrate all user-facing strings.
 - [ ] Menu animations.
