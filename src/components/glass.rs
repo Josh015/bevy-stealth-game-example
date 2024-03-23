@@ -13,8 +13,8 @@ pub struct GlassBundle {
 
 impl Default for GlassBundle {
     fn default() -> Self {
-        // TODO: Use a state machine and actions to remove its Barrier and spawn a
-        // particle effect.
+        // TODO: Use a state machine and actions to remove its Barrier and spawn
+        // a particle effect.
 
         Self {
             glass: Glass,

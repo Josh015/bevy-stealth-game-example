@@ -1,6 +1,5 @@
+use crate::{state::*, system_params::*};
 use bevy::{ecs::prelude::*, prelude::*, utils::HashMap};
-
-use crate::game::{ActiveWhenPausedSet, Animations, GameState};
 
 const DEFAULT_ANIMATION: &str = "idle";
 
@@ -71,16 +70,21 @@ fn link_animation_players(
     all_entities_with_parents_query: Query<&Parent>,
     animations_entity_link_query: Query<&AnimationEntityLink>,
 ) {
-    // Get all the Animation players which can be deep and hidden in the hierarchy.
+    // Get all the Animation players which can be deep and hidden in the
+    // hierarchy.
     for entity_with_animation_player in animation_players_query.iter() {
         let top_entity = get_top_parent(
             entity_with_animation_player,
             &all_entities_with_parents_query,
         );
 
-        // If the top parent has an animation config ref then link the player to the config.
+        // If the top parent has an animation config ref then link the player to
+        // the config.
         if animations_entity_link_query.get(top_entity).is_ok() {
-            warn!("Problem with multiple animation players for the same top parent");
+            warn!(
+                "Problem with multiple animation players for the same top \
+                 parent"
+            );
         } else {
             commands.entity(top_entity).insert(AnimationEntityLink(
                 entity_with_animation_player.clone(),

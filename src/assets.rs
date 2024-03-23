@@ -1,9 +1,8 @@
+use super::state::*;
 use bevy::{prelude::*, reflect::TypePath, utils::HashMap};
 use bevy_asset_loader::prelude::*;
 use bevy_common_assets::ron::RonAssetPlugin;
 use serde::Deserialize;
-
-use super::state::GameState;
 
 pub(super) struct AssetsPlugin;
 

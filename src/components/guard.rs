@@ -1,16 +1,8 @@
+use crate::{actions::*, components::*, state::*, util::*};
 use bevy::{app::prelude::*, prelude::*};
 use bevy_sequential_actions::*;
 use seldom_state::prelude::*;
 use std::time::Duration;
-
-use crate::{
-    actions::{
-        AnimationAction, MoveAction, RepeatSequence, StateDoneAction,
-        WaitAction,
-    },
-    game::{Repeat, StoppedWhenPausedSet},
-    MoveTo,
-};
 
 pub(super) struct GuardPlugin;
 
@@ -48,7 +40,8 @@ impl Default for GuardBundle {
         // Camera panning
         // Alarm response
 
-        // TODO: Check for special components in the transition checks for those states.
+        // TODO: Check for special components in the transition checks for those
+        // states.
         Self {
             guard: Guard,
             actions_bundle: ActionsBundle::new(),

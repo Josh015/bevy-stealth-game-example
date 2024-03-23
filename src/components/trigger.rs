@@ -1,4 +1,4 @@
-use crate::game::Repeat;
+use crate::util::*;
 
 /// Entity that player can collide with to trigger an in-game effect.
 pub struct Trigger {

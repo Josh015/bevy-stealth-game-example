@@ -13,8 +13,8 @@ pub struct FloorSwitchBundle {
 
 impl Default for FloorSwitchBundle {
     fn default() -> Self {
-        // TODO: Use a state machine and actions to make it animate, signal open doors,
-        // delay, and then signal doors to close them again.
+        // TODO: Use a state machine and actions to make it animate, signal open
+        // doors, delay, and then signal doors to close them again.
 
         Self {
             floor_switch: FloorSwitch,

@@ -1,7 +1,6 @@
+use crate::state::*;
 use bevy::{ecs::prelude::*, prelude::*};
 use strum::IntoEnumIterator;
-
-use crate::game::GameState;
 
 pub(super) struct ForStatePlugin;
 

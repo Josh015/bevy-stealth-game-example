@@ -1,6 +1,5 @@
+use crate::{state::*, system_params::*};
 use bevy::prelude::*;
-
-use crate::game::{Animations, StoppedWhenPausedSet};
 
 const DESTINATION_MARGIN_OF_ERROR: f32 = 0.01;
 const HEADING_MARGIN_OF_ERROR: f32 = 0.001;

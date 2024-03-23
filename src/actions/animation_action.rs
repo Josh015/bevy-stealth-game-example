@@ -1,8 +1,7 @@
+use crate::system_params::*;
 use bevy::ecs::{prelude::*, system::SystemState};
 use bevy_sequential_actions::*;
 use derive_new::new;
-
-use crate::game::Animations;
 
 /// Plays an animation.
 #[derive(new)]

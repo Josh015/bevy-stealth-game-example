@@ -13,8 +13,9 @@ pub struct DoorBundle {
 
 impl Default for DoorBundle {
     fn default() -> Self {
-        // TODO: Use a state machine and actions to make it animate open and remove its
-        // Barrier, but then restore Barrier and close once signaled by floor switch.
+        // TODO: Use a state machine and actions to make it animate open and
+        // remove its Barrier, but then restore Barrier and close once
+        // signaled by floor switch.
 
         Self {
             door: Door,

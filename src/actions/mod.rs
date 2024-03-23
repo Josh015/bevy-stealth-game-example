@@ -1,6 +1,6 @@
-use crate::game::{ActiveWhenPausedSet, GameState};
+use crate::state::*;
 use bevy::prelude::*;
-use bevy_sequential_actions::{ActionQueue, ActionsProxy, ModifyActions};
+use bevy_sequential_actions::*;
 
 mod action_sequence;
 mod animation_action;

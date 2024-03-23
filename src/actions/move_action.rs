@@ -1,8 +1,7 @@
+use crate::components::*;
 use bevy::prelude::*;
 use bevy_sequential_actions::*;
 use derive_new::new;
-
-use crate::MoveTo;
 
 /// Moves an entity.
 #[derive(new)]

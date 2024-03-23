@@ -16,8 +16,8 @@ pub struct PickupBundle {
 
 impl Default for PickupBundle {
     fn default() -> Self {
-        // TODO: Need states to represent it being visible, disappearing, disappeared, and
-        // reappearing after a set delay.
+        // TODO: Need states to represent it being visible, disappearing,
+        // disappeared, and reappearing after a set delay.
 
         Self { pickup: Pickup }
     }

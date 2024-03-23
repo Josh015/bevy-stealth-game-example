@@ -1,14 +1,6 @@
+use crate::{assets::*, components::*};
 use bevy::{ecs::prelude::*, prelude::*, utils::HashMap};
 use spew::prelude::*;
-
-use crate::{
-    AnimationClips, Barrier, BlocksVision, DeflectsSounds, DoorBundle,
-    DropShadow, FloorSwitchBundle, GlassBundle, GuardBundle, Hearing, Movement,
-    PickupBundle, PlayerBundle, SecurityCameraBundle, Stunnable, Vision,
-    Weapon,
-};
-
-use super::{ActorConfig, ComponentConfig};
 
 pub(super) struct SpawnPlugin;
 
@@ -56,7 +48,8 @@ fn spawn_actor_from_config_with_matrix(
             ComponentConfig::Weapon => {
                 actor.insert(Weapon::default());
             },
-            //Trigger {} // TODO: Probably want to have a sub-enum with pre-allowed events?
+            //Trigger {} // TODO: Probably want to have a sub-enum with
+            // pre-allowed events?
             ComponentConfig::FloorSwitch => {
                 actor.insert(FloorSwitchBundle::default());
             },

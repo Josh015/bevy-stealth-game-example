@@ -1,10 +1,8 @@
-use bevy::app::prelude::*;
-use bevy::{ecs::prelude::*, prelude::*};
+use crate::state::*;
+use bevy::{app::prelude::*, ecs::prelude::*, prelude::*};
 use bevy_sequential_actions::*;
 use derive_new::new;
 use std::time::Duration;
-
-use crate::game::StoppedWhenPausedSet;
 
 pub(super) struct WaitActionPlugin;
 

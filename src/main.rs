@@ -1,10 +1,17 @@
 #![allow(clippy::too_many_arguments, clippy::type_complexity)]
 
-pub mod actions;
-pub mod components;
-pub mod game;
-pub mod ui;
+mod actions;
+mod assets;
+mod components;
+mod events;
+mod spawn;
+mod state;
+mod system_params;
+mod ui;
+mod util;
 
+use actions::*;
+use assets::*;
 use bevy::{
     prelude::*,
     window::{PresentMode, WindowResolution},
@@ -12,9 +19,11 @@ use bevy::{
 use bevy_sequential_actions::*;
 use bevy_tweening::*;
 use components::*;
-use game::{ActorConfig, Config, GameAssets, GameState};
+use events::*;
 use seldom_state::prelude::*;
+use spawn::*;
 use spew::prelude::SpawnEvent;
+use state::*;
 
 fn main() {
     App::new()
@@ -37,14 +46,20 @@ fn main() {
             TweeningPlugin,
         ))
         .add_plugins((
-            actions::ActionsPlugin,
-            components::ComponentsPlugin,
-            game::GamePlugin,
+            ActionsPlugin,
+            AssetsPlugin,
+            ComponentsPlugin,
+            EventsPlugin,
+            SpawnPlugin,
+            StatePlugin,
         ))
         .insert_resource(Msaa::default())
         .insert_resource(ClearColor(Color::rgba(0.7, 0.9, 1.0, 1.0)))
         .add_systems(Update, bevy::window::close_on_esc)
-        .add_systems(OnExit(GameState::AssetLoading), tinkering_zone_system)
+        .add_systems(
+            OnExit(state::GameState::AssetLoading),
+            tinkering_zone_system,
+        )
         .run();
 }
 
