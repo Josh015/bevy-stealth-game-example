@@ -4,7 +4,7 @@ mod actions;
 mod assets;
 mod components;
 mod events;
-mod spawn;
+mod spawners;
 mod state;
 mod system_params;
 mod ui;
@@ -21,7 +21,7 @@ use bevy_tweening::*;
 use components::*;
 use events::*;
 use seldom_state::prelude::*;
-use spawn::*;
+use spawners::*;
 use spew::prelude::SpawnEvent;
 use state::*;
 
@@ -50,7 +50,7 @@ fn main() {
             AssetsPlugin,
             ComponentsPlugin,
             EventsPlugin,
-            SpawnPlugin,
+            SpawnersPlugin,
             StatePlugin,
         ))
         .insert_resource(Msaa::default())

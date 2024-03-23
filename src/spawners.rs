@@ -2,9 +2,9 @@ use crate::{assets::*, components::*};
 use bevy::{ecs::prelude::*, prelude::*, utils::HashMap};
 use spew::prelude::*;
 
-pub(super) struct SpawnPlugin;
+pub(super) struct SpawnersPlugin;
 
-impl Plugin for SpawnPlugin {
+impl Plugin for SpawnersPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins((
             SpewPlugin::<Config, (Handle<ActorConfig>, Mat4)>::default(),
