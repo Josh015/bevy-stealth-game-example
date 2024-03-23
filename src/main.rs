@@ -48,7 +48,7 @@ fn main() {
         .run();
 }
 
-const PICKUP_HALF_SIZE: f32 = 0.05;
+const PICKUP_HALF_SIZE: f32 = 0.25;
 
 // TODO: Remove this after testing.
 #[allow(dead_code)]
@@ -105,19 +105,20 @@ fn tinkering_zone_system(
     });
 
     // ---- Pickup ----
-    commands.spawn((
-        PickupBundle::default(),
-        PbrBundle {
-            mesh: meshes.add(Cuboid {
-                half_size: Vec3::splat(PICKUP_HALF_SIZE),
-            }),
-            material: materials.add(StandardMaterial {
-                base_color: Color::YELLOW,
-                ..default()
-            }),
-            transform: Transform::from_xyz(0.25, PICKUP_HALF_SIZE + 0.1, 0.0),
-            ..default()
-        },
+    let birthday_cake = game_assets
+        .actors
+        .get("config/actors/pickups/birthday_cake_pickup.actor.ron")
+        .unwrap();
+    spawn_events.send(SpawnEvent::with_data(
+        Config::Actor,
+        (
+            birthday_cake.clone_weak(),
+            Mat4::from_scale_rotation_translation(
+                Vec3::splat(PICKUP_HALF_SIZE),
+                Quat::IDENTITY,
+                Vec3::new(0.25, PICKUP_HALF_SIZE + 0.1, 0.0),
+            ),
+        ),
     ));
 
     // ---- Actor ----
