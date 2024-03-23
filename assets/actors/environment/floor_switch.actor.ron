@@ -1,15 +1,12 @@
 // Opens all associated doors temporarily!
-(
-  name: "Floor Switch",
-  components: [
-    FloorSwitch,
-    // Trigger,
-    // Scene("models/animated/Fox.glb#Scene0"),
-    // AnimationClips({
-    //   "idle": "models/animated/Fox.glb#Animation0",
-    //   "moving": "models/animated/Fox.glb#Animation2",
-    //   "puzzled": "models/animated/Fox.glb#Animation0",
-    //   "shocked": "models/animated/Fox.glb#Animation1",
-    // })
-  ]
-)
+([
+  FloorSwitch,
+  // Trigger,
+  // Scene("models/animated/Fox.glb#Scene0"),
+  // AnimationClips({
+  //   "idle": "models/animated/Fox.glb#Animation0",
+  //   "moving": "models/animated/Fox.glb#Animation2",
+  //   "puzzled": "models/animated/Fox.glb#Animation0",
+  //   "shocked": "models/animated/Fox.glb#Animation1",
+  // })
+])

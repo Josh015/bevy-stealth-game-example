@@ -1,11 +1,8 @@
 // A translucent barrier that gets shattered by being in the Shockwave Cannon's
 // area of effect when it's fired. Doesn't block vision.
-(
-  name: "Glass",
-  components: [
-    Glass,
-    Barrier,
-    DeflectsSounds,
-    // Scene("models/animated/Fox.glb#Scene0"),
-  ]
-)
+([
+  Glass,
+  Barrier,
+  DeflectsSounds,
+  // Scene("models/animated/Fox.glb#Scene0"),
+])

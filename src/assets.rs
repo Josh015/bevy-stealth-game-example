@@ -1,5 +1,5 @@
 use super::game_state::*;
-use bevy::{prelude::*, reflect::TypePath, utils::HashMap};
+use bevy::{asset::*, prelude::*, reflect::TypePath, utils::HashMap};
 use bevy_asset_loader::prelude::*;
 use bevy_common_assets::ron::RonAssetPlugin;
 use serde::Deserialize;
@@ -25,19 +25,16 @@ impl Plugin for AssetsPlugin {
 
 #[derive(AssetCollection, Resource)]
 pub struct GameAssets {
-    #[asset(path = "actors", collection(typed, mapped))]
-    pub actors: HashMap<String, Handle<ActorConfig>>,
+    #[asset(path = "actors", collection(mapped, typed))]
+    pub actors: HashMap<FileStem, Handle<ActorConfig>>,
 
-    #[asset(path = "sound_waves", collection(typed))]
-    pub sound_waves: Vec<Handle<SoundWaveConfig>>,
+    #[asset(path = "sound_waves", collection(mapped, typed))]
+    pub sound_waves: HashMap<FileStem, Handle<SoundWaveConfig>>,
 }
 
 /// Configs for spawnable entities.
 #[derive(Asset, Debug, Deserialize, Resource, TypePath)]
-pub struct ActorConfig {
-    pub name: String,
-    pub components: Vec<ComponentConfig>,
-}
+pub struct ActorConfig(pub Vec<ComponentConfig>);
 
 /// Configs for entity components.
 #[derive(Clone, Debug, Deserialize)]
@@ -75,7 +72,6 @@ pub enum ComponentConfig {
 /// Configs for spawnable entities.
 #[derive(Asset, Debug, Deserialize, Resource, TypePath)]
 pub struct SoundWaveConfig {
-    pub name: String,
     pub color: String,
     // sound??
 }

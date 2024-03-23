@@ -1,8 +1,5 @@
 // Activated by associated camera.
 // Alerts guards within earshot of player's location at the moment alert was triggered.
-(
-  name: "Alarm",
-  components: [
-    // Scene("models/animated/Fox.glb#Scene0"),
-  ]
-)
+([
+  // Scene("models/animated/Fox.glb#Scene0"),
+])
