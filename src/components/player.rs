@@ -86,8 +86,8 @@ fn control_player(
             .clamped_axis_pair(&PlayerAction::Move)
             .unwrap()
             .xy();
-        let move_direction = clamped_axis.extend(0.0).xzy()
-            * Vec3::new(1.0, 1.0, -1.0).normalize_or_zero();
+        let move_direction =
+            Vec3::new(clamped_axis.x, 0.0, -clamped_axis.y).normalize_or_zero();
 
         mover.move_to = Some(crate::MoveTo::Destination(
             player_transform.translation

@@ -22,26 +22,6 @@ pub struct MoverBundle {
     pub angular_speed: AngularSpeed,
 }
 
-/// Linear speed in `meters/second`.
-#[derive(Clone, Component, Debug)]
-pub struct LinearSpeed(pub f32);
-
-impl Default for LinearSpeed {
-    fn default() -> Self {
-        Self(1.0)
-    }
-}
-
-/// Angular speed in `radians/second`.
-#[derive(Clone, Component, Debug)]
-pub struct AngularSpeed(pub f32);
-
-impl Default for AngularSpeed {
-    fn default() -> Self {
-        Self(std::f32::consts::TAU)
-    }
-}
-
 /// Moves the entity.
 #[derive(Clone, Component, Debug, Default)]
 pub struct Mover {
@@ -60,6 +40,26 @@ pub enum MoveTo {
 
     /// A direction this entity wants to face.
     Heading(Direction3d),
+}
+
+/// Linear speed in `meters/second`.
+#[derive(Clone, Component, Debug)]
+pub struct LinearSpeed(pub f32);
+
+impl Default for LinearSpeed {
+    fn default() -> Self {
+        Self(1.0)
+    }
+}
+
+/// Angular speed in `radians/second`.
+#[derive(Clone, Component, Debug)]
+pub struct AngularSpeed(pub f32);
+
+impl Default for AngularSpeed {
+    fn default() -> Self {
+        Self(std::f32::consts::TAU)
+    }
 }
 
 fn move_to(
