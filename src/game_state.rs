@@ -17,6 +17,7 @@ pub enum GameState {
     #[default]
     AssetLoading,
     StartMenu,
-    Gameplay,
     Paused,
+    Gameplay,
+    GameOver,
 }

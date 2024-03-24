@@ -1,4 +1,4 @@
-use crate::{assets::*, components::*, configs::*};
+use crate::{assets::*, components::*, configs::*, game_state::*};
 use bevy::{ecs::prelude::*, prelude::*, utils::HashMap};
 use spew::prelude::*;
 
@@ -29,7 +29,8 @@ fn spawn_actor_from_config_with_matrix(
     preloaded_actor_assets: Res<PreloadedActorAssets>,
 ) {
     let actor_config = actor_configs.get(handle).unwrap();
-    let mut actor = commands.spawn_empty();
+    let mut actor = commands
+        .spawn(ForStates(vec![GameState::Gameplay, GameState::GameOver]));
 
     for component_config in &actor_config.0 {
         match component_config {

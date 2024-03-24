@@ -15,7 +15,7 @@ impl Plugin for ForStatePlugin {
     }
 }
 
-/// Tags an entity to only exist in its associated game states.
+/// Tags an entity to only exist in the provided game states.
 #[derive(Clone, Component, Debug)]
 pub struct ForStates<S: States>(pub Vec<S>);
 
