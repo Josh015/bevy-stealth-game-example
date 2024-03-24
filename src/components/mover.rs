@@ -2,8 +2,8 @@ use crate::{system_params::*, system_sets::*};
 use bevy::prelude::*;
 
 const MOVING_ANIMATION: &str = "moving";
-const DESTINATION_MARGIN_OF_ERROR: f32 = 0.0001;
-const HEADING_MARGIN_OF_ERROR: f32 = 0.0001;
+const DESTINATION_MARGIN_OF_ERROR: f32 = 0.001;
+const HEADING_MARGIN_OF_ERROR: f32 = 0.001;
 
 pub(super) struct MoverPlugin;
 
@@ -130,6 +130,29 @@ fn move_to(
                 ))
             .normalize();
         }
+
+        // let forward_angle = forward.x.atan2(forward.z);
+        // let heading_angle = heading.x.atan2(heading.z);
+        // let diff = heading_angle - forward_angle;
+        // let dir = diff.signum();
+        // let delta = dir * angular_speed.0 * time.delta_seconds();
+        // let end_rotation = diff.abs() < delta.abs();
+
+        // println!(
+        //     "{} {} {} {}",
+        //     forward_angle + delta,
+        //     forward_angle,
+        //     diff.abs(),
+        //     delta.abs()
+        // );
+        // if end_rotation {
+        //     transform.rotation =
+        //         Quat::from_axis_angle(Vec3::Y, heading_angle).normalize();
+        // } else {
+        //     transform.rotation =
+        //         Quat::from_axis_angle(Vec3::Y, forward_angle + delta)
+        //             .normalize();
+        // }
 
         if end_translation && end_rotation {
             mover.move_to = None;
