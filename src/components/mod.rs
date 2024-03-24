@@ -53,6 +53,7 @@ impl Plugin for ComponentsPlugin {
             MovementPlugin,
             PhysicsPlugin,
             PickupPlugin,
+            PlayerPlugin,
         ));
     }
 }

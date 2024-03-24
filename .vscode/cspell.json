@@ -16,6 +16,7 @@
     "despawned",
     "despawning",
     "despawns",
+    "dpad",
     "fira",
     "gamepad",
     "gameplay",
@@ -58,7 +59,8 @@
     "voxels",
     "vsmarketplacebadge",
     "vsync",
-    "xyzw"
+    "xyzw",
+    "wasd"
   ],
   // flagWords - list of words to be always considered incorrect
   // This is useful for offensive words and common spelling errors.

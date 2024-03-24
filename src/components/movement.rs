@@ -1,9 +1,9 @@
 use crate::{system_params::*, system_sets::*};
 use bevy::prelude::*;
 
+pub const MOVING_ANIMATION: &str = "moving";
 const DESTINATION_MARGIN_OF_ERROR: f32 = 0.01;
 const HEADING_MARGIN_OF_ERROR: f32 = 0.001;
-const MOVING_ANIMATION: &str = "moving";
 
 pub(super) struct MovementPlugin;
 
@@ -77,9 +77,10 @@ fn move_to_update(
         let mut entity_commands = commands.entity(entity);
         let (heading, end_translation) = match move_to {
             MoveTo::Destination(destination) => {
-                let direction_vector = *destination - transform.translation;
-                let heading = direction_vector.normalize();
-                let distance = direction_vector.dot(direction_vector).sqrt();
+                let heading =
+                    (*destination - transform.translation).normalize_or_zero();
+                let distance =
+                    destination.distance_squared(transform.translation);
                 let end_translation = distance <= DESTINATION_MARGIN_OF_ERROR;
 
                 if end_translation {
@@ -102,7 +103,7 @@ fn move_to_update(
         if !end_rotation {
             transform.rotation = (transform.rotation
                 * Quat::from_axis_angle(
-                    forward.cross(heading).normalize(),
+                    forward.cross(heading).normalize_or_zero(),
                     movement.angular_speed * time.delta_seconds(),
                 ))
             .normalize();
