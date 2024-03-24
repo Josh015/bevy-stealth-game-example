@@ -1,4 +1,4 @@
-use crate::{assets::*, components::*};
+use crate::{components::*, configs::*};
 use bevy::{ecs::prelude::*, prelude::*, utils::HashMap};
 use spew::prelude::*;
 

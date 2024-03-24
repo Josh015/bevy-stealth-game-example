@@ -3,6 +3,7 @@
 mod actions;
 mod assets;
 mod components;
+mod configs;
 mod events;
 mod game_state;
 mod spawners;
@@ -20,6 +21,7 @@ use bevy::{
 use bevy_sequential_actions::*;
 use bevy_tweening::*;
 use components::*;
+use configs::*;
 use events::*;
 use game_state::*;
 use seldom_state::prelude::*;
@@ -51,6 +53,7 @@ fn main() {
             ActionsPlugin,
             AssetsPlugin,
             ComponentsPlugin,
+            ConfigsPlugin,
             GameStatePlugin,
             EventsPlugin,
             SpawnersPlugin,
