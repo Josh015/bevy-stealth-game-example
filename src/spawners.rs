@@ -1,4 +1,4 @@
-use crate::{components::*, configs::*};
+use crate::{assets::*, components::*, configs::*};
 use bevy::{ecs::prelude::*, prelude::*, utils::HashMap};
 use spew::prelude::*;
 
@@ -26,7 +26,7 @@ fn spawn_actor_from_config_with_matrix(
     In((handle, matrix)): In<(Handle<ActorConfig>, Mat4)>,
     actor_configs: Res<Assets<ActorConfig>>,
     mut commands: Commands,
-    asset_server: Res<AssetServer>,
+    preloaded_actor_assets: Res<PreloadedActorAssets>,
 ) {
     let actor_config = actor_configs.get(handle).unwrap();
     let mut actor = commands.spawn_empty();
@@ -101,14 +101,25 @@ fn spawn_actor_from_config_with_matrix(
                 let mut loaded_clips = HashMap::default();
 
                 for (k, v) in clips {
-                    loaded_clips.insert(k.to_string(), asset_server.load(v));
+                    loaded_clips.insert(
+                        k.to_string(),
+                        preloaded_actor_assets
+                            .animation_clips
+                            .get(v)
+                            .unwrap()
+                            .clone(),
+                    );
                 }
 
                 actor.insert(AnimationClips(loaded_clips));
             },
             ComponentConfig::Scene(scene) => {
                 actor.insert(SceneBundle {
-                    scene: asset_server.load(scene),
+                    scene: preloaded_actor_assets
+                        .scenes
+                        .get(scene)
+                        .unwrap()
+                        .clone(),
                     transform: Transform::from_matrix(matrix),
                     ..default()
                 });
