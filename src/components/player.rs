@@ -69,11 +69,17 @@ impl PlayerAction {
 fn control_player(
     time: Res<Time>,
     mut query: Query<
-        (&Transform, &mut Mover, &ActionState<PlayerAction>),
+        (
+            &Transform,
+            &mut Mover,
+            &LinearSpeed,
+            &ActionState<PlayerAction>,
+        ),
         With<Player>,
     >,
 ) {
-    let (player_transform, mut mover, action_state) = query.single_mut();
+    let (player_transform, mut mover, linear_speed, action_state) =
+        query.single_mut();
 
     if action_state.pressed(&PlayerAction::Move) {
         let clamped_axis = action_state
@@ -85,7 +91,7 @@ fn control_player(
 
         mover.move_to = Some(crate::MoveTo::Destination(
             player_transform.translation
-                + move_direction * mover.linear_speed * time.delta_seconds(),
+                + move_direction * linear_speed.0 * time.delta_seconds(),
         ));
     }
 }

@@ -64,9 +64,9 @@ fn spawn_actor_from_config_with_matrix(
                 linear_speed,
                 angular_speed,
             } => {
-                entity_commands.insert(Mover {
-                    linear_speed: *linear_speed,
-                    angular_speed: *angular_speed,
+                entity_commands.insert(MoverBundle {
+                    linear_speed: LinearSpeed(*linear_speed),
+                    angular_speed: AngularSpeed(*angular_speed),
                     ..default()
                 });
             },

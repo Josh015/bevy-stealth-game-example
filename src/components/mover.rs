@@ -14,31 +14,42 @@ impl Plugin for MoverPlugin {
     }
 }
 
-/// Moves the entity.
+/// Required components for a [`Mover`] entity.
+#[derive(Bundle, Default)]
+pub struct MoverBundle {
+    pub mover: Mover,
+    pub linear_speed: LinearSpeed,
+    pub angular_speed: AngularSpeed,
+}
+
+/// Linear speed in `meters/second`.
 #[derive(Clone, Component, Debug)]
+pub struct LinearSpeed(pub f32);
+
+impl Default for LinearSpeed {
+    fn default() -> Self {
+        Self(1.0)
+    }
+}
+
+/// Angular speed in `radians/second`.
+#[derive(Clone, Component, Debug)]
+pub struct AngularSpeed(pub f32);
+
+impl Default for AngularSpeed {
+    fn default() -> Self {
+        Self(std::f32::consts::TAU)
+    }
+}
+
+/// Moves the entity.
+#[derive(Clone, Component, Debug, Default)]
 pub struct Mover {
-    /// Linear speed in `meters/second`.
-    pub linear_speed: f32,
-
-    /// Angular speed in `radians/second`.
-    pub angular_speed: f32,
-
     /// Where the entity needs to move.
     pub move_to: Option<MoveTo>,
 
     /// Previously running animation from before the movement started.
     pub stored_animation: Option<Handle<AnimationClip>>,
-}
-
-impl Default for Mover {
-    fn default() -> Self {
-        Self {
-            linear_speed: 1.0,
-            angular_speed: std::f32::consts::TAU,
-            move_to: None,
-            stored_animation: None,
-        }
-    }
 }
 
 /// Makes an entity transform in a specified way.
@@ -54,9 +65,17 @@ pub enum MoveTo {
 fn move_to(
     time: Res<Time>,
     mut animations: Animations,
-    mut query: Query<(Entity, &mut Transform, &mut Mover)>,
+    mut query: Query<(
+        Entity,
+        &mut Transform,
+        &mut Mover,
+        &LinearSpeed,
+        &AngularSpeed,
+    )>,
 ) {
-    for (entity, mut transform, mut mover) in &mut query {
+    for (entity, mut transform, mut mover, linear_speed, angular_speed) in
+        &mut query
+    {
         match (&mover.move_to, &mover.stored_animation) {
             (Some(_), None) => {
                 if let Some(current_animation) =
@@ -90,7 +109,7 @@ fn move_to(
                     transform.translation = *destination;
                 } else {
                     transform.translation +=
-                        heading * mover.linear_speed * time.delta_seconds();
+                        heading * linear_speed.0 * time.delta_seconds();
                 }
 
                 (heading, end_translation)
@@ -107,7 +126,7 @@ fn move_to(
             transform.rotation = (transform.rotation
                 * Quat::from_axis_angle(
                     forward.cross(heading).normalize_or_zero(),
-                    mover.angular_speed * time.delta_seconds(),
+                    angular_speed.0 * time.delta_seconds(),
                 ))
             .normalize();
         }
