@@ -29,42 +29,42 @@ fn spawn_actor_from_config_with_matrix(
     preloaded_actor_assets: Res<PreloadedActorAssets>,
 ) {
     let actor_config = actor_configs.get(handle).unwrap();
-    let mut actor = commands
+    let mut entity_commands = commands
         .spawn(ForStates(vec![GameState::Gameplay, GameState::GameOver]));
 
     for component_config in &actor_config.0 {
         match component_config {
             ComponentConfig::Player => {
-                actor.insert(PlayerBundle::default());
+                entity_commands.insert(PlayerBundle::default());
             },
             ComponentConfig::Guard => {
-                actor.insert(GuardBundle::default());
+                entity_commands.insert(GuardBundle::default());
             },
             ComponentConfig::SecurityCamera => {
-                actor.insert(SecurityCameraBundle::default());
+                entity_commands.insert(SecurityCameraBundle::default());
             },
             ComponentConfig::Pickup => {
-                actor.insert(PickupBundle::default());
+                entity_commands.insert(PickupBundle::default());
             },
             ComponentConfig::Weapon => {
-                actor.insert(Weapon::default());
+                entity_commands.insert(Weapon::default());
             },
             //Trigger {} // TODO: Probably want to have a sub-enum with
             // pre-allowed events?
             ComponentConfig::FloorSwitch => {
-                actor.insert(FloorSwitchBundle::default());
+                entity_commands.insert(FloorSwitchBundle::default());
             },
             ComponentConfig::Door => {
-                actor.insert(DoorBundle::default());
+                entity_commands.insert(DoorBundle::default());
             },
             ComponentConfig::Glass => {
-                actor.insert(GlassBundle::default());
+                entity_commands.insert(GlassBundle::default());
             },
             ComponentConfig::Movement {
                 linear_speed,
                 angular_speed,
             } => {
-                actor.insert(Movement {
+                entity_commands.insert(Movement {
                     linear_speed: *linear_speed,
                     angular_speed: *angular_speed,
                 });
@@ -76,27 +76,27 @@ fn spawn_actor_from_config_with_matrix(
                 // TODO: Need a component for this one.
             },
             ComponentConfig::DropShadow => {
-                actor.insert(DropShadow::default());
+                entity_commands.insert(DropShadow::default());
             },
             ComponentConfig::Vision => {
                 // TODO: Implement setting the fields.
-                actor.insert(Vision::default());
+                entity_commands.insert(Vision::default());
             },
             ComponentConfig::Hearing => {
                 // TODO: Implement setting the fields.
-                actor.insert(Hearing::default());
+                entity_commands.insert(Hearing::default());
             },
             ComponentConfig::Stunnable => {
-                actor.insert(Stunnable::default());
+                entity_commands.insert(Stunnable::default());
             },
             ComponentConfig::Barrier => {
-                actor.insert(Barrier::default());
+                entity_commands.insert(Barrier::default());
             },
             ComponentConfig::BlocksVision => {
-                actor.insert(BlocksVision::default());
+                entity_commands.insert(BlocksVision::default());
             },
             ComponentConfig::DeflectsSounds => {
-                actor.insert(DeflectsSounds::default());
+                entity_commands.insert(DeflectsSounds::default());
             },
             ComponentConfig::AnimationClips(clips) => {
                 let mut loaded_clips = HashMap::default();
@@ -112,10 +112,10 @@ fn spawn_actor_from_config_with_matrix(
                     );
                 }
 
-                actor.insert(AnimationClips(loaded_clips));
+                entity_commands.insert(AnimationClips(loaded_clips));
             },
             ComponentConfig::Scene(scene) => {
-                actor.insert(SceneBundle {
+                entity_commands.insert(SceneBundle {
                     scene: preloaded_actor_assets
                         .scenes
                         .get(scene)

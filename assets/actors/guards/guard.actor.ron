@@ -4,7 +4,7 @@
   Hearing,
   Stunnable,
   Physics(radius: 0.375),
-  Footsteps(sound_wave: "Guard"),
+  Footsteps(sound_wave: "guard.sound_wave"),
   Movement(
     linear_speed: 0.5,
     angular_speed: 6.2832
