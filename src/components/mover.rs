@@ -1,39 +1,42 @@
 use crate::{system_params::*, system_sets::*};
 use bevy::prelude::*;
 
-pub const MOVING_ANIMATION: &str = "moving";
-const DESTINATION_MARGIN_OF_ERROR: f32 = 0.01;
-const HEADING_MARGIN_OF_ERROR: f32 = 0.001;
+const MOVING_ANIMATION: &str = "moving";
+const DESTINATION_MARGIN_OF_ERROR: f32 = 0.0001;
+const HEADING_MARGIN_OF_ERROR: f32 = 0.0001;
 
-pub(super) struct MovementPlugin;
+pub(super) struct MoverPlugin;
 
-impl Plugin for MovementPlugin {
+impl Plugin for MoverPlugin {
     fn build(&self, app: &mut App) {
         // The order is important for correct rotations, so don't mess with it!
-        app.add_systems(
-            Update,
-            (move_to_setup, move_to_update, move_to_cleanup)
-                .chain()
-                .in_set(StoppedWhenPausedSet),
-        );
+        app.add_systems(Update, move_to.in_set(StoppedWhenPausedSet));
     }
 }
 
-/// All stats relevant to movement.
+/// Moves the entity.
 #[derive(Clone, Component, Debug)]
-pub struct Movement {
+pub struct Mover {
     /// Linear speed in `meters/second`.
     pub linear_speed: f32,
 
     /// Angular speed in `radians/second`.
     pub angular_speed: f32,
+
+    /// Where the entity needs to move.
+    pub move_to: Option<MoveTo>,
+
+    /// Previously running animation from before the movement started.
+    pub stored_animation: Option<Handle<AnimationClip>>,
 }
 
-impl Default for Movement {
+impl Default for Mover {
     fn default() -> Self {
         Self {
             linear_speed: 1.0,
             angular_speed: std::f32::consts::TAU,
+            move_to: None,
+            stored_animation: None,
         }
     }
 }
@@ -48,33 +51,33 @@ pub enum MoveTo {
     Heading(Direction3d),
 }
 
-/// Stores currently running animation for later restoration.
-#[derive(Clone, Component, Debug, Default)]
-pub struct StoredAnimation(pub Handle<AnimationClip>);
-
-fn move_to_setup(
-    mut commands: Commands,
+fn move_to(
+    time: Res<Time>,
     mut animations: Animations,
-    mut query: Query<Entity, Added<MoveTo>>,
+    mut query: Query<(Entity, &mut Transform, &mut Mover)>,
 ) {
-    for entity in &mut query {
-        let mut entity_commands = commands.entity(entity);
+    for (entity, mut transform, mut mover) in &mut query {
+        match (&mover.move_to, &mover.stored_animation) {
+            (Some(_), None) => {
+                if let Some(current_animation) =
+                    animations.get_current_clip(entity)
+                {
+                    mover.stored_animation = Some(current_animation);
+                }
 
-        if let Some(current_animation) = animations.get_current_clip(entity) {
-            entity_commands.insert(StoredAnimation(current_animation));
+                animations.play_clip(entity, MOVING_ANIMATION);
+            },
+            (None, Some(stored_animation)) => {
+                animations
+                    .play_clip_handle(entity, stored_animation.clone_weak());
+                mover.stored_animation = None;
+            },
+            _ => {},
         }
 
-        animations.play_clip(entity, MOVING_ANIMATION);
-    }
-}
-
-fn move_to_update(
-    time: Res<Time>,
-    mut commands: Commands,
-    mut query: Query<(Entity, &mut Transform, &MoveTo, &Movement)>,
-) {
-    for (entity, mut transform, move_to, movement) in &mut query {
-        let mut entity_commands = commands.entity(entity);
+        let Some(move_to) = &mover.move_to else {
+            continue;
+        };
         let (heading, end_translation) = match move_to {
             MoveTo::Destination(destination) => {
                 let heading =
@@ -87,7 +90,7 @@ fn move_to_update(
                     transform.translation = *destination;
                 } else {
                     transform.translation +=
-                        heading * movement.linear_speed * time.delta_seconds();
+                        heading * mover.linear_speed * time.delta_seconds();
                 }
 
                 (heading, end_translation)
@@ -104,28 +107,13 @@ fn move_to_update(
             transform.rotation = (transform.rotation
                 * Quat::from_axis_angle(
                     forward.cross(heading).normalize_or_zero(),
-                    movement.angular_speed * time.delta_seconds(),
+                    mover.angular_speed * time.delta_seconds(),
                 ))
             .normalize();
         }
 
         if end_translation && end_rotation {
-            entity_commands.remove::<MoveTo>();
-        }
-    }
-}
-
-fn move_to_cleanup(
-    mut commands: Commands,
-    mut animations: Animations,
-    mut removed: RemovedComponents<MoveTo>,
-    query: Query<&StoredAnimation>,
-) {
-    for entity in removed.read() {
-        if let Ok(stored_animation) = query.get(entity) {
-            animations
-                .play_clip_handle(entity, stored_animation.0.clone_weak());
-            commands.entity(entity).remove::<StoredAnimation>();
+            mover.move_to = None;
         }
     }
 }

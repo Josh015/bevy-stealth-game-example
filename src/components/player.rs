@@ -1,10 +1,7 @@
 use bevy::prelude::*;
 use leafwing_input_manager::prelude::*;
 
-use crate::{
-    system_params::Animations, GameplaySet, Movement, StoredAnimation,
-    MOVING_ANIMATION,
-};
+use crate::{components::*, system_sets::*};
 
 pub(super) struct PlayerPlugin;
 
@@ -71,39 +68,14 @@ impl PlayerAction {
 
 fn control_player(
     time: Res<Time>,
-    mut commands: Commands,
-    mut animations: Animations,
     mut query: Query<
-        (
-            Entity,
-            &mut Transform,
-            &Movement,
-            &ActionState<PlayerAction>,
-            Option<&StoredAnimation>,
-        ),
+        (&Transform, &mut Mover, &ActionState<PlayerAction>),
         With<Player>,
     >,
 ) {
-    let (
-        entity,
-        mut player_transform,
-        movement,
-        action_state,
-        stored_animation,
-    ) = query.single_mut();
+    let (player_transform, mut mover, action_state) = query.single_mut();
 
     if action_state.pressed(&PlayerAction::Move) {
-        if stored_animation.is_none() {
-            if let Some(current_animation) = animations.get_current_clip(entity)
-            {
-                commands
-                    .entity(entity)
-                    .insert(StoredAnimation(current_animation));
-            }
-
-            animations.play_clip(entity, MOVING_ANIMATION);
-        }
-
         let clamped_axis = action_state
             .clamped_axis_pair(&PlayerAction::Move)
             .unwrap()
@@ -111,10 +83,9 @@ fn control_player(
         let move_direction = clamped_axis.extend(0.0).xzy()
             * Vec3::new(1.0, 1.0, -1.0).normalize_or_zero();
 
-        player_transform.translation +=
-            move_direction * movement.linear_speed * time.delta_seconds();
-    } else if let Some(stored_animation) = stored_animation {
-        animations.play_clip_handle(entity, stored_animation.0.clone_weak());
-        commands.entity(entity).remove::<StoredAnimation>();
+        mover.move_to = Some(crate::MoveTo::Destination(
+            player_transform.translation
+                + move_direction * mover.linear_speed * time.delta_seconds(),
+        ));
     }
 }

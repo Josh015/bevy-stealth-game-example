@@ -11,11 +11,20 @@ pub struct MoveAction {
 
 impl Action for MoveAction {
     fn is_finished(&self, agent: Entity, world: &World) -> bool {
-        !world.entity(agent).contains::<MoveTo>()
+        let entity_commands = world.entity(agent);
+        let Some(mover) = entity_commands.get::<Mover>() else {
+            return true;
+        };
+        mover.move_to.is_none()
     }
 
     fn on_start(&mut self, agent: Entity, world: &mut World) -> bool {
-        world.entity_mut(agent).insert(self.move_to.clone());
+        let mut entity_commands = world.entity_mut(agent);
+        let Some(mut mover) = entity_commands.get_mut::<Mover>() else {
+            return true;
+        };
+
+        mover.move_to = Some(self.move_to.clone());
         false
     }
 

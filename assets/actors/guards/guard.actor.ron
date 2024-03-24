@@ -5,7 +5,7 @@
   Stunnable,
   Physics(radius: 0.375),
   Footsteps(sound_wave: "guard.sound_wave"),
-  Movement(
+  Mover(
     linear_speed: 0.5,
     angular_speed: 6.2832
   ),

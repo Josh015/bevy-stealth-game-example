@@ -60,13 +60,14 @@ fn spawn_actor_from_config_with_matrix(
             ComponentConfig::Glass => {
                 entity_commands.insert(GlassBundle::default());
             },
-            ComponentConfig::Movement {
+            ComponentConfig::Mover {
                 linear_speed,
                 angular_speed,
             } => {
-                entity_commands.insert(Movement {
+                entity_commands.insert(Mover {
                     linear_speed: *linear_speed,
                     angular_speed: *angular_speed,
+                    ..default()
                 });
             },
             ComponentConfig::Physics { radius } => {

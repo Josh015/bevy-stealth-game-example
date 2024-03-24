@@ -3,7 +3,7 @@
   Physics(radius: 0.375),
   Footsteps(sound_wave: "player.sound_wave"),
   DropShadow,
-  Movement(
+  Mover(
     linear_speed: 1.0,
     angular_speed: 6.2832
   ),
