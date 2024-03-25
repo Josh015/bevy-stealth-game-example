@@ -100,7 +100,7 @@ fn move_to(
         let (heading, end_translation) = match move_to {
             MoveTo::Destination(destination) => {
                 let diff = *destination - transform.translation;
-                let heading = diff.normalize_or_zero();
+                let dir = diff.normalize_or_zero();
                 let distance_squared = diff.length_squared();
                 let end_translation =
                     distance_squared <= DESTINATION_MARGIN_OF_ERROR;
@@ -109,10 +109,10 @@ fn move_to(
                     transform.translation = *destination;
                 } else {
                     transform.translation +=
-                        heading * linear_speed.0 * time.delta_seconds();
+                        dir * linear_speed.0 * time.delta_seconds();
                 }
 
-                (heading, end_translation)
+                (dir, end_translation)
             },
             MoveTo::FaceDirection(heading) => (**heading, true),
         };
