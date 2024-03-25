@@ -8,7 +8,7 @@ pub(super) struct MoverPlugin;
 
 impl Plugin for MoverPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, move_to.in_set(StoppedWhenPausedSet));
+        app.add_systems(Update, move_to.in_set(StopWhenPausedSet));
     }
 }
 
@@ -23,7 +23,7 @@ pub struct MoverBundle {
 /// Moves the entity.
 #[derive(Clone, Component, Debug, Default)]
 pub struct Mover {
-    current_rotation: f32,
+    yaw: f32,
     move_to: Option<MoveTo>,
     stored_animation: Option<Handle<AnimationClip>>,
 }
@@ -100,10 +100,8 @@ fn move_to(
 
                 animations.play_clip(entity, MOVING_ANIMATION);
 
-                // Extract and store current yaw.
-                let (yaw, _, _) = transform.rotation.to_euler(EulerRot::YXZ);
-
-                mover.current_rotation = yaw;
+                // Extract and store the transform rotation's current yaw.
+                mover.yaw = transform.rotation.to_euler(EulerRot::YXZ).0;
             },
             (None, Some(stored_animation)) => {
                 // Restore the saved animation.
@@ -134,8 +132,6 @@ fn move_to(
                         dir * linear_speed.0 * time.delta_seconds();
                 }
 
-                //println!("dir {}", dir);
-
                 (dir, end_translation)
             },
             MoveTo::FaceDirection(direction) => (**direction, true),
@@ -146,22 +142,18 @@ fn move_to(
             true
         } else {
             let heading = direction.x.atan2(direction.z);
-            let diff = wrap_angle(heading - mover.current_rotation);
+            let diff = wrap_angle(heading - mover.yaw);
             let dir = diff.signum();
             let delta = dir * angular_speed.0 * time.delta_seconds();
             let end_rotation = diff.abs() < delta.abs();
 
-            //println!("heading {}", heading);
-
-            mover.current_rotation = if end_rotation {
+            mover.yaw = if end_rotation {
                 heading
             } else {
-                wrap_angle(mover.current_rotation + delta)
+                wrap_angle(mover.yaw + delta)
             };
 
-            transform.rotation =
-                Quat::from_rotation_y(mover.current_rotation).normalize();
-
+            transform.rotation = Quat::from_rotation_y(mover.yaw).normalize();
             end_rotation
         };
 

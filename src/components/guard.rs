@@ -8,10 +8,7 @@ pub(super) struct GuardPlugin;
 
 impl Plugin for GuardPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(
-            Update,
-            (ping, pong).chain().in_set(StoppedWhenPausedSet),
-        );
+        app.add_systems(Update, (ping, pong).chain().in_set(StopWhenPausedSet));
     }
 }
 

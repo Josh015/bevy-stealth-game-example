@@ -8,7 +8,7 @@ pub(super) struct WaitActionPlugin;
 
 impl Plugin for WaitActionPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, wait_timer_update.in_set(StoppedWhenPausedSet));
+        app.add_systems(Update, wait_timer_update.in_set(StopWhenPausedSet));
     }
 }
 

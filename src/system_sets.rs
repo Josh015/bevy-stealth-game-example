@@ -18,7 +18,7 @@ impl Plugin for SystemSetsPlugin {
         )
         .configure_sets(
             Update,
-            StoppedWhenPausedSet
+            StopWhenPausedSet
                 .in_set(PostAssetLoadingSet)
                 .run_if(not(in_state(GameState::Paused))),
         )
@@ -26,7 +26,7 @@ impl Plugin for SystemSetsPlugin {
             Update,
             GameplaySet
                 .in_set(PostAssetLoadingSet)
-                .after(StoppedWhenPausedSet)
+                .after(StopWhenPausedSet)
                 .before(SpewSystemSet)
                 .run_if(in_state(GameState::Gameplay)),
         )
@@ -36,7 +36,7 @@ impl Plugin for SystemSetsPlugin {
         )
         .configure_sets(
             PostUpdate,
-            StoppedWhenPausedSet
+            StopWhenPausedSet
                 .in_set(PostAssetLoadingSet)
                 .run_if(not(in_state(GameState::Paused))),
         )
@@ -44,7 +44,7 @@ impl Plugin for SystemSetsPlugin {
             PostUpdate,
             GameplaySet
                 .in_set(PostAssetLoadingSet)
-                .after(StoppedWhenPausedSet)
+                .after(StopWhenPausedSet)
                 .run_if(in_state(GameState::Gameplay)),
         );
     }
@@ -56,7 +56,7 @@ pub struct PostAssetLoadingSet;
 
 /// Systems that stop when the game is paused.
 #[derive(Clone, Debug, Eq, Hash, PartialEq, SystemSet)]
-pub struct StoppedWhenPausedSet;
+pub struct StopWhenPausedSet;
 
 /// Systems that are active when the game is paused.
 #[derive(Clone, Debug, Eq, Hash, PartialEq, SystemSet)]
