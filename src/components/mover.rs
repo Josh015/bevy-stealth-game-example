@@ -99,11 +99,11 @@ fn move_to(
         };
         let (heading, end_translation) = match move_to {
             MoveTo::Destination(destination) => {
-                let heading =
-                    (*destination - transform.translation).normalize_or_zero();
-                let distance =
-                    destination.distance_squared(transform.translation);
-                let end_translation = distance <= DESTINATION_MARGIN_OF_ERROR;
+                let diff = *destination - transform.translation;
+                let heading = diff.normalize_or_zero();
+                let distance_squared = diff.length_squared();
+                let end_translation =
+                    distance_squared <= DESTINATION_MARGIN_OF_ERROR;
 
                 if end_translation {
                     transform.translation = *destination;
