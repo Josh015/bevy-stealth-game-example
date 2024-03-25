@@ -104,11 +104,13 @@ fn move_to(
         Entity,
         &mut Mover,
         &Transform,
-        Option<&Translation>,
-        Option<&Rotation>,
+        Has<Translation>,
+        Has<Rotation>,
     )>,
 ) {
-    for (entity, mut mover, transform, translation, rotation) in &mut query {
+    for (entity, mut mover, transform, has_translation, has_rotation) in
+        &mut query
+    {
         if mover.move_to.is_none() {
             continue;
         }
@@ -153,7 +155,7 @@ fn move_to(
         }
 
         // Clean up when everything is complete.
-        if translation.is_none() && rotation.is_none() {
+        if !has_translation && !has_rotation {
             mover.move_to = None;
             mover.is_started = false;
 
