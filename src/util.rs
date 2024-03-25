@@ -1,9 +1,9 @@
 use std::f32::consts::*;
 
 /// Controls how many times a thing can repeat.
+#[allow(dead_code)]
 pub enum Repeat {
     /// Repeats an unlimited number of times.
-    #[allow(dead_code)]
     Forever,
 
     /// Repeats for a specified number of times.

@@ -8,7 +8,13 @@ pub(super) struct MoverPlugin;
 
 impl Plugin for MoverPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, move_to.in_set(StopWhenPausedSet));
+        // NOTE: Systems will malfunction if order isn't enforced!
+        app.add_systems(
+            Update,
+            (move_to, translation, rotation)
+                .chain()
+                .in_set(StopWhenPausedSet),
+        );
     }
 }
 
@@ -23,15 +29,16 @@ pub struct MoverBundle {
 /// Moves the entity.
 #[derive(Clone, Component, Debug, Default)]
 pub struct Mover {
-    yaw: f32,
     move_to: Option<MoveTo>,
     stored_animation: Option<Handle<AnimationClip>>,
+    is_started: bool,
 }
 
 impl Mover {
     /// Set the type of movement to execute.
     pub fn set_move_to(&mut self, move_to: MoveTo) {
         self.move_to = Some(move_to);
+        self.is_started = false;
     }
 
     /// Cancel the current movement.
@@ -46,6 +53,7 @@ impl Mover {
 }
 
 /// Makes an entity transform in a specified way.
+#[allow(dead_code)]
 #[derive(Clone, Debug)]
 pub enum MoveTo {
     /// A point this entity is trying to reach.
@@ -53,6 +61,9 @@ pub enum MoveTo {
 
     /// A direction this entity wants to face.
     FaceDirection(Direction3d),
+
+    /// An angle in radians that this entity wants to face.
+    Heading(f32),
 }
 
 /// Linear speed in `meters/second`.
@@ -75,23 +86,59 @@ impl Default for AngularSpeed {
     }
 }
 
+#[derive(Clone, Component, Debug)]
+struct Translation {
+    destination: Vec3,
+}
+
+#[derive(Clone, Component, Debug)]
+struct Rotation {
+    yaw: f32,
+    heading: f32,
+}
+
 fn move_to(
-    time: Res<Time>,
+    mut commands: Commands,
     mut animations: Animations,
     mut query: Query<(
         Entity,
-        &mut Transform,
         &mut Mover,
-        &LinearSpeed,
-        &AngularSpeed,
+        &Transform,
+        Option<&Translation>,
+        Option<&Rotation>,
     )>,
 ) {
-    for (entity, mut transform, mut mover, linear_speed, angular_speed) in
-        &mut query
-    {
-        match (&mover.move_to, &mover.stored_animation) {
-            (Some(_), None) => {
-                // Save the currently playing animation for later.
+    for (entity, mut mover, transform, translation, rotation) in &mut query {
+        if mover.move_to.is_none() {
+            continue;
+        }
+
+        if !mover.is_started {
+            let heading = match mover.move_to {
+                Some(MoveTo::Destination(destination)) => {
+                    let diff = destination - transform.translation;
+
+                    // Translation.
+                    commands.entity(entity).insert(Translation { destination });
+                    diff.x.atan2(diff.z)
+                },
+                Some(MoveTo::FaceDirection(direction)) => {
+                    direction.x.atan2(direction.z)
+                },
+                Some(MoveTo::Heading(heading)) => heading,
+                _ => {
+                    continue;
+                },
+            };
+
+            // Rotation.
+            commands.entity(entity).insert(Rotation {
+                heading,
+                yaw: transform.rotation.to_euler(EulerRot::YXZ).0,
+            });
+
+            // Save the currently playing animation for later.
+            if mover.stored_animation.is_none() {
                 if let Some(current_animation) =
                     animations.get_current_clip(entity)
                 {
@@ -99,67 +146,66 @@ fn move_to(
                 }
 
                 animations.play_clip(entity, MOVING_ANIMATION);
+            }
 
-                // Extract and store the transform rotation's current yaw.
-                mover.yaw = transform.rotation.to_euler(EulerRot::YXZ).0;
-            },
-            (None, Some(stored_animation)) => {
-                // Restore the saved animation.
+            mover.is_started = true;
+            continue;
+        }
+
+        // Clean up when everything is complete.
+        if translation.is_none() && rotation.is_none() {
+            mover.move_to = None;
+            mover.is_started = false;
+
+            // Restore the saved animation.
+            if let Some(stored_animation) = &mover.stored_animation {
                 animations
                     .play_clip_handle(entity, stored_animation.clone_weak());
                 mover.stored_animation = None;
-            },
-            _ => {},
+            }
         }
+    }
+}
 
-        let Some(move_to) = &mover.move_to else {
-            continue;
-        };
+fn translation(
+    time: Res<Time>,
+    mut commands: Commands,
+    mut query: Query<(Entity, &Translation, &mut Transform, &LinearSpeed)>,
+) {
+    for (entity, translation, mut transform, linear_speed) in &mut query {
+        let diff = translation.destination - transform.translation;
+        let dir = diff.normalize_or_zero();
+        let distance_squared = diff.length_squared();
+        let finished = distance_squared <= DESTINATION_MARGIN_OF_ERROR;
 
-        // Translations.
-        let (direction, end_translation) = match move_to {
-            MoveTo::Destination(destination) => {
-                let diff = *destination - transform.translation;
-                let dir = diff.normalize_or_zero();
-                let distance_squared = diff.length_squared();
-                let end_translation =
-                    distance_squared <= DESTINATION_MARGIN_OF_ERROR;
-
-                if end_translation {
-                    transform.translation = *destination;
-                } else {
-                    transform.translation +=
-                        dir * linear_speed.0 * time.delta_seconds();
-                }
-
-                (dir, end_translation)
-            },
-            MoveTo::FaceDirection(direction) => (**direction, true),
-        };
-
-        // Rotations.
-        let end_rotation = if direction == Vec3::ZERO {
-            true
+        if finished {
+            commands.entity(entity).remove::<Translation>();
+            transform.translation = translation.destination;
         } else {
-            let heading = direction.x.atan2(direction.z);
-            let diff = wrap_angle(heading - mover.yaw);
-            let dir = diff.signum();
-            let delta = dir * angular_speed.0 * time.delta_seconds();
-            let end_rotation = diff.abs() < delta.abs();
+            transform.translation +=
+                dir * linear_speed.0 * time.delta_seconds();
+        }
+    }
+}
 
-            mover.yaw = if end_rotation {
-                heading
-            } else {
-                wrap_angle(mover.yaw + delta)
-            };
+fn rotation(
+    time: Res<Time>,
+    mut commands: Commands,
+    mut query: Query<(Entity, &mut Rotation, &mut Transform, &AngularSpeed)>,
+) {
+    for (entity, mut rotation, mut transform, angular_speed) in &mut query {
+        let diff = wrap_angle(rotation.heading - rotation.yaw);
+        let dir = diff.signum();
+        let delta = dir * angular_speed.0 * time.delta_seconds();
+        let finished = diff.abs() < delta.abs();
 
-            transform.rotation = Quat::from_rotation_y(mover.yaw).normalize();
-            end_rotation
+        rotation.yaw = if finished {
+            commands.entity(entity).remove::<Rotation>();
+            rotation.heading
+        } else {
+            wrap_angle(rotation.yaw + delta)
         };
 
-        // Clean up when everything is complete.
-        if end_translation && end_rotation {
-            mover.move_to = None;
-        }
+        transform.rotation = Quat::from_rotation_y(rotation.yaw).normalize();
     }
 }
