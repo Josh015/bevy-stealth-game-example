@@ -76,6 +76,8 @@ fn move_to(
     for (entity, mut transform, mut mover, linear_speed, angular_speed) in
         &mut query
     {
+        // Start/Stop moving animation at start/end of movement. Restore saved
+        // prior animation upon completion.
         match (&mover.move_to, &mover.stored_animation) {
             (Some(_), None) => {
                 if let Some(current_animation) =
@@ -97,6 +99,8 @@ fn move_to(
         let Some(move_to) = &mover.move_to else {
             continue;
         };
+
+        // Begin movement starting with translation if it's required.
         let (heading, end_translation) = match move_to {
             MoveTo::Destination(destination) => {
                 let diff = *destination - transform.translation;
