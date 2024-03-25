@@ -89,7 +89,7 @@ fn control_player(
         let move_direction =
             Vec3::new(clamped_axis.x, 0.0, -clamped_axis.y).normalize_or_zero();
 
-        mover.move_to = Some(crate::MoveTo::Destination(
+        mover.set_move_to(MoveTo::Destination(
             player_transform.translation
                 + move_direction * linear_speed.0 * time.delta_seconds(),
         ));

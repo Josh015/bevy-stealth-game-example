@@ -15,7 +15,8 @@ impl Action for MoveAction {
         let Some(mover) = entity_commands.get::<Mover>() else {
             return true;
         };
-        mover.move_to.is_none()
+
+        !mover.is_moving()
     }
 
     fn on_start(&mut self, agent: Entity, world: &mut World) -> bool {
@@ -24,7 +25,7 @@ impl Action for MoveAction {
             return true;
         };
 
-        mover.move_to = Some(self.move_to.clone());
+        mover.set_move_to(self.move_to.clone());
         false
     }
 
@@ -38,6 +39,6 @@ impl Action for MoveAction {
         let Some(mut mover) = entity_commands.get_mut::<Mover>() else {
             return;
         };
-        mover.move_to = None;
+        mover.cancel_move_to();
     }
 }
