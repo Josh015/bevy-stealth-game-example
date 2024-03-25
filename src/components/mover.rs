@@ -125,7 +125,7 @@ fn move_to(
                 Some(MoveTo::FaceDirection(direction)) => {
                     direction.x.atan2(direction.z)
                 },
-                Some(MoveTo::Heading(heading)) => heading,
+                Some(MoveTo::Heading(heading)) => wrap_angle(heading),
                 _ => {
                     continue;
                 },
@@ -178,13 +178,12 @@ fn translation(
         let distance_squared = diff.length_squared();
         let finished = distance_squared <= DESTINATION_MARGIN_OF_ERROR;
 
-        if finished {
+        transform.translation = if finished {
             commands.entity(entity).remove::<Translation>();
-            transform.translation = translation.destination;
+            translation.destination
         } else {
-            transform.translation +=
-                dir * linear_speed.0 * time.delta_seconds();
-        }
+            transform.translation + dir * linear_speed.0 * time.delta_seconds()
+        };
     }
 }
 
