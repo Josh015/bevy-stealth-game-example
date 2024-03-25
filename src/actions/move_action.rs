@@ -34,6 +34,10 @@ impl Action for MoveAction {
         world: &mut World,
         _reason: StopReason,
     ) {
-        world.entity_mut(agent).remove::<MoveTo>();
+        let mut entity_commands = world.entity_mut(agent);
+        let Some(mut mover) = entity_commands.get_mut::<Mover>() else {
+            return;
+        };
+        mover.move_to = None;
     }
 }

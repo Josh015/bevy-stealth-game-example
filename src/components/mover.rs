@@ -33,13 +33,13 @@ pub struct Mover {
 }
 
 /// Makes an entity transform in a specified way.
-#[derive(Clone, Component, Debug)]
+#[derive(Clone, Debug)]
 pub enum MoveTo {
     /// A point this entity is trying to reach.
     Destination(Vec3),
 
     /// A direction this entity wants to face.
-    Heading(Direction3d),
+    FaceDirection(Direction3d),
 }
 
 /// Linear speed in `meters/second`.
@@ -114,7 +114,7 @@ fn move_to(
 
                 (heading, end_translation)
             },
-            MoveTo::Heading(heading) => (**heading, true),
+            MoveTo::FaceDirection(heading) => (**heading, true),
         };
 
         // Negate forward() because glTF models typically face +Z axis.
