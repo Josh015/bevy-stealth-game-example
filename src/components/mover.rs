@@ -31,14 +31,12 @@ pub struct MoverBundle {
 pub struct Mover {
     move_to: Option<MoveTo>,
     stored_animation: Option<Handle<AnimationClip>>,
-    is_started: bool,
 }
 
 impl Mover {
     /// Set the type of movement to execute.
     pub fn set_move_to(&mut self, move_to: MoveTo) {
         self.move_to = Some(move_to);
-        self.is_started = false;
     }
 
     /// Cancel the current movement.
@@ -103,47 +101,40 @@ fn move_to_setup(
     mut query: Query<(Entity, &mut Mover, &Transform), Changed<Mover>>,
 ) {
     for (entity, mut mover, transform) in &mut query {
-        if mover.move_to.is_none() {
+        let mut entity_commands = commands.entity(entity);
+        let Some(move_to) = &mover.move_to else {
+            entity_commands.remove::<(Translation, Rotation)>();
             continue;
-        }
+        };
 
-        if !mover.is_started {
-            let heading = match mover.move_to {
-                Some(MoveTo::Destination(destination)) => {
-                    let diff = destination - transform.translation;
+        let heading = match move_to {
+            MoveTo::Destination(destination) => {
+                let diff = *destination - transform.translation;
 
-                    // Translation.
-                    commands.entity(entity).insert(Translation { destination });
-                    diff.x.atan2(diff.z)
-                },
-                Some(MoveTo::FaceDirection(direction)) => {
-                    direction.x.atan2(direction.z)
-                },
-                Some(MoveTo::Heading(heading)) => wrap_angle(heading),
-                _ => {
-                    continue;
-                },
-            };
+                // Translation.
+                entity_commands.insert(Translation {
+                    destination: *destination,
+                });
+                diff.x.atan2(diff.z)
+            },
+            MoveTo::FaceDirection(direction) => direction.x.atan2(direction.z),
+            MoveTo::Heading(heading) => wrap_angle(*heading),
+        };
 
-            // Rotation.
-            commands.entity(entity).insert(Rotation {
-                heading,
-                yaw: transform.rotation.to_euler(EulerRot::YXZ).0,
-            });
+        // Rotation.
+        entity_commands.insert(Rotation {
+            heading,
+            yaw: transform.rotation.to_euler(EulerRot::YXZ).0,
+        });
 
-            // Save the currently playing animation for later.
-            if mover.stored_animation.is_none() {
-                if let Some(current_animation) =
-                    animations.get_current_clip(entity)
-                {
-                    mover.stored_animation = Some(current_animation);
-                }
-
-                animations.play_clip(entity, MOVING_ANIMATION);
+        // Save the currently playing animation for later.
+        if mover.stored_animation.is_none() {
+            if let Some(current_animation) = animations.get_current_clip(entity)
+            {
+                mover.stored_animation = Some(current_animation);
             }
 
-            mover.is_started = true;
-            continue;
+            animations.play_clip(entity, MOVING_ANIMATION);
         }
     }
 }
@@ -159,7 +150,6 @@ fn move_to(
         // Clean up when everything is complete.
         if mover.move_to.is_some() {
             mover.move_to = None;
-            mover.is_started = false;
 
             // Restore the saved animation.
             if let Some(stored_animation) = &mover.stored_animation {
