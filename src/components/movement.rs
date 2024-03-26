@@ -85,22 +85,21 @@ fn movement_setup(
     >,
 ) {
     for (entity, move_to, transform, moving) in &query {
+        // Queue up automatic translation and rotation.
         let mut entity_commands = commands.entity(entity);
         let heading = match move_to {
+            MoveTo::Heading(heading) => wrap_angle(*heading),
+            MoveTo::FaceDirection(direction) => direction.x.atan2(direction.z),
             MoveTo::Destination(destination) => {
                 let diff = *destination - transform.translation;
 
-                // Translation.
                 entity_commands.insert(Translating {
                     destination: *destination,
                 });
                 diff.x.atan2(diff.z)
             },
-            MoveTo::FaceDirection(direction) => direction.x.atan2(direction.z),
-            MoveTo::Heading(heading) => wrap_angle(*heading),
         };
 
-        // Rotation.
         entity_commands.insert(Rotating {
             heading,
             yaw: transform.rotation.to_euler(EulerRot::YXZ).0,
