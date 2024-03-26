@@ -67,19 +67,14 @@ impl PlayerAction {
 }
 
 fn control_player(
+    mut commands: Commands,
     time: Res<Time>,
-    mut query: Query<
-        (
-            &Transform,
-            &mut Mover,
-            &LinearSpeed,
-            &ActionState<PlayerAction>,
-        ),
+    query: Query<
+        (Entity, &Transform, &LinearSpeed, &ActionState<PlayerAction>),
         With<Player>,
     >,
 ) {
-    let (player_transform, mut mover, linear_speed, action_state) =
-        query.single_mut();
+    let (entity, player_transform, linear_speed, action_state) = query.single();
 
     if action_state.pressed(&PlayerAction::Move) {
         let clamped_axis = action_state
@@ -89,7 +84,7 @@ fn control_player(
         let move_direction =
             Vec3::new(clamped_axis.x, 0.0, -clamped_axis.y).normalize_or_zero();
 
-        mover.set_move_to(MoveTo::Destination(
+        commands.entity(entity).insert(MoveTo::Destination(
             player_transform.translation
                 + move_direction * linear_speed.0 * time.delta_seconds(),
         ));

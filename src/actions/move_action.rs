@@ -11,21 +11,11 @@ pub struct MoveAction {
 
 impl Action for MoveAction {
     fn is_finished(&self, agent: Entity, world: &World) -> bool {
-        let entity_commands = world.entity(agent);
-        let Some(mover) = entity_commands.get::<Mover>() else {
-            return true;
-        };
-
-        !mover.is_moving()
+        !world.entity(agent).contains::<MoveTo>()
     }
 
     fn on_start(&mut self, agent: Entity, world: &mut World) -> bool {
-        let mut entity_commands = world.entity_mut(agent);
-        let Some(mut mover) = entity_commands.get_mut::<Mover>() else {
-            return true;
-        };
-
-        mover.set_move_to(self.move_to.clone());
+        world.entity_mut(agent).insert(self.move_to.clone());
         false
     }
 
@@ -35,10 +25,6 @@ impl Action for MoveAction {
         world: &mut World,
         _reason: StopReason,
     ) {
-        let mut entity_commands = world.entity_mut(agent);
-        let Some(mut mover) = entity_commands.get_mut::<Mover>() else {
-            return;
-        };
-        mover.cancel_move_to();
+        world.entity_mut(agent).remove::<MoveTo>();
     }
 }

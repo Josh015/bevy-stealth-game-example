@@ -4,63 +4,25 @@ use bevy::prelude::*;
 const MOVING_ANIMATION: &str = "moving";
 const DESTINATION_MARGIN_OF_ERROR: f32 = 0.001;
 
-pub(super) struct MoverPlugin;
+pub(super) struct MovementPlugin;
 
-impl Plugin for MoverPlugin {
+impl Plugin for MovementPlugin {
     fn build(&self, app: &mut App) {
         // NOTE: Systems will malfunction if order isn't enforced!
         app.add_systems(
             Update,
-            (move_to_setup, move_to_cleanup, translation, rotation)
+            (movement_setup, movement_cleanup, translating, rotating)
                 .chain()
                 .in_set(StopWhenPausedSet),
         );
     }
 }
 
-/// Required components for a [`Mover`] entity.
+/// Required components by an entity with [`Movement`].
 #[derive(Bundle, Default)]
-pub struct MoverBundle {
-    pub mover: Mover,
+pub struct MovementBundle {
     pub linear_speed: LinearSpeed,
     pub angular_speed: AngularSpeed,
-}
-
-/// Moves the entity.
-#[derive(Clone, Component, Debug, Default)]
-pub struct Mover {
-    move_to: Option<MoveTo>,
-}
-
-impl Mover {
-    /// Set the type of movement to execute.
-    pub fn set_move_to(&mut self, move_to: MoveTo) {
-        self.move_to = Some(move_to);
-    }
-
-    /// Cancel the current movement.
-    pub fn cancel_move_to(&mut self) {
-        self.move_to = None;
-    }
-
-    /// Check if there is movement occurring.
-    pub fn is_moving(&self) -> bool {
-        self.move_to.is_some()
-    }
-}
-
-/// Makes an entity transform in a specified way.
-#[allow(dead_code)]
-#[derive(Clone, Debug)]
-pub enum MoveTo {
-    /// A point this entity is trying to reach.
-    Destination(Vec3),
-
-    /// A direction this entity wants to face.
-    FaceDirection(Direction3d),
-
-    /// An angle in radians that this entity wants to face.
-    Heading(f32),
 }
 
 /// Linear speed in `meters/second`.
@@ -83,40 +45,53 @@ impl Default for AngularSpeed {
     }
 }
 
+/// Makes an entity transform in a specified way.
+#[allow(dead_code)]
 #[derive(Clone, Component, Debug)]
-struct Translation {
+#[component(storage = "SparseSet")]
+pub enum MoveTo {
+    /// A point this entity is trying to reach.
+    Destination(Vec3),
+
+    /// A direction this entity wants to face.
+    FaceDirection(Direction3d),
+
+    /// An angle in radians that this entity wants to face.
+    Heading(f32),
+}
+
+#[derive(Clone, Component, Debug)]
+struct Movement {
+    stored_animation: Option<Handle<AnimationClip>>,
+}
+
+#[derive(Clone, Component, Debug)]
+struct Translating {
     destination: Vec3,
 }
 
 #[derive(Clone, Component, Debug)]
-struct Rotation {
+struct Rotating {
     yaw: f32,
     heading: f32,
 }
 
-#[derive(Clone, Component, Debug)]
-struct Moving {
-    stored_animation: Option<Handle<AnimationClip>>,
-}
-
-fn move_to_setup(
+fn movement_setup(
     mut commands: Commands,
     mut animations: Animations,
-    query: Query<(Entity, &Mover, &Transform, Option<&Moving>), Changed<Mover>>,
+    query: Query<
+        (Entity, &MoveTo, &Transform, Option<&Movement>),
+        Changed<MoveTo>,
+    >,
 ) {
-    for (entity, mover, transform, moving) in &query {
+    for (entity, move_to, transform, moving) in &query {
         let mut entity_commands = commands.entity(entity);
-        let Some(move_to) = &mover.move_to else {
-            entity_commands.remove::<(Translation, Rotation, Moving)>();
-            continue;
-        };
-
         let heading = match move_to {
             MoveTo::Destination(destination) => {
                 let diff = *destination - transform.translation;
 
                 // Translation.
-                entity_commands.insert(Translation {
+                entity_commands.insert(Translating {
                     destination: *destination,
                 });
                 diff.x.atan2(diff.z)
@@ -126,14 +101,14 @@ fn move_to_setup(
         };
 
         // Rotation.
-        entity_commands.insert(Rotation {
+        entity_commands.insert(Rotating {
             heading,
             yaw: transform.rotation.to_euler(EulerRot::YXZ).0,
         });
 
         // Start moving.
         if moving.is_none() {
-            entity_commands.insert(Moving {
+            entity_commands.insert(Movement {
                 // Save the currently playing animation for later.
                 stored_animation: if let Some(current_animation) =
                     animations.get_current_clip(entity)
@@ -149,18 +124,17 @@ fn move_to_setup(
     }
 }
 
-fn move_to_cleanup(
+fn movement_cleanup(
     mut commands: Commands,
     mut animations: Animations,
     mut query: Query<
-        (Entity, &mut Mover, &Moving),
-        (Without<Translation>, Without<Rotation>),
+        (Entity, &Movement),
+        (With<MoveTo>, Without<Translating>, Without<Rotating>),
     >,
 ) {
-    for (entity, mut mover, moving) in &mut query {
+    for (entity, moving) in &mut query {
         // Clean up when everything is complete.
-        mover.move_to = None;
-        commands.entity(entity).remove::<Moving>();
+        commands.entity(entity).remove::<(Movement, MoveTo)>();
 
         // Restore the saved animation.
         if let Some(stored_animation) = &moving.stored_animation {
@@ -169,44 +143,50 @@ fn move_to_cleanup(
     }
 }
 
-fn translation(
+fn translating(
     time: Res<Time>,
     mut commands: Commands,
-    mut query: Query<(Entity, &Translation, &mut Transform, &LinearSpeed)>,
+    mut query: Query<
+        (Entity, &Translating, &mut Transform, &LinearSpeed),
+        With<MoveTo>,
+    >,
 ) {
-    for (entity, translation, mut transform, linear_speed) in &mut query {
-        let diff = translation.destination - transform.translation;
+    for (entity, translating, mut transform, linear_speed) in &mut query {
+        let diff = translating.destination - transform.translation;
         let dir = diff.normalize_or_zero();
         let distance_squared = diff.length_squared();
         let finished = distance_squared <= DESTINATION_MARGIN_OF_ERROR;
 
         transform.translation = if finished {
-            commands.entity(entity).remove::<Translation>();
-            translation.destination
+            commands.entity(entity).remove::<Translating>();
+            translating.destination
         } else {
             transform.translation + dir * linear_speed.0 * time.delta_seconds()
         };
     }
 }
 
-fn rotation(
+fn rotating(
     time: Res<Time>,
     mut commands: Commands,
-    mut query: Query<(Entity, &mut Rotation, &mut Transform, &AngularSpeed)>,
+    mut query: Query<
+        (Entity, &mut Rotating, &mut Transform, &AngularSpeed),
+        With<MoveTo>,
+    >,
 ) {
-    for (entity, mut rotation, mut transform, angular_speed) in &mut query {
-        let diff = wrap_angle(rotation.heading - rotation.yaw);
+    for (entity, mut rotating, mut transform, angular_speed) in &mut query {
+        let diff = wrap_angle(rotating.heading - rotating.yaw);
         let dir = diff.signum();
         let delta = dir * angular_speed.0 * time.delta_seconds();
         let finished = diff.abs() < delta.abs();
 
-        rotation.yaw = if finished {
-            commands.entity(entity).remove::<Rotation>();
-            rotation.heading
+        rotating.yaw = if finished {
+            commands.entity(entity).remove::<Rotating>();
+            rotating.heading
         } else {
-            wrap_angle(rotation.yaw + delta)
+            wrap_angle(rotating.yaw + delta)
         };
 
-        transform.rotation = Quat::from_rotation_y(rotation.yaw).normalize();
+        transform.rotation = Quat::from_rotation_y(rotating.yaw).normalize();
     }
 }
