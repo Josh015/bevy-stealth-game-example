@@ -10,12 +10,13 @@ mod footsteps;
 mod for_state;
 mod glass;
 mod guard;
-mod movement;
+mod move_to;
 mod physics;
 mod pickup;
 mod player;
 mod security_camera;
 mod spawn_point;
+mod speed;
 mod start_location;
 mod trigger;
 mod waypoint;
@@ -31,12 +32,13 @@ pub use footsteps::*;
 pub use for_state::*;
 pub use glass::*;
 pub use guard::*;
-pub use movement::*;
+pub use move_to::*;
 pub use physics::*;
 pub use pickup::*;
 pub use player::*;
 pub use security_camera::*;
 pub use spawn_point::*;
+pub use speed::*;
 pub use start_location::*;
 pub use trigger::*;
 pub use waypoint::*;
@@ -50,7 +52,7 @@ impl Plugin for ComponentsPlugin {
             AnimationClipsPlugin,
             ForStatePlugin,
             GuardPlugin,
-            MovementPlugin,
+            MoveToPlugin,
             PhysicsPlugin,
             PickupPlugin,
             PlayerPlugin,

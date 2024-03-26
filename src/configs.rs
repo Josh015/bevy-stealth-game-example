@@ -29,7 +29,7 @@ pub enum ComponentConfig {
     FloorSwitch,
     Door,
     Glass,
-    Movement {
+    Speed {
         linear_speed: f32,
         angular_speed: f32,
     },

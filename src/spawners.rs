@@ -60,11 +60,11 @@ fn spawn_actor_from_config_with_matrix(
             ComponentConfig::Glass => {
                 entity_commands.insert(GlassBundle::default());
             },
-            ComponentConfig::Movement {
+            ComponentConfig::Speed {
                 linear_speed,
                 angular_speed,
             } => {
-                entity_commands.insert(MovementBundle {
+                entity_commands.insert(SpeedBundle {
                     linear_speed: LinearSpeed(*linear_speed),
                     angular_speed: AngularSpeed(*angular_speed),
                     ..default()

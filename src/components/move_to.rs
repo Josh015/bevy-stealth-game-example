@@ -1,47 +1,27 @@
+use super::speed::*;
 use crate::{system_params::*, system_sets::*, util::*};
 use bevy::prelude::*;
 
 const MOVING_ANIMATION: &str = "moving";
 const DESTINATION_MARGIN_OF_ERROR: f32 = 0.001;
 
-pub(super) struct MovementPlugin;
+pub(super) struct MoveToPlugin;
 
-impl Plugin for MovementPlugin {
+impl Plugin for MoveToPlugin {
     fn build(&self, app: &mut App) {
         // NOTE: Systems will malfunction if order isn't enforced!
         app.add_systems(
             Update,
-            (movement_setup, movement_cleanup, translating, rotating)
+            (
+                move_to_started,
+                move_to_completed,
+                move_to_removed,
+                translating,
+                rotating,
+            )
                 .chain()
                 .in_set(StopWhenPausedSet),
         );
-    }
-}
-
-/// Required components by an entity with [`Movement`].
-#[derive(Bundle, Default)]
-pub struct MovementBundle {
-    pub linear_speed: LinearSpeed,
-    pub angular_speed: AngularSpeed,
-}
-
-/// Linear speed in `meters/second`.
-#[derive(Clone, Component, Debug)]
-pub struct LinearSpeed(pub f32);
-
-impl Default for LinearSpeed {
-    fn default() -> Self {
-        Self(1.0)
-    }
-}
-
-/// Angular speed in `radians/second`.
-#[derive(Clone, Component, Debug)]
-pub struct AngularSpeed(pub f32);
-
-impl Default for AngularSpeed {
-    fn default() -> Self {
-        Self(std::f32::consts::TAU)
     }
 }
 
@@ -61,9 +41,7 @@ pub enum MoveTo {
 }
 
 #[derive(Clone, Component, Debug)]
-struct Movement {
-    stored_animation: Option<Handle<AnimationClip>>,
-}
+struct StoredAnimation(Handle<AnimationClip>);
 
 #[derive(Clone, Component, Debug)]
 struct Translating {
@@ -76,15 +54,15 @@ struct Rotating {
     heading: f32,
 }
 
-fn movement_setup(
+fn move_to_started(
     mut commands: Commands,
     mut animations: Animations,
     query: Query<
-        (Entity, &MoveTo, &Transform, Option<&Movement>),
+        (Entity, &MoveTo, &Transform, Has<StoredAnimation>),
         Changed<MoveTo>,
     >,
 ) {
-    for (entity, move_to, transform, moving) in &query {
+    for (entity, move_to, transform, has_stored_animation) in &query {
         // Queue up automatic translation and rotation.
         let mut entity_commands = commands.entity(entity);
         let heading = match move_to {
@@ -105,39 +83,46 @@ fn movement_setup(
             yaw: transform.rotation.to_euler(EulerRot::YXZ).0,
         });
 
-        // Start moving.
-        if moving.is_none() {
-            entity_commands.insert(Movement {
-                // Save the currently playing animation for later.
-                stored_animation: if let Some(current_animation) =
-                    animations.get_current_clip(entity)
-                {
-                    Some(current_animation)
-                } else {
-                    None
-                },
-            });
+        // Save currently playing animation to restore later.
+        if !has_stored_animation {
+            if let Some(current_animation) = animations.get_current_clip(entity)
+            {
+                entity_commands.insert(StoredAnimation(current_animation));
+            }
 
             animations.play_clip(entity, MOVING_ANIMATION);
         }
     }
 }
 
-fn movement_cleanup(
+fn move_to_completed(
     mut commands: Commands,
-    mut animations: Animations,
-    mut query: Query<
-        (Entity, &Movement),
+    query: Query<
+        Entity,
         (With<MoveTo>, Without<Translating>, Without<Rotating>),
     >,
 ) {
-    for (entity, moving) in &mut query {
-        // Clean up when everything is complete.
-        commands.entity(entity).remove::<(Movement, MoveTo)>();
+    for entity in &query {
+        commands.entity(entity).remove::<MoveTo>();
+    }
+}
+
+fn move_to_removed(
+    mut commands: Commands,
+    mut animations: Animations,
+    mut removed: RemovedComponents<MoveTo>,
+    query: Query<&StoredAnimation>,
+) {
+    for entity in removed.read() {
+        // Clean up all related components just in case.
+        commands
+            .entity(entity)
+            .remove::<(Translating, Rotating, StoredAnimation)>();
 
         // Restore the saved animation.
-        if let Some(stored_animation) = &moving.stored_animation {
-            animations.play_clip_handle(entity, stored_animation.clone_weak());
+        if let Ok(stored_animation) = query.get(entity) {
+            animations
+                .play_clip_handle(entity, stored_animation.0.clone_weak());
         }
     }
 }
