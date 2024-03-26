@@ -30,7 +30,6 @@ pub struct MoverBundle {
 #[derive(Clone, Component, Debug, Default)]
 pub struct Mover {
     move_to: Option<MoveTo>,
-    stored_animation: Option<Handle<AnimationClip>>,
 }
 
 impl Mover {
@@ -95,12 +94,18 @@ struct Rotation {
     heading: f32,
 }
 
+#[derive(Clone, Component, Debug)]
+struct StoredAnimation(Handle<AnimationClip>);
+
 fn move_to_setup(
     mut commands: Commands,
     mut animations: Animations,
-    mut query: Query<(Entity, &mut Mover, &Transform), Changed<Mover>>,
+    query: Query<
+        (Entity, &Mover, &Transform, Option<&StoredAnimation>),
+        Changed<Mover>,
+    >,
 ) {
-    for (entity, mut mover, transform) in &mut query {
+    for (entity, mover, transform, stored_animation) in &query {
         let mut entity_commands = commands.entity(entity);
         let Some(move_to) = &mover.move_to else {
             entity_commands.remove::<(Translation, Rotation)>();
@@ -128,10 +133,10 @@ fn move_to_setup(
         });
 
         // Save the currently playing animation for later.
-        if mover.stored_animation.is_none() {
+        if stored_animation.is_none() {
             if let Some(current_animation) = animations.get_current_clip(entity)
             {
-                mover.stored_animation = Some(current_animation);
+                entity_commands.insert(StoredAnimation(current_animation));
             }
 
             animations.play_clip(entity, MOVING_ANIMATION);
@@ -140,24 +145,20 @@ fn move_to_setup(
 }
 
 fn move_to(
+    mut commands: Commands,
     mut animations: Animations,
     mut query: Query<
-        (Entity, &mut Mover),
+        (Entity, &mut Mover, &StoredAnimation),
         (Without<Translation>, Without<Rotation>),
     >,
 ) {
-    for (entity, mut mover) in &mut query {
+    for (entity, mut mover, stored_animation) in &mut query {
         // Clean up when everything is complete.
-        if mover.move_to.is_some() {
-            mover.move_to = None;
+        mover.move_to = None;
 
-            // Restore the saved animation.
-            if let Some(stored_animation) = &mover.stored_animation {
-                animations
-                    .play_clip_handle(entity, stored_animation.clone_weak());
-                mover.stored_animation = None;
-            }
-        }
+        // Restore the saved animation.
+        animations.play_clip_handle(entity, stored_animation.0.clone_weak());
+        commands.entity(entity).remove::<StoredAnimation>();
     }
 }
 
