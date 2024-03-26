@@ -11,7 +11,7 @@ impl Plugin for MoverPlugin {
         // NOTE: Systems will malfunction if order isn't enforced!
         app.add_systems(
             Update,
-            (move_to, translation, rotation)
+            (move_to_setup, move_to, translation, rotation)
                 .chain()
                 .in_set(StopWhenPausedSet),
         );
@@ -97,20 +97,12 @@ struct Rotation {
     heading: f32,
 }
 
-fn move_to(
+fn move_to_setup(
     mut commands: Commands,
     mut animations: Animations,
-    mut query: Query<(
-        Entity,
-        &mut Mover,
-        &Transform,
-        Has<Translation>,
-        Has<Rotation>,
-    )>,
+    mut query: Query<(Entity, &mut Mover, &Transform), Changed<Mover>>,
 ) {
-    for (entity, mut mover, transform, has_translation, has_rotation) in
-        &mut query
-    {
+    for (entity, mut mover, transform) in &mut query {
         if mover.move_to.is_none() {
             continue;
         }
@@ -153,9 +145,16 @@ fn move_to(
             mover.is_started = true;
             continue;
         }
+    }
+}
 
+fn move_to(
+    mut animations: Animations,
+    mut query: Query<(Entity, &mut Mover, Has<Translation>, Has<Rotation>)>,
+) {
+    for (entity, mut mover, has_translation, has_rotation) in &mut query {
         // Clean up when everything is complete.
-        if !has_translation && !has_rotation {
+        if mover.move_to.is_some() && !has_translation && !has_rotation {
             mover.move_to = None;
             mover.is_started = false;
 
