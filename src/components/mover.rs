@@ -11,7 +11,7 @@ impl Plugin for MoverPlugin {
         // NOTE: Systems will malfunction if order isn't enforced!
         app.add_systems(
             Update,
-            (move_to_setup, move_to, translation, rotation)
+            (move_to_setup, move_to_cleanup, translation, rotation)
                 .chain()
                 .in_set(StopWhenPausedSet),
         );
@@ -95,20 +95,19 @@ struct Rotation {
 }
 
 #[derive(Clone, Component, Debug)]
-struct StoredAnimation(Handle<AnimationClip>);
+struct Moving {
+    stored_animation: Option<Handle<AnimationClip>>,
+}
 
 fn move_to_setup(
     mut commands: Commands,
     mut animations: Animations,
-    query: Query<
-        (Entity, &Mover, &Transform, Option<&StoredAnimation>),
-        Changed<Mover>,
-    >,
+    query: Query<(Entity, &Mover, &Transform, Option<&Moving>), Changed<Mover>>,
 ) {
-    for (entity, mover, transform, stored_animation) in &query {
+    for (entity, mover, transform, moving) in &query {
         let mut entity_commands = commands.entity(entity);
         let Some(move_to) = &mover.move_to else {
-            entity_commands.remove::<(Translation, Rotation)>();
+            entity_commands.remove::<(Translation, Rotation, Moving)>();
             continue;
         };
 
@@ -132,33 +131,41 @@ fn move_to_setup(
             yaw: transform.rotation.to_euler(EulerRot::YXZ).0,
         });
 
-        // Save the currently playing animation for later.
-        if stored_animation.is_none() {
-            if let Some(current_animation) = animations.get_current_clip(entity)
-            {
-                entity_commands.insert(StoredAnimation(current_animation));
-            }
+        // Start moving.
+        if moving.is_none() {
+            entity_commands.insert(Moving {
+                // Save the currently playing animation for later.
+                stored_animation: if let Some(current_animation) =
+                    animations.get_current_clip(entity)
+                {
+                    Some(current_animation)
+                } else {
+                    None
+                },
+            });
 
             animations.play_clip(entity, MOVING_ANIMATION);
         }
     }
 }
 
-fn move_to(
+fn move_to_cleanup(
     mut commands: Commands,
     mut animations: Animations,
     mut query: Query<
-        (Entity, &mut Mover, &StoredAnimation),
+        (Entity, &mut Mover, &Moving),
         (Without<Translation>, Without<Rotation>),
     >,
 ) {
-    for (entity, mut mover, stored_animation) in &mut query {
+    for (entity, mut mover, moving) in &mut query {
         // Clean up when everything is complete.
         mover.move_to = None;
+        commands.entity(entity).remove::<Moving>();
 
         // Restore the saved animation.
-        animations.play_clip_handle(entity, stored_animation.0.clone_weak());
-        commands.entity(entity).remove::<StoredAnimation>();
+        if let Some(stored_animation) = &moving.stored_animation {
+            animations.play_clip_handle(entity, stored_animation.clone_weak());
+        }
     }
 }
 
