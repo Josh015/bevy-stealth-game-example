@@ -150,11 +150,14 @@ fn move_to_setup(
 
 fn move_to(
     mut animations: Animations,
-    mut query: Query<(Entity, &mut Mover, Has<Translation>, Has<Rotation>)>,
+    mut query: Query<
+        (Entity, &mut Mover),
+        (Without<Translation>, Without<Rotation>),
+    >,
 ) {
-    for (entity, mut mover, has_translation, has_rotation) in &mut query {
+    for (entity, mut mover) in &mut query {
         // Clean up when everything is complete.
-        if mover.move_to.is_some() && !has_translation && !has_rotation {
+        if mover.move_to.is_some() {
             mover.move_to = None;
             mover.is_started = false;
 
