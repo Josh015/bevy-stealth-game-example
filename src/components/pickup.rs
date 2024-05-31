@@ -4,7 +4,7 @@ pub(super) struct PickupPlugin;
 
 impl Plugin for PickupPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, spinning_pickup_item);
+        app.add_systems(Update, spinning_rise_and_fall_effect);
     }
 }
 
@@ -27,7 +27,7 @@ impl Default for PickupBundle {
 #[derive(Clone, Component, Debug, Default)]
 pub struct Pickup;
 
-fn spinning_pickup_item(
+fn spinning_rise_and_fall_effect(
     time: Res<Time>,
     mut query: Query<&mut Transform, With<Pickup>>,
 ) {
@@ -42,7 +42,7 @@ fn spinning_pickup_item(
 
         // TODO: Need to optimize this by storing Rotation as a component!
         // Up and Down hover effect (assumes Up=+Y).
-        let rotation_angle = transform.rotation.to_euler(EulerRot::XYZ).1;
+        let rotation_angle = transform.rotation.to_euler(EulerRot::YZX).0;
         transform.translation.y = (rotation_angle).sin() * 0.1 + 0.2
     }
 }
