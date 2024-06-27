@@ -5,11 +5,11 @@ use derive_new::new;
 
 /// Plays an animation.
 #[derive(new)]
-pub struct AnimationAction {
+pub struct StartAnimationAction {
     clip_name: String,
 }
 
-impl Action for AnimationAction {
+impl Action for StartAnimationAction {
     fn is_finished(&self, _agent: Entity, _world: &World) -> bool {
         true
     }

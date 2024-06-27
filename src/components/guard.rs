@@ -85,7 +85,7 @@ pub struct Pong;
 fn ping(mut commands: Commands, query: Query<Entity, Added<Ping>>) {
     for entity in &query {
         commands.actions(entity).add_many(actions![
-            AnimationAction::new("idle".to_owned()),
+            StartAnimationAction::new("idle".to_owned()),
             WaitAction::new(Duration::from_millis(IDLE_DELAY_MILLIS)),
             RepeatSequence::new(
                 Repeat::Times(2),
@@ -115,7 +115,7 @@ fn pong(mut commands: Commands, query: Query<Entity, Added<Ping>>) {
 
     for entity in &query {
         commands.actions(entity).add_many(actions![
-            AnimationAction::new("idle".to_owned()),
+            StartAnimationAction::new("idle".to_owned()),
             WaitAction::new(Duration::from_millis(IDLE_DELAY_MILLIS)),
             MoveAction::new(MoveTo::Destination(Vec3::new(
                 movement_range,
