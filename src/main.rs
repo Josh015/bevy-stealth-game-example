@@ -5,7 +5,7 @@ mod assets;
 mod components;
 mod events;
 mod game_state;
-mod spawning;
+mod spawners;
 mod system_params;
 mod system_sets;
 mod ui;
@@ -23,7 +23,7 @@ use components::*;
 use events::*;
 use game_state::*;
 use seldom_state::prelude::*;
-use spawning::*;
+use spawners::*;
 use system_sets::*;
 use ui::*;
 
@@ -53,7 +53,7 @@ fn main() {
             ComponentsPlugin,
             GameStatePlugin,
             EventsPlugin,
-            SpawningPlugin,
+            SpawnersPlugin,
             SystemSetsPlugin,
             UiPlugin,
         ))
