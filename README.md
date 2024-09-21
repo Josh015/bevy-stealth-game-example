@@ -4,7 +4,7 @@ My attempt to mimic the game mechanics of "SONAR" in the Bevy engine. It's gonna
 
 ## ToDo
 
-- [ ] Replace Spew crate with Bevy observers.
+- [ ] Switch to Bevy component lifecycle hooks.
 - [ ] Finish porting animation system to Bevy AnimationGraph API.
 - [ ] Use vleue_navigator for nav-mesh pathing.
 - [ ] Use bevy_rapier character controller integration.
@@ -27,3 +27,4 @@ My attempt to mimic the game mechanics of "SONAR" in the Bevy engine. It's gonna
 - [x] Automatic animation based on movement.
 - [x] Smooth blended transitions between animations.
 - [x] Use leafwing-input-manager to add Player input movement.
+- [x] Replace Spew crate with Bevy observers.

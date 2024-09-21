@@ -13,12 +13,3 @@ impl Plugin for SpawningPlugin {
         app.add_plugins((ActorsPlugin, SoundWavesPlugin));
     }
 }
-
-/// Entities that can be spawned from config file resources.
-#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
-pub enum Spawning {
-    Actor,
-    Emote,
-    Level,
-    SoundWave,
-}

@@ -10,7 +10,7 @@ impl Plugin for AssetsPlugin {
     fn build(&self, app: &mut App) {
         app.add_loading_state(
             LoadingState::new(GameState::AssetLoading)
-                .continue_to_state(GameState::StartMenu),
+                .continue_to_state(GameState::Gameplay),
         )
         .configure_loading_state(
             LoadingStateConfig::new(GameState::AssetLoading)

@@ -24,7 +24,6 @@ use events::*;
 use game_state::*;
 use seldom_state::prelude::*;
 use spawning::*;
-use spew::prelude::SpawnEvent;
 use system_sets::*;
 use ui::*;
 
@@ -61,7 +60,7 @@ fn main() {
         .insert_resource(Msaa::default())
         .insert_resource(ClearColor(Color::srgba(0.7, 0.9, 1.0, 1.0)))
         .add_systems(
-            OnExit(game_state::GameState::AssetLoading),
+            OnEnter(game_state::GameState::Gameplay),
             tinkering_zone_system,
         )
         .run();
@@ -76,10 +75,6 @@ fn tinkering_zone_system(
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
     game_assets: Res<GameAssets>,
-    mut spawn_events: EventWriter<
-        SpawnEvent<Spawning, (Handle<ActorConfig>, Mat4)>,
-    >,
-    mut next_game_state: ResMut<NextState<GameState>>,
 ) {
     // ---- Camera ----
     // TODO: Follow player effect.
@@ -128,43 +123,32 @@ fn tinkering_zone_system(
         .actors
         .get("birthday_cake_pickup.actor")
         .unwrap();
-    spawn_events.send(SpawnEvent::with_data(
-        Spawning::Actor,
-        (
-            birthday_cake.clone_weak(),
-            Mat4::from_scale_rotation_translation(
-                Vec3::splat(PICKUP_HALF_SIZE),
-                Quat::IDENTITY,
-                Vec3::new(0.25, PICKUP_HALF_SIZE + 0.1, 0.0),
-            ),
+    commands.trigger(SpawnActorWithTransform(
+        birthday_cake.clone_weak(),
+        Mat4::from_scale_rotation_translation(
+            Vec3::splat(PICKUP_HALF_SIZE),
+            Quat::IDENTITY,
+            Vec3::new(0.25, PICKUP_HALF_SIZE + 0.1, 0.0),
         ),
     ));
 
     let guard_dog = game_assets.actors.get("guard_dog.actor").unwrap();
-    spawn_events.send(SpawnEvent::with_data(
-        Spawning::Actor,
-        (
-            guard_dog.clone_weak(),
-            Mat4::from_scale_rotation_translation(
-                Vec3::splat(0.0025),
-                Quat::IDENTITY,
-                Vec3::ZERO,
-            ),
+    commands.trigger(SpawnActorWithTransform(
+        guard_dog.clone_weak(),
+        Mat4::from_scale_rotation_translation(
+            Vec3::splat(0.0025),
+            Quat::IDENTITY,
+            Vec3::ZERO,
         ),
     ));
 
     let player = game_assets.actors.get("player.actor").unwrap();
-    spawn_events.send(SpawnEvent::with_data(
-        Spawning::Actor,
-        (
-            player.clone_weak(),
-            Mat4::from_scale_rotation_translation(
-                Vec3::splat(0.0025),
-                Quat::IDENTITY,
-                Vec3::new(0.25, 0.0, 0.0),
-            ),
+    commands.trigger(SpawnActorWithTransform(
+        player.clone_weak(),
+        Mat4::from_scale_rotation_translation(
+            Vec3::splat(0.0025),
+            Quat::IDENTITY,
+            Vec3::new(0.25, 0.0, 0.0),
         ),
     ));
-
-    next_game_state.set(GameState::Gameplay);
 }

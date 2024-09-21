@@ -1,6 +1,5 @@
 use crate::game_state::*;
 use bevy::prelude::*;
-use spew::prelude::SpewSystemSet;
 
 pub(super) struct SystemSetsPlugin;
 
@@ -27,7 +26,6 @@ impl Plugin for SystemSetsPlugin {
             GameplaySet
                 .in_set(PostAssetLoadingSet)
                 .after(StopWhenPausedSet)
-                .before(SpewSystemSet)
                 .run_if(in_state(GameState::Gameplay)),
         )
         .configure_sets(

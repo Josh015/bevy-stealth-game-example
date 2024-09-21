@@ -19,6 +19,5 @@ leafwing-input-manager = "0.15.0"
 rand = { version = "0.8.5", features = ["small_rng"] }
 seldom_state = "0.11.0"
 serde = { version = "1.0.210", features = ["serde_derive"] }
-spew = "0.6.0"
 strum = { version = "0.26.3", features = ["derive"] }
 vleue_navigator = "0.8.0"

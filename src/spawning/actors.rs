@@ -6,24 +6,18 @@ use bevy::{
 };
 use bevy_common_assets::ron::RonAssetPlugin;
 use serde::Deserialize;
-use spew::prelude::*;
-
-use super::Spawning;
 
 pub(super) struct ActorsPlugin;
 
 impl Plugin for ActorsPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins(RonAssetPlugin::<ActorConfig>::new(&["actor.ron"]))
-            .add_plugins((
-                SpewPlugin::<Spawning, (Handle<ActorConfig>, Mat4)>::default(),
-            ))
-            .add_spawner((
-                Spawning::Actor,
-                spawn_actor_from_config_with_matrix,
-            ));
+            .observe(spawn_actor_from_config_with_matrix);
     }
 }
+
+#[derive(Event)]
+pub struct SpawnActorWithTransform(pub Handle<ActorConfig>, pub Mat4);
 
 /// Configs for spawnable actor entities.
 #[derive(Asset, Debug, Deserialize, Resource, TypePath)]
@@ -121,12 +115,14 @@ impl FromWorld for PreloadedActorAssets {
 }
 
 fn spawn_actor_from_config_with_matrix(
-    In((handle, matrix)): In<(Handle<ActorConfig>, Mat4)>,
+    trigger: Trigger<SpawnActorWithTransform>,
     actor_configs: Res<Assets<ActorConfig>>,
     mut commands: Commands,
     preloaded_actor_assets: Res<PreloadedActorAssets>,
 ) {
-    let actor_config = actor_configs.get(&handle).unwrap();
+    let event = trigger.event();
+    let SpawnActorWithTransform(handle, matrix) = event;
+    let actor_config = actor_configs.get(handle).unwrap();
     let mut entity_commands = commands
         .spawn(ForStates(vec![GameState::Gameplay, GameState::GameOver]));
 
@@ -220,7 +216,7 @@ fn spawn_actor_from_config_with_matrix(
                         .get(scene)
                         .unwrap()
                         .clone(),
-                    transform: Transform::from_matrix(matrix),
+                    transform: Transform::from_matrix(*matrix),
                     ..default()
                 });
             },

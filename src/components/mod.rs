@@ -18,7 +18,6 @@ mod security_camera;
 mod spawn_point;
 mod speed;
 mod start_location;
-mod trigger;
 mod waypoint;
 mod weapon;
 
@@ -40,7 +39,6 @@ pub use security_camera::*;
 pub use spawn_point::*;
 pub use speed::*;
 pub use start_location::*;
-pub use trigger::*;
 pub use waypoint::*;
 pub use weapon::*;
 
