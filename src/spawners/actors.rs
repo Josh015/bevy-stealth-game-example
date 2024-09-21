@@ -119,6 +119,7 @@ impl FromWorld for PreloadedActorAssets {
 fn spawn_actor_from_config_with_matrix(
     trigger: Trigger<SpawnActor>,
     actor_configs: Res<Assets<ActorConfig>>,
+    game_assets: Res<GameAssets>,
     mut commands: Commands,
     preloaded_actor_assets: Res<PreloadedActorAssets>,
 ) {
@@ -172,7 +173,12 @@ fn spawn_actor_from_config_with_matrix(
                 // TODO: Need a component for this one.
             },
             ComponentConfig::Footsteps { sound_wave } => {
-                // TODO: Need a component for this one.
+                let sound_wave_handle =
+                    game_assets.sound_waves.get(sound_wave.as_str()).unwrap();
+
+                entity_commands.insert(Footsteps {
+                    sound_wave: sound_wave_handle.clone(),
+                });
             },
             ComponentConfig::DropShadow => {
                 entity_commands.insert(DropShadow::default());

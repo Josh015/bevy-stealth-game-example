@@ -48,6 +48,7 @@ impl Plugin for ComponentsPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins((
             AnimationClipsPlugin,
+            FootstepsPlugin,
             ForStatePlugin,
             GuardPlugin,
             MoveToPlugin,
