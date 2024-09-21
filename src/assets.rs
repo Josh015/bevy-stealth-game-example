@@ -1,4 +1,4 @@
-use crate::{ActorConfig, PreloadedActorAssets, SoundWaveConfig};
+use crate::{ActorConfig, EmoteConfig, PreloadedActorAssets, SoundWaveConfig};
 
 use super::game_state::*;
 use bevy::{asset::*, prelude::*, utils::HashMap};
@@ -24,6 +24,9 @@ impl Plugin for AssetsPlugin {
 pub struct GameAssets {
     #[asset(path = "actors", collection(mapped, typed))]
     pub actors: HashMap<AssetFileStem, Handle<ActorConfig>>,
+
+    #[asset(path = "emotes", collection(mapped, typed))]
+    pub emotes: HashMap<AssetFileStem, Handle<EmoteConfig>>,
 
     #[asset(path = "sound_waves", collection(mapped, typed))]
     pub sound_waves: HashMap<AssetFileStem, Handle<SoundWaveConfig>>,
