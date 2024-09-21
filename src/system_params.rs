@@ -25,14 +25,15 @@ impl<'w, 's> Animations<'w, 's> {
                 if let Ok(mut animation_player) =
                     self.animation_players.get_mut(animation_entity_link.0)
                 {
-                    animation_player
-                        .play_with_transition(
-                            animation_clip.clone_weak(),
-                            Duration::from_millis(
-                                ANIMATION_TRANSITION_DELAY_MILLIS,
-                            ),
-                        )
-                        .repeat();
+                    // TODO: Implement the new AnimationGraph stuff!
+                    // animation_player
+                    //     .play_with_transition(
+                    //         animation_clip.clone_weak(),
+                    //         Duration::from_millis(
+                    //             ANIMATION_TRANSITION_DELAY_MILLIS,
+                    //         ),
+                    //     )
+                    //     .repeat();
                 }
             }
         }
@@ -48,32 +49,34 @@ impl<'w, 's> Animations<'w, 's> {
             if let Ok(mut animation_player) =
                 self.animation_players.get_mut(animation_entity_link.0)
             {
-                animation_player
-                    .play_with_transition(
-                        clip_handle.clone_weak(),
-                        Duration::from_millis(
-                            ANIMATION_TRANSITION_DELAY_MILLIS,
-                        ),
-                    )
-                    .repeat();
+                // TODO: Implement the new AnimationGraph stuff!
+                // animation_player
+                //     .play_with_transition(
+                //         clip_handle.clone_weak(),
+                //         Duration::from_millis(
+                //             ANIMATION_TRANSITION_DELAY_MILLIS,
+                //         ),
+                //     )
+                //     .repeat();
             }
         }
     }
 
-    /// Gets the handle for this entity's currently playing animation.
-    pub fn get_current_clip(
-        &self,
-        entity: Entity,
-    ) -> Option<Handle<AnimationClip>> {
-        let Ok((_, animation_entity_link)) = self.query.get(entity) else {
-            return None;
-        };
-        let Ok(animation_player) =
-            self.animation_players.get(animation_entity_link.0)
-        else {
-            return None;
-        };
+    // TODO: Implement the new AnimationGraph stuff!
+    // /// Gets the handle for this entity's currently playing animation.
+    // pub fn get_current_clip(
+    //     &self,
+    //     entity: Entity,
+    // ) -> Option<Handle<AnimationClip>> {
+    //     let Ok((_, animation_entity_link)) = self.query.get(entity) else {
+    //         return None;
+    //     };
+    //     let Ok(animation_player) =
+    //         self.animation_players.get(animation_entity_link.0)
+    //     else {
+    //         return None;
+    //     };
 
-        Some(animation_player.animation_clip().clone())
-    }
+    //     Some(animation_player.animation_clip().clone())
+    // }
 }

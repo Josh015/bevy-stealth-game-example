@@ -34,7 +34,7 @@ pub enum MoveTo {
     Destination(Vec3),
 
     /// A direction this entity wants to face.
-    FaceDirection(Direction3d),
+    FaceDirection(Dir3),
 
     /// An angle in radians that this entity wants to face.
     Heading(f32),
@@ -85,10 +85,11 @@ fn move_to_started(
 
         // Save currently playing animation to restore later.
         if !has_stored_animation {
-            if let Some(current_animation) = animations.get_current_clip(entity)
-            {
-                entity_commands.insert(StoredAnimation(current_animation));
-            }
+            // TODO: Implement the new AnimationGraph stuff!
+            // if let Some(current_animation) = animations.get_current_clip(entity)
+            // {
+            //     entity_commands.insert(StoredAnimation(current_animation));
+            // }
 
             animations.play_clip(entity, MOVING_ANIMATION);
         }

@@ -13,7 +13,7 @@ impl Plugin for SpawnersPlugin {
     }
 }
 
-/// Entities that can be spawned from config files.
+/// Entities that can be spawned from config resources.
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
 pub enum Config {
     Actor,
@@ -28,7 +28,7 @@ fn spawn_actor_from_config_with_matrix(
     mut commands: Commands,
     preloaded_actor_assets: Res<PreloadedActorAssets>,
 ) {
-    let actor_config = actor_configs.get(handle).unwrap();
+    let actor_config = actor_configs.get(&handle).unwrap();
     let mut entity_commands = commands
         .spawn(ForStates(vec![GameState::Gameplay, GameState::GameOver]));
 

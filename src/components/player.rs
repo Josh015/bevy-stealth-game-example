@@ -23,10 +23,9 @@ impl Default for PlayerBundle {
     fn default() -> Self {
         Self {
             player: Player,
-            input_manager_bundle: InputManagerBundle::<PlayerAction> {
-                action_state: ActionState::default(),
-                input_map: PlayerAction::default_input_map(),
-            },
+            input_manager_bundle: InputManagerBundle::<PlayerAction>::with_map(
+                PlayerAction::default_input_map(),
+            ),
         }
     }
 }
@@ -47,7 +46,7 @@ pub struct QuietFootsteps; // timer: Timer
 #[derive(Clone, Component, Debug)]
 pub struct EquippedFirearm(Entity);
 
-#[derive(Actionlike, Clone, Copy, Debug, Eq, Hash, PartialEq, Reflect)]
+#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq, Reflect)]
 pub enum PlayerAction {
     Move,
 }
@@ -56,13 +55,20 @@ impl PlayerAction {
     pub fn default_input_map() -> InputMap<Self> {
         use PlayerAction::*;
 
-        let mut input_map = InputMap::default();
-
-        input_map.insert(Move, DualAxis::left_stick());
-        input_map.insert(Move, VirtualDPad::dpad());
-        input_map.insert(Move, VirtualDPad::wasd());
-        input_map.insert(Move, VirtualDPad::arrow_keys());
+        let input_map =
+            InputMap::default().with_dual_axis(Move, GamepadStick::LEFT);
+        // .with_dual_axis(Move, KeyboardVirtualDPad::ARROW_KEYS)
+        // .with_dual_axis(Move, KeyboardVirtualDPad::WASD)
+        // .with_dual_axis(Move, KeyboardVirtualDPad::NUMPAD);
         input_map
+    }
+}
+
+impl Actionlike for PlayerAction {
+    fn input_control_kind(&self) -> InputControlKind {
+        match self {
+            PlayerAction::Move => InputControlKind::DualAxis,
+        }
     }
 }
 
@@ -76,14 +82,12 @@ fn control_player(
 ) {
     let (entity, player_transform, linear_speed, action_state) = query.single();
 
-    if action_state.pressed(&PlayerAction::Move) {
-        let clamped_axis = action_state
-            .clamped_axis_pair(&PlayerAction::Move)
-            .unwrap()
-            .xy();
-        let move_direction =
-            Vec3::new(clamped_axis.x, 0.0, -clamped_axis.y).normalize_or_zero();
+    let clamped_axis = action_state.clamped_axis_pair(&PlayerAction::Move).xy();
+    let move_direction =
+        Vec3::new(clamped_axis.x, 0.0, -clamped_axis.y).normalize_or_zero();
 
+    // Prevent snapping to facing forward on -Z when releasing stick.
+    if move_direction != Vec3::ZERO {
         commands.entity(entity).insert(MoveTo::Destination(
             player_transform.translation
                 + move_direction * linear_speed.0 * time.delta_seconds(),

@@ -11,19 +11,19 @@ impl Plugin for EventsPlugin {
 }
 
 /// Fired when an enemy vision cone intersects the visible player.
-#[derive(Clone, Component, Debug, Event)]
+#[derive(Clone, Debug, Event)]
 pub struct SawPlayerEvent {
     pub witness: Entity,
 }
 
 /// Fired when a sound wave collides with an enemy's hearing radius.
-#[derive(Clone, Component, Debug, Event)]
+#[derive(Clone, Debug, Event)]
 pub struct HeardSoundEvent {
     pub sound_position: Vec3,
 }
 
 /// Fired when an enemy is stunned.
-#[derive(Clone, Component, Debug, Event)]
+#[derive(Clone, Debug, Event)]
 pub struct StunnedEnemyEvent {
     pub victim: Entity,
 }

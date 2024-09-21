@@ -90,13 +90,13 @@ fn ping(mut commands: Commands, query: Query<Entity, Added<Ping>>) {
             RepeatSequence::new(
                 Repeat::Times(2),
                 actions![
-                    MoveAction::new(MoveTo::FaceDirection(Direction3d::NEG_X)),
+                    MoveAction::new(MoveTo::FaceDirection(Dir3::NEG_X)),
                     WaitAction::new(Duration::from_millis(SPIN_DELAY_MILLIS)),
-                    MoveAction::new(MoveTo::FaceDirection(Direction3d::NEG_Z)),
+                    MoveAction::new(MoveTo::FaceDirection(Dir3::NEG_Z)),
                     WaitAction::new(Duration::from_millis(SPIN_DELAY_MILLIS)),
-                    MoveAction::new(MoveTo::FaceDirection(Direction3d::X)),
+                    MoveAction::new(MoveTo::FaceDirection(Dir3::X)),
                     WaitAction::new(Duration::from_millis(SPIN_DELAY_MILLIS)),
-                    MoveAction::new(MoveTo::FaceDirection(Direction3d::Z)),
+                    MoveAction::new(MoveTo::FaceDirection(Dir3::Z)),
                     WaitAction::new(Duration::from_millis(SPIN_DELAY_MILLIS))
                 ]
             ),
@@ -138,7 +138,7 @@ fn pong(mut commands: Commands, query: Query<Entity, Added<Ping>>) {
                 movement_range
             ))),
             MoveAction::new(MoveTo::Destination(Vec3::new(0.0, 0.0, 0.0))),
-            MoveAction::new(MoveTo::FaceDirection(Direction3d::Z)),
+            MoveAction::new(MoveTo::FaceDirection(Dir3::Z)),
             WaitAction::new(Duration::from_millis(SPIN_DELAY_MILLIS)),
             |agent: Entity, world: &mut World| -> bool {
                 world.entity_mut(agent).insert(Stunnable::default());

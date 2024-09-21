@@ -60,8 +60,7 @@ fn main() {
             SystemSetsPlugin,
         ))
         .insert_resource(Msaa::default())
-        .insert_resource(ClearColor(Color::rgba(0.7, 0.9, 1.0, 1.0)))
-        .add_systems(Update, bevy::window::close_on_esc)
+        .insert_resource(ClearColor(Color::srgba(0.7, 0.9, 1.0, 1.0)))
         .add_systems(
             OnExit(game_state::GameState::AssetLoading),
             tinkering_zone_system,
@@ -119,7 +118,7 @@ fn tinkering_zone_system(
     commands.spawn(PbrBundle {
         mesh: meshes.add(Plane3d::default().mesh().size(1.0, 1.0)),
         material: materials.add(StandardMaterial {
-            base_color: Color::GREEN,
+            base_color: Srgba::GREEN.into(),
             ..default()
         }),
         transform: Transform::IDENTITY,

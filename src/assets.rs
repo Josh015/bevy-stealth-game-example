@@ -23,10 +23,10 @@ impl Plugin for AssetsPlugin {
 #[derive(AssetCollection, Resource)]
 pub struct GameAssets {
     #[asset(path = "actors", collection(mapped, typed))]
-    pub actors: HashMap<FileStem, Handle<ActorConfig>>,
+    pub actors: HashMap<AssetFileStem, Handle<ActorConfig>>,
 
     #[asset(path = "sound_waves", collection(mapped, typed))]
-    pub sound_waves: HashMap<FileStem, Handle<SoundWaveConfig>>,
+    pub sound_waves: HashMap<AssetFileStem, Handle<SoundWaveConfig>>,
 }
 
 /// Assets that need to be loaded in advance of spawning entities.

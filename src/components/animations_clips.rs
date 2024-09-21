@@ -35,7 +35,7 @@ fn pause_all_animation_players(
     mut animation_players: Query<&mut AnimationPlayer>,
 ) {
     for mut animation_player in &mut animation_players {
-        animation_player.pause();
+        animation_player.pause_all();
     }
 }
 
@@ -43,7 +43,7 @@ fn resume_all_animation_players(
     mut animation_players: Query<&mut AnimationPlayer>,
 ) {
     for mut animation_player in &mut animation_players {
-        animation_player.resume();
+        animation_player.resume_all();
     }
 }
 
@@ -51,7 +51,7 @@ fn pause_added_animation_players(
     mut animation_players: Query<&mut AnimationPlayer, Added<AnimationPlayer>>,
 ) {
     for mut animation_player in &mut animation_players {
-        animation_player.pause();
+        animation_player.pause_all();
     }
 }
 
