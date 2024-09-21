@@ -17,7 +17,9 @@ impl Plugin for ActorsPlugin {
 }
 
 #[derive(Event)]
-pub struct SpawnActorWithTransform(pub Handle<ActorConfig>, pub Mat4);
+pub enum SpawnActor {
+    WithTransform(Handle<ActorConfig>, Mat4),
+}
 
 /// Configs for spawnable actor entities.
 #[derive(Asset, Debug, Deserialize, Resource, TypePath)]
@@ -115,13 +117,15 @@ impl FromWorld for PreloadedActorAssets {
 }
 
 fn spawn_actor_from_config_with_matrix(
-    trigger: Trigger<SpawnActorWithTransform>,
+    trigger: Trigger<SpawnActor>,
     actor_configs: Res<Assets<ActorConfig>>,
     mut commands: Commands,
     preloaded_actor_assets: Res<PreloadedActorAssets>,
 ) {
-    let event = trigger.event();
-    let SpawnActorWithTransform(handle, matrix) = event;
+    let (handle, matrix) = match trigger.event() {
+        SpawnActor::WithTransform(handle, matrix) => (handle, matrix),
+    };
+
     let actor_config = actor_configs.get(handle).unwrap();
     let mut entity_commands = commands
         .spawn(ForStates(vec![GameState::Gameplay, GameState::GameOver]));

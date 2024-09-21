@@ -123,7 +123,7 @@ fn tinkering_zone_system(
         .actors
         .get("birthday_cake_pickup.actor")
         .unwrap();
-    commands.trigger(SpawnActorWithTransform(
+    commands.trigger(SpawnActor::WithTransform(
         birthday_cake.clone_weak(),
         Mat4::from_scale_rotation_translation(
             Vec3::splat(PICKUP_HALF_SIZE),
@@ -133,7 +133,7 @@ fn tinkering_zone_system(
     ));
 
     let guard_dog = game_assets.actors.get("guard_dog.actor").unwrap();
-    commands.trigger(SpawnActorWithTransform(
+    commands.trigger(SpawnActor::WithTransform(
         guard_dog.clone_weak(),
         Mat4::from_scale_rotation_translation(
             Vec3::splat(0.0025),
@@ -143,7 +143,7 @@ fn tinkering_zone_system(
     ));
 
     let player = game_assets.actors.get("player.actor").unwrap();
-    commands.trigger(SpawnActorWithTransform(
+    commands.trigger(SpawnActor::WithTransform(
         player.clone_weak(),
         Mat4::from_scale_rotation_translation(
             Vec3::splat(0.0025),
