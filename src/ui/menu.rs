@@ -35,22 +35,15 @@ impl Plugin for MenuPlugin {
 }
 
 fn handle_menu_inputs(
-    mut commands: Commands,
     game_state: Res<State<GameState>>,
     menu_action_state: Res<ActionState<MenuAction>>,
-    focused_windows: Query<(Entity, &Window)>,
+    mut writer: EventWriter<AppExit>,
 ) {
     use MenuAction::*;
 
     match game_state.get() {
         _ if menu_action_state.just_pressed(&Exit) => {
-            for (window, focus) in focused_windows.iter() {
-                if !focus.focused {
-                    continue;
-                }
-
-                commands.entity(window).despawn();
-            }
+            writer.send(AppExit::Success);
         },
         _ => {},
     }
