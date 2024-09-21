@@ -26,6 +26,7 @@ use seldom_state::prelude::*;
 use spawning::*;
 use spew::prelude::SpawnEvent;
 use system_sets::*;
+use ui::*;
 
 fn main() {
     App::new()
@@ -55,6 +56,7 @@ fn main() {
             EventsPlugin,
             SpawningPlugin,
             SystemSetsPlugin,
+            UiPlugin,
         ))
         .insert_resource(Msaa::default())
         .insert_resource(ClearColor(Color::srgba(0.7, 0.9, 1.0, 1.0)))
