@@ -23,13 +23,13 @@ pub enum SpawnActor {
 
 /// Actor entity configuration.
 #[derive(Asset, Debug, Deserialize, Resource, TypePath)]
-pub struct ActorConfig(pub Vec<ActorData>);
+pub struct ActorConfig(pub Vec<ActorProp>);
 
 /// Properties for configuring actor entities.
 ///
 /// Don't necessarily map 1:1 to the entity's components.
 #[derive(Clone, Debug, Deserialize)]
-pub enum ActorData {
+pub enum ActorProp {
     Player,
     Guard,
     SecurityCamera,
@@ -88,7 +88,7 @@ impl FromWorld for PreloadedActorAssets {
             // Preload all referenced assets in entity configs.
             for property in &actor.0 {
                 match property {
-                    ActorData::Scene(path) => {
+                    ActorProp::Scene(path) => {
                         if scenes.get(path).is_none() {
                             scenes.insert(
                                 path.to_string(),
@@ -96,7 +96,7 @@ impl FromWorld for PreloadedActorAssets {
                             );
                         }
                     },
-                    ActorData::AnimationClips(mappings) => {
+                    ActorProp::AnimationClips(mappings) => {
                         for (_, path) in mappings {
                             if animation_clips.get(path).is_none() {
                                 animation_clips.insert(
@@ -135,33 +135,33 @@ fn spawn_actor_from_config_with_matrix(
 
     for property in &actor_config.0 {
         match property {
-            ActorData::Player => {
+            ActorProp::Player => {
                 entity_commands.insert(PlayerBundle::default());
             },
-            ActorData::Guard => {
+            ActorProp::Guard => {
                 entity_commands.insert(GuardBundle::default());
             },
-            ActorData::SecurityCamera => {
+            ActorProp::SecurityCamera => {
                 entity_commands.insert(SecurityCameraBundle::default());
             },
-            ActorData::Pickup => {
+            ActorProp::Pickup => {
                 entity_commands.insert(PickupBundle::default());
             },
-            ActorData::Weapon => {
+            ActorProp::Weapon => {
                 entity_commands.insert(Weapon::default());
             },
             //Trigger {} // TODO: Probably want to have a sub-enum with
             // pre-allowed events?
-            ActorData::FloorSwitch => {
+            ActorProp::FloorSwitch => {
                 entity_commands.insert(FloorSwitchBundle::default());
             },
-            ActorData::Door => {
+            ActorProp::Door => {
                 entity_commands.insert(DoorBundle::default());
             },
-            ActorData::Glass => {
+            ActorProp::Glass => {
                 entity_commands.insert(GlassBundle::default());
             },
-            ActorData::Speed {
+            ActorProp::Speed {
                 linear_speed,
                 angular_speed,
             } => {
@@ -171,10 +171,10 @@ fn spawn_actor_from_config_with_matrix(
                     ..default()
                 });
             },
-            ActorData::Physics { radius } => {
+            ActorProp::Physics { radius } => {
                 // TODO: Need a component for this one.
             },
-            ActorData::Footsteps { sound_wave } => {
+            ActorProp::Footsteps { sound_wave } => {
                 let sound_wave_handle =
                     game_assets.sound_waves.get(sound_wave.as_str()).unwrap();
 
@@ -184,30 +184,30 @@ fn spawn_actor_from_config_with_matrix(
                     },
                 });
             },
-            ActorData::DropShadow => {
+            ActorProp::DropShadow => {
                 entity_commands.insert(DropShadow::default());
             },
-            ActorData::Vision => {
+            ActorProp::Vision => {
                 // TODO: Implement setting the fields.
                 entity_commands.insert(Vision::default());
             },
-            ActorData::Hearing => {
+            ActorProp::Hearing => {
                 // TODO: Implement setting the fields.
                 entity_commands.insert(Hearing::default());
             },
-            ActorData::Stunnable => {
+            ActorProp::Stunnable => {
                 entity_commands.insert(Stunnable::default());
             },
-            ActorData::Barrier => {
+            ActorProp::Barrier => {
                 entity_commands.insert(Barrier::default());
             },
-            ActorData::BlocksVision => {
+            ActorProp::BlocksVision => {
                 entity_commands.insert(BlocksVision::default());
             },
-            ActorData::DeflectsSounds => {
+            ActorProp::DeflectsSounds => {
                 entity_commands.insert(DeflectsSounds::default());
             },
-            ActorData::AnimationClips(clips) => {
+            ActorProp::AnimationClips(clips) => {
                 let mut loaded_clips = HashMap::default();
 
                 for (k, v) in clips {
@@ -223,7 +223,7 @@ fn spawn_actor_from_config_with_matrix(
 
                 entity_commands.insert(AnimationClips(loaded_clips));
             },
-            ActorData::Scene(scene) => {
+            ActorProp::Scene(scene) => {
                 entity_commands.insert(SceneBundle {
                     scene: preloaded_actor_assets
                         .scenes
