@@ -176,8 +176,10 @@ fn spawn_actor_from_config_with_matrix(
                 let sound_wave_handle =
                     game_assets.sound_waves.get(sound_wave.as_str()).unwrap();
 
-                entity_commands.insert(Footsteps {
-                    sound_wave: sound_wave_handle.clone(),
+                entity_commands.insert(FootstepsBundle {
+                    footsteps: Footsteps {
+                        sound_wave: sound_wave_handle.clone(),
+                    },
                 });
             },
             ComponentConfig::DropShadow => {
