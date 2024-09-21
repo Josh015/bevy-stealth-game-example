@@ -4,13 +4,8 @@ My attempt to mimic the game mechanics of "SONAR" in the Bevy engine. It's gonna
 
 ## ToDo
 
-- [x] Load entities from YAML files rather than hard-coding them.
-- [x] Spawning entities from config files.
-- [x] Animated mesh entity.
-- [x] Use Bevy animation demo fox model to test complex animating entities.
-- [x] Automatic animation based on movement.
-- [x] Smooth blended transitions between animations.
-- [x] Use leafwing-input-manager to add Player input movement.
+- [ ] Replace Spew crate with Bevy observers.
+- [ ] Finish porting animation system to Bevy AnimationGraph API.
 - [ ] Use vleue_navigator for nav-mesh pathing.
 - [ ] Use bevy_rapier character controller integration.
 - [ ] Waypoint patrolling.
@@ -25,3 +20,10 @@ My attempt to mimic the game mechanics of "SONAR" in the Bevy engine. It's gonna
 - [ ] Use bevy_fluent to implement localization support and migrate all user-facing strings.
 - [ ] Basic UI.
 - [ ] Menu animations.
+- [x] Load entities from YAML files rather than hard-coding them.
+- [x] Spawning entities from config files.
+- [x] Animated mesh entity.
+- [x] Use Bevy animation demo fox model to test complex animating entities.
+- [x] Automatic animation based on movement.
+- [x] Smooth blended transitions between animations.
+- [x] Use leafwing-input-manager to add Player input movement.
