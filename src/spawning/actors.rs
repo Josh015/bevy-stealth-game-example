@@ -1,25 +1,123 @@
-use crate::{assets::*, components::*, configs::*, game_state::*};
-use bevy::{ecs::prelude::*, prelude::*, utils::HashMap};
+use crate::{assets::*, components::*, game_state::*};
+use bevy::{
+    ecs::{prelude::*, system::SystemState},
+    prelude::*,
+    utils::HashMap,
+};
+use bevy_common_assets::ron::RonAssetPlugin;
+use serde::Deserialize;
 use spew::prelude::*;
 
-pub(super) struct SpawnersPlugin;
+use super::Spawning;
 
-impl Plugin for SpawnersPlugin {
+pub(super) struct ActorsPlugin;
+
+impl Plugin for ActorsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugins((
-            SpewPlugin::<Config, (Handle<ActorConfig>, Mat4)>::default(),
-        ))
-        .add_spawner((Config::Actor, spawn_actor_from_config_with_matrix));
+        app.add_plugins(RonAssetPlugin::<ActorConfig>::new(&["actor.ron"]))
+            .add_plugins((
+                SpewPlugin::<Spawning, (Handle<ActorConfig>, Mat4)>::default(),
+            ))
+            .add_spawner((
+                Spawning::Actor,
+                spawn_actor_from_config_with_matrix,
+            ));
     }
 }
 
-/// Entities that can be spawned from config resources.
-#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
-pub enum Config {
-    Actor,
-    Emote,
-    Level,
-    SoundWave,
+/// Configs for spawnable actor entities.
+#[derive(Asset, Debug, Deserialize, Resource, TypePath)]
+pub struct ActorConfig(pub Vec<ComponentConfig>);
+
+/// Configs for actor components.
+#[derive(Clone, Debug, Deserialize)]
+pub enum ComponentConfig {
+    Player,
+    Guard,
+    SecurityCamera,
+    Pickup,
+    Weapon,
+    //Trigger {} // Probably want to have a sub-enum with pre-allowed events?
+    FloorSwitch,
+    Door,
+    Glass,
+    Speed {
+        linear_speed: f32,
+        angular_speed: f32,
+    },
+    Physics {
+        radius: f32,
+    },
+    Footsteps {
+        sound_wave: String,
+    },
+    DropShadow,
+    Vision,
+    Hearing,
+    Stunnable,
+    Barrier,
+    BlocksVision,
+    DeflectsSounds,
+    Scene(String),
+    AnimationClips(HashMap<String, String>),
+}
+
+/// Assets that need to be loaded in advance of spawning entities.
+#[derive(Debug, Resource)]
+pub struct PreloadedActorAssets {
+    pub scenes: HashMap<String, Handle<Scene>>,
+    pub animation_clips: HashMap<String, Handle<AnimationClip>>,
+}
+
+impl FromWorld for PreloadedActorAssets {
+    fn from_world(world: &mut World) -> Self {
+        let mut system_state: SystemState<(
+            Res<AssetServer>,
+            Res<GameAssets>,
+            Res<Assets<ActorConfig>>,
+        )> = SystemState::new(world);
+        let (asset_server, game_assets, actor_config_assets) =
+            system_state.get_mut(world);
+        let mut scenes: HashMap<String, Handle<Scene>> = HashMap::default();
+        let mut animation_clips: HashMap<String, Handle<AnimationClip>> =
+            HashMap::default();
+
+        for (_, actor) in &game_assets.actors {
+            let Some(actor) = actor_config_assets.get(actor) else {
+                continue;
+            };
+
+            // Preload all referenced assets in entity configs.
+            for config in &actor.0 {
+                match config {
+                    ComponentConfig::Scene(path) => {
+                        if scenes.get(path).is_none() {
+                            scenes.insert(
+                                path.to_string(),
+                                asset_server.load(path),
+                            );
+                        }
+                    },
+                    ComponentConfig::AnimationClips(mappings) => {
+                        for (_, path) in mappings {
+                            if animation_clips.get(path).is_none() {
+                                animation_clips.insert(
+                                    path.to_string(),
+                                    asset_server.load(path),
+                                );
+                            }
+                        }
+                    },
+                    _ => {},
+                }
+            }
+        }
+
+        Self {
+            scenes,
+            animation_clips,
+        }
+    }
 }
 
 fn spawn_actor_from_config_with_matrix(

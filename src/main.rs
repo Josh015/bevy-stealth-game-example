@@ -3,10 +3,9 @@
 mod actions;
 mod assets;
 mod components;
-mod configs;
 mod events;
 mod game_state;
-mod spawners;
+mod spawning;
 mod system_params;
 mod system_sets;
 mod ui;
@@ -21,11 +20,10 @@ use bevy::{
 use bevy_sequential_actions::*;
 use bevy_tweening::*;
 use components::*;
-use configs::*;
 use events::*;
 use game_state::*;
 use seldom_state::prelude::*;
-use spawners::*;
+use spawning::*;
 use spew::prelude::SpawnEvent;
 use system_sets::*;
 
@@ -53,10 +51,9 @@ fn main() {
             ActionsPlugin,
             AssetsPlugin,
             ComponentsPlugin,
-            ConfigsPlugin,
             GameStatePlugin,
             EventsPlugin,
-            SpawnersPlugin,
+            SpawningPlugin,
             SystemSetsPlugin,
         ))
         .insert_resource(Msaa::default())
@@ -78,7 +75,7 @@ fn tinkering_zone_system(
     mut materials: ResMut<Assets<StandardMaterial>>,
     game_assets: Res<GameAssets>,
     mut spawn_events: EventWriter<
-        SpawnEvent<Config, (Handle<ActorConfig>, Mat4)>,
+        SpawnEvent<Spawning, (Handle<ActorConfig>, Mat4)>,
     >,
     mut next_game_state: ResMut<NextState<GameState>>,
 ) {
@@ -130,7 +127,7 @@ fn tinkering_zone_system(
         .get("birthday_cake_pickup.actor")
         .unwrap();
     spawn_events.send(SpawnEvent::with_data(
-        Config::Actor,
+        Spawning::Actor,
         (
             birthday_cake.clone_weak(),
             Mat4::from_scale_rotation_translation(
@@ -143,7 +140,7 @@ fn tinkering_zone_system(
 
     let guard_dog = game_assets.actors.get("guard_dog.actor").unwrap();
     spawn_events.send(SpawnEvent::with_data(
-        Config::Actor,
+        Spawning::Actor,
         (
             guard_dog.clone_weak(),
             Mat4::from_scale_rotation_translation(
@@ -156,7 +153,7 @@ fn tinkering_zone_system(
 
     let player = game_assets.actors.get("player.actor").unwrap();
     spawn_events.send(SpawnEvent::with_data(
-        Config::Actor,
+        Spawning::Actor,
         (
             player.clone_weak(),
             Mat4::from_scale_rotation_translation(
