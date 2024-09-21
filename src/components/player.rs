@@ -55,11 +55,11 @@ impl PlayerAction {
     pub fn default_input_map() -> InputMap<Self> {
         use PlayerAction::*;
 
-        let input_map =
-            InputMap::default().with_dual_axis(Move, GamepadStick::LEFT);
-        // .with_dual_axis(Move, KeyboardVirtualDPad::ARROW_KEYS)
-        // .with_dual_axis(Move, KeyboardVirtualDPad::WASD)
-        // .with_dual_axis(Move, KeyboardVirtualDPad::NUMPAD);
+        let input_map = InputMap::default()
+            .with_dual_axis(Move, GamepadStick::LEFT)
+            .with_dual_axis(Move, KeyboardVirtualDPad::ARROW_KEYS)
+            .with_dual_axis(Move, KeyboardVirtualDPad::WASD)
+            .with_dual_axis(Move, KeyboardVirtualDPad::NUMPAD);
         input_map
     }
 }
