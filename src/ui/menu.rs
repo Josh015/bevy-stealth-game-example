@@ -37,13 +37,13 @@ impl Plugin for MenuPlugin {
 fn handle_menu_inputs(
     game_state: Res<State<GameState>>,
     menu_action_state: Res<ActionState<MenuAction>>,
-    mut writer: EventWriter<AppExit>,
+    mut app_exit: EventWriter<AppExit>,
 ) {
     use MenuAction::*;
 
     match game_state.get() {
         _ if menu_action_state.just_pressed(&Exit) => {
-            writer.send(AppExit::Success);
+            app_exit.send_default();
         },
         _ => {},
     }
