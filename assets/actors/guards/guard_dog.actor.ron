@@ -8,7 +8,8 @@
   Physics(radius: 0.375),
   Footsteps(sound_wave: "guard.sound_wave"),
   Speed(
-    linear_speed: 0.5,
+    // linear_speed: 0.5,
+    linear_speed: 10.0,
     angular_speed: 4.712
   ),
   Scene("models/animated/Fox.glb#Scene0"),

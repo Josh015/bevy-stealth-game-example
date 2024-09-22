@@ -4,7 +4,8 @@
   Footsteps(sound_wave: "player.sound_wave"),
   DropShadow,
   Speed(
-    linear_speed: 1.0,
+    // linear_speed: 1.0,
+    linear_speed: 10.0,
     angular_speed: 6.2832
   ),
   Scene("models/animated/Fox.glb#Scene0"),

@@ -18,7 +18,7 @@ impl Plugin for ActorsPlugin {
 
 #[derive(Event)]
 pub enum SpawnActor {
-    WithTransform(Handle<ActorConfig>, Mat4),
+    WithTransform(String, Mat4),
 }
 
 /// Actor entity configuration.
@@ -125,10 +125,11 @@ fn spawn_actor_from_config_with_matrix(
     mut commands: Commands,
     preloaded_actor_assets: Res<PreloadedActorAssets>,
 ) {
-    let (handle, matrix) = match trigger.event() {
-        SpawnActor::WithTransform(handle, matrix) => (handle, matrix),
+    let (filename, matrix) = match trigger.event() {
+        SpawnActor::WithTransform(filename, matrix) => (filename, matrix),
     };
 
+    let handle = game_assets.actors.get(filename.as_str()).unwrap();
     let actor_config = actor_configs.get(handle).unwrap();
     let mut entity_commands = commands
         .spawn(ForStates(vec![GameState::Gameplay, GameState::GameOver]));
