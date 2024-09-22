@@ -61,11 +61,15 @@ pub struct Vision {
     pub fov: f32,
 }
 
+// TODO: Use parent observer to bubble event up from child component.
+
 /// A [`Guard`] that can hear and respond to sound waves.
 #[derive(Clone, Component, Debug, Default)]
 pub struct Hearing {
     pub radius: f32,
 }
+
+// TODO: Use parent observer to bubble event up from child component.
 
 /// A [`Guard`] that's able to be stunned.
 #[derive(Clone, Component, Debug, Default)]
