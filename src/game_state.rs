@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use strum::EnumIter;
 
-pub(super) struct GameStatePlugin;
+pub struct GameStatePlugin;
 
 impl Plugin for GameStatePlugin {
     fn build(&self, app: &mut App) {

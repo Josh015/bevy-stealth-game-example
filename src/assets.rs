@@ -4,7 +4,7 @@ use super::game_state::*;
 use bevy::{asset::*, prelude::*, utils::HashMap};
 use bevy_asset_loader::prelude::*;
 
-pub(super) struct AssetsPlugin;
+pub struct AssetsPlugin;
 
 impl Plugin for AssetsPlugin {
     fn build(&self, app: &mut App) {

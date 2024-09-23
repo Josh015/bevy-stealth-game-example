@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-pub(super) struct EventsPlugin;
+pub struct EventsPlugin;
 
 impl Plugin for EventsPlugin {
     fn build(&self, app: &mut App) {
