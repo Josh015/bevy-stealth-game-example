@@ -17,10 +17,10 @@ impl Plugin for GuardPlugin {
                 stun_response,
                 chase_player,
                 alarm_response,
-                investigate_sound,
+                investigate_noise,
                 search_for_player,
                 patrol,
-                idle,
+                guard_location,
             )
                 .in_set(StopWhenPausedSet),
         );
@@ -38,7 +38,7 @@ pub struct GuardBundle {
     pub guard: Guard,
     pub actions_bundle: ActionsBundle,
     pub state_machine: StateMachine,
-    pub idle: IdleState,
+    pub idle: GuardLocationState,
 }
 
 impl Default for GuardBundle {
@@ -49,16 +49,14 @@ impl Default for GuardBundle {
             guard: Guard,
             actions_bundle: ActionsBundle::new(),
             state_machine: StateMachine::default()
-                // Guard location
                 // Patrol
-                // Chase player
                 // Search for player
                 // Investigate noise
                 // Stun response
                 // Alarm response
-                .trans::<IdleState, _>(done(None), ChasePlayerState)
-                .trans::<ChasePlayerState, _>(done(None), IdleState),
-            idle: IdleState,
+                .trans::<GuardLocationState, _>(done(None), ChasePlayerState)
+                .trans::<ChasePlayerState, _>(done(None), GuardLocationState),
+            idle: GuardLocationState,
         }
     }
 }
@@ -105,7 +103,7 @@ pub struct AlarmResponseState;
 
 #[derive(Clone, Component, Copy, Reflect)]
 #[component(storage = "SparseSet")]
-pub struct InvestigateSoundState;
+pub struct InvestigateNoiseState;
 
 #[derive(Clone, Component, Copy, Reflect)]
 #[component(storage = "SparseSet")]
@@ -117,7 +115,7 @@ pub struct PatrolState;
 
 #[derive(Clone, Component, Copy, Reflect)]
 #[component(storage = "SparseSet")]
-pub struct IdleState;
+pub struct GuardLocationState;
 
 fn stun_response(
     mut commands: Commands,
@@ -233,9 +231,9 @@ fn alarm_response(
     }
 }
 
-fn investigate_sound(
+fn investigate_noise(
     mut commands: Commands,
-    query: Query<Entity, (With<Guard>, Added<InvestigateSoundState>)>,
+    query: Query<Entity, (With<Guard>, Added<InvestigateNoiseState>)>,
 ) {
     for entity in &query {
         // Parallel Actions:
@@ -276,12 +274,13 @@ fn patrol(
     }
 }
 
-fn idle(
+fn guard_location(
     mut commands: Commands,
-    query: Query<Entity, (With<Guard>, Added<IdleState>)>,
+    query: Query<Entity, (With<Guard>, Added<GuardLocationState>)>,
 ) {
     for entity in &query {
-        // Move to guard location.
+        // <generate path back to guard location>
+        //   Move to next point.
         // Turn to face guard direction.
         // Start "idle" animation (blocking, repeating).
 
