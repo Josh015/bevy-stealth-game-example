@@ -1,8 +1,6 @@
-use crate::{actions::*, components::*, system_sets::*, util::*, GameState};
-use bevy::{
-    color::palettes, log::tracing_subscriber::field::debug,
-    pbr::NotShadowCaster, prelude::*, time::common_conditions::on_timer,
-};
+use crate::{actions::*, components::*, system_sets::*};
+
+use bevy::{color::palettes, pbr::NotShadowCaster, prelude::*};
 use bevy_sequential_actions::*;
 use rand::prelude::*;
 use seldom_state::prelude::*;
@@ -15,7 +13,16 @@ impl Plugin for GuardPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(
             Update,
-            (idle, chase_player, patrol).in_set(StopWhenPausedSet),
+            (
+                stun_response,
+                chase_player,
+                alarm_response,
+                investigate_sound,
+                search_for_player,
+                patrol,
+                idle,
+            )
+                .in_set(StopWhenPausedSet),
         );
         // .add_systems(
         //     Update,
@@ -31,7 +38,7 @@ pub struct GuardBundle {
     pub guard: Guard,
     pub actions_bundle: ActionsBundle,
     pub state_machine: StateMachine,
-    pub idle: Idle,
+    pub idle: IdleState,
 }
 
 impl Default for GuardBundle {
@@ -48,11 +55,10 @@ impl Default for GuardBundle {
                 // Search for player
                 // Investigate noise
                 // Stun response
-                // Camera panning
                 // Alarm response
-                .trans::<Idle, _>(done(None), ChasePlayer)
-                .trans::<ChasePlayer, _>(done(None), Idle),
-            idle: Idle,
+                .trans::<IdleState, _>(done(None), ChasePlayerState)
+                .trans::<ChasePlayerState, _>(done(None), IdleState),
+            idle: IdleState,
         }
     }
 }
@@ -87,38 +93,63 @@ const SPIN_DELAY_MILLIS: u64 = 400;
 
 #[derive(Clone, Component, Copy, Reflect)]
 #[component(storage = "SparseSet")]
-pub struct Idle;
+pub struct StunResponseState;
 
 #[derive(Clone, Component, Copy, Reflect)]
 #[component(storage = "SparseSet")]
-pub struct ChasePlayer;
+pub struct ChasePlayerState;
 
 #[derive(Clone, Component, Copy, Reflect)]
 #[component(storage = "SparseSet")]
-pub struct Patrol;
+pub struct AlarmResponseState;
 
-fn idle(
+#[derive(Clone, Component, Copy, Reflect)]
+#[component(storage = "SparseSet")]
+pub struct InvestigateSoundState;
+
+#[derive(Clone, Component, Copy, Reflect)]
+#[component(storage = "SparseSet")]
+pub struct SearchForPlayerState;
+
+#[derive(Clone, Component, Copy, Reflect)]
+#[component(storage = "SparseSet")]
+pub struct PatrolState;
+
+#[derive(Clone, Component, Copy, Reflect)]
+#[component(storage = "SparseSet")]
+pub struct IdleState;
+
+fn stun_response(
     mut commands: Commands,
-    query: Query<Entity, (With<Guard>, Added<Idle>)>,
+    query: Query<Entity, (With<Guard>, Added<StunResponseState>)>,
 ) {
     for entity in &query {
-        commands.actions(entity).add_many(actions![
-            StartAnimationAction::new("idle".to_owned()),
-            WaitAction::new(Duration::from_millis(IDLE_DELAY_MILLIS)),
-            StateDoneAction::new(Done::Success)
-        ]);
+        // Parallel Actions:
+        //   Play "Stunned" sound (blocking, once).
+        //   Play "Stunned" animation (blocking, once).
+        // Wait (stun duration).
+        // Play "Recovering" animation (blocking, once).
+        // Done.
     }
 }
 
 fn chase_player(
     mut commands: Commands,
-    query: Query<(Entity, &Transform), (With<Guard>, Added<ChasePlayer>)>,
+    query: Query<(Entity, &Transform), (With<Guard>, Added<ChasePlayerState>)>,
     targets: Query<Entity, With<Target>>,
     navmeshes: Res<Assets<NavMesh>>,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
     for (entity, transform) in &query {
+        // Turn to face direction of player.
+        // Parallel Actions:
+        //   Play "Surprised" sound (blocking, once).
+        //   Play "Surprised" animation (blocking, once).
+        //   Emit "!" emote (blocking).
+        // Emit emphasized "!" emote (non-blocking).
+        // <path to player.>
+
         let Some(navmesh) = navmeshes.get(&Handle::default()) else {
             continue;
         };
@@ -142,11 +173,11 @@ fn chase_player(
 
         let mut movement_path = path.path;
 
+        movement_path.insert(0, transform.translation);
+
         for target in &targets {
             commands.entity(target).despawn_recursive();
         }
-
-        movement_path.insert(0, transform.translation);
 
         commands
             .spawn((
@@ -193,42 +224,70 @@ fn chase_player(
     }
 }
 
+fn alarm_response(
+    mut commands: Commands,
+    query: Query<Entity, (With<Guard>, Added<AlarmResponseState>)>,
+) {
+    for entity in &query {
+        // <almost identical to Chase Player, minus sound and instead going to spot where camera saw player.>
+    }
+}
+
+fn investigate_sound(
+    mut commands: Commands,
+    query: Query<Entity, (With<Guard>, Added<InvestigateSoundState>)>,
+) {
+    for entity in &query {
+        // Parallel Actions:
+        //   Play "What the?" sound (blocking, once).
+        //   Emit "?" emote (blocking).
+        //   Turn to face direction of sound.
+        // Play "Searching" animation (blocking, once).
+        // Done.
+    }
+}
+
+fn search_for_player(
+    mut commands: Commands,
+    query: Query<Entity, (With<Guard>, Added<SearchForPlayerState>)>,
+) {
+    for entity in &query {
+        // Turn to random direction.
+        // Wait.
+        // Turn to random direction.
+        // Wait.
+        // Parallel Actions:
+        //   Emit "Frustrated" emote (blocking).
+        //   Play "Frustrated" animation (blocking, once).
+        // Done.
+    }
+}
+
 fn patrol(
     mut commands: Commands,
-    query: Query<Entity, (With<Guard>, Added<Patrol>)>,
+    query: Query<Entity, (With<Guard>, Added<PatrolState>)>,
 ) {
-    let movement_range = 0.5;
-
-    // TODO: Move, turn to face next point, wait, repeat. Loop state.
     for entity in &query {
+        // Repeat Sequence (forever):
+        //   <generate for all patrol points>:
+        //     Move to next point.
+        //     Turn to face next point.
+        //     Wait.
+    }
+}
+
+fn idle(
+    mut commands: Commands,
+    query: Query<Entity, (With<Guard>, Added<IdleState>)>,
+) {
+    for entity in &query {
+        // Move to guard location.
+        // Turn to face guard direction.
+        // Start "idle" animation (blocking, repeating).
+
         commands.actions(entity).add_many(actions![
-            MoveAction::new(MoveTo::Destination(Vec3::new(
-                movement_range,
-                0.0,
-                movement_range
-            ))),
-            MoveAction::new(MoveTo::Destination(Vec3::new(
-                movement_range,
-                0.0,
-                -movement_range
-            ))),
-            MoveAction::new(MoveTo::Destination(Vec3::new(
-                -movement_range,
-                0.0,
-                -movement_range
-            ))),
-            MoveAction::new(MoveTo::Destination(Vec3::new(
-                -movement_range,
-                0.0,
-                movement_range
-            ))),
-            MoveAction::new(MoveTo::Destination(Vec3::new(0.0, 0.0, 0.0))),
-            MoveAction::new(MoveTo::FaceDirection(Dir3::Z)),
-            WaitAction::new(Duration::from_millis(SPIN_DELAY_MILLIS)),
-            |agent: Entity, world: &mut World| -> bool {
-                world.entity_mut(agent).insert(Stunnable::default());
-                true
-            },
+            StartAnimationAction::new("idle".to_owned()),
+            WaitAction::new(Duration::from_millis(IDLE_DELAY_MILLIS)),
             StateDoneAction::new(Done::Success)
         ]);
     }
