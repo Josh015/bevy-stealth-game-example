@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use leafwing_input_manager::prelude::*;
 
-use crate::{components::*, system_sets::*};
+use crate::{components::*, game_state::*};
 
 pub(super) struct PlayerPlugin;
 

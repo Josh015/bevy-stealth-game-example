@@ -1,5 +1,5 @@
 use super::speed::*;
-use crate::{system_params::*, system_sets::*, util::*};
+use crate::{game_state::*, system_params::*, util::*};
 use bevy::prelude::*;
 
 const MOVING_ANIMATION: &str = "moving";
@@ -20,7 +20,7 @@ impl Plugin for MoveToPlugin {
                 rotating,
             )
                 .chain()
-                .in_set(StopWhenPausedSet),
+                .in_set(StoppedWhenPausedSet),
         );
     }
 }

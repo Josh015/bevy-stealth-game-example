@@ -1,4 +1,4 @@
-use crate::system_sets::*;
+use crate::game_state::*;
 use bevy::{app::prelude::*, ecs::prelude::*, prelude::*};
 use bevy_sequential_actions::*;
 use derive_new::new;
@@ -8,7 +8,7 @@ pub(super) struct WaitActionPlugin;
 
 impl Plugin for WaitActionPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, wait_timer_update.in_set(StopWhenPausedSet));
+        app.add_systems(Update, wait_timer_update.in_set(StoppedWhenPausedSet));
     }
 }
 

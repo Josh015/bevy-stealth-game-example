@@ -7,7 +7,6 @@ mod events;
 mod game_state;
 mod spawners;
 mod system_params;
-mod system_sets;
 mod ui;
 mod util;
 
@@ -35,7 +34,6 @@ use rand::Rng;
 use seldom_state::prelude::*;
 use spawners::*;
 use std::{f32::consts::FRAC_PI_2, time::Duration};
-use system_sets::*;
 use ui::*;
 use vleue_navigator::{
     prelude::{
@@ -76,7 +74,6 @@ fn main() {
             GameStatePlugin,
             EventsPlugin,
             SpawnersPlugin,
-            SystemSetsPlugin,
             UiPlugin,
         ))
         .add_systems(OnEnter(GameState::StartMenu), setup)

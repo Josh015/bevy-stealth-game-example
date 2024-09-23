@@ -1,4 +1,4 @@
-use crate::{actions::*, components::*, system_sets::*};
+use crate::{actions::*, components::*, game_state::*};
 
 use bevy::{color::palettes, pbr::NotShadowCaster, prelude::*};
 use bevy_sequential_actions::*;
@@ -22,7 +22,7 @@ impl Plugin for GuardPlugin {
                 patrol,
                 guard_location,
             )
-                .in_set(StopWhenPausedSet),
+                .in_set(StoppedWhenPausedSet),
         );
     }
 }
