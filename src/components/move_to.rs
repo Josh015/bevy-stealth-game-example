@@ -1,6 +1,6 @@
-use super::speed::*;
-use crate::{game_state::*, system_params::*, util::*};
 use bevy::prelude::*;
+
+use crate::prelude::*;
 
 const MOVING_ANIMATION: &str = "moving";
 const DESTINATION_MARGIN_OF_ERROR: f32 = 0.001;

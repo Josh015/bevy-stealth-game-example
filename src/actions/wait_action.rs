@@ -1,8 +1,9 @@
-use crate::game_state::*;
-use bevy::{app::prelude::*, ecs::prelude::*, prelude::*};
+use bevy::prelude::*;
 use bevy_sequential_actions::*;
 use derive_new::new;
 use std::time::Duration;
+
+use crate::prelude::*;
 
 pub(super) struct WaitActionPlugin;
 

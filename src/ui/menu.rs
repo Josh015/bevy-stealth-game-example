@@ -1,7 +1,7 @@
 use bevy::{prelude::*, window::WindowFocused};
 pub use leafwing_input_manager::prelude::*;
 
-use crate::{GameState, GameplaySet, PostAssetLoadingSet};
+use crate::prelude::*;
 
 // List of user actions associated to menu/ui interaction
 #[derive(Actionlike, Clone, Copy, Debug, Eq, Hash, PartialEq, Reflect)]

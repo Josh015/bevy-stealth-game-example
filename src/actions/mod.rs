@@ -1,6 +1,7 @@
-use crate::game_state::*;
 use bevy::prelude::*;
 use bevy_sequential_actions::*;
+
+use crate::prelude::*;
 
 mod action_sequence;
 mod emote_action;

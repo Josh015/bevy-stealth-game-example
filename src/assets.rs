@@ -1,8 +1,7 @@
-use crate::{ActorConfig, EmoteConfig, PreloadedActorAssets, SoundWaveConfig};
-
-use super::game_state::*;
-use bevy::{asset::*, prelude::*, utils::HashMap};
+use bevy::{prelude::*, utils::HashMap};
 use bevy_asset_loader::prelude::*;
+
+use crate::prelude::*;
 
 pub struct AssetsPlugin;
 

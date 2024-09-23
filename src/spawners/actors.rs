@@ -1,11 +1,8 @@
-use crate::{assets::*, components::*, game_state::*};
-use bevy::{
-    ecs::{prelude::*, system::SystemState},
-    prelude::*,
-    utils::HashMap,
-};
+use bevy::{ecs::system::SystemState, prelude::*, utils::HashMap};
 use bevy_common_assets::ron::RonAssetPlugin;
 use serde::Deserialize;
+
+use crate::prelude::*;
 
 pub(super) struct ActorsPlugin;
 

@@ -1,7 +1,8 @@
-use crate::util::*;
 use bevy::ecs::prelude::*;
 use bevy_sequential_actions::*;
 use derive_new::new;
+
+use crate::prelude::*;
 
 /// Runs a collection of actions in order and repeats them.
 ///

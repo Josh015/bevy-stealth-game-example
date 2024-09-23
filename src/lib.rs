@@ -8,15 +8,20 @@ mod system_params;
 mod ui;
 mod util;
 
-pub use actions::*;
-pub use assets::*;
+mod prelude {
+    pub use crate::actions::*;
+    pub use crate::assets::*;
+    pub use crate::components::*;
+    pub use crate::events::*;
+    pub use crate::game_state::*;
+    pub use crate::spawners::*;
+    pub use crate::system_params::*;
+    pub use crate::ui::*;
+    pub use crate::util::*;
+}
+
 pub use bevy::prelude::*;
-pub use components::*;
-pub use events::*;
-pub use game_state::*;
-pub use spawners::*;
-pub use ui::*;
-pub use util::*;
+pub use prelude::*;
 
 pub struct BevyStealthSoundGamePlugin;
 

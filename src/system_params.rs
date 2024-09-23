@@ -1,9 +1,10 @@
-use crate::components::*;
 use bevy::{
     ecs::{prelude::*, system::SystemParam},
     prelude::*,
 };
 use std::time::Duration;
+
+use crate::prelude::*;
 
 const ANIMATION_TRANSITION_DELAY_MILLIS: u64 = 500;
 
