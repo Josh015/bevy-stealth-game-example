@@ -24,11 +24,6 @@ impl Plugin for GuardPlugin {
             )
                 .in_set(StopWhenPausedSet),
         );
-        // .add_systems(
-        //     Update,
-        //     (give_target_auto, move_object)
-        //         .run_if(in_state(GameState::Gameplay)),
-        // );
     }
 }
 
