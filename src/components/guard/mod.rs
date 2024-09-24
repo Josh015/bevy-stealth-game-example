@@ -20,7 +20,7 @@ impl Plugin for GuardPlugin {
                 investigate_noise,
                 search_for_player,
                 patrolling,
-                guarding_location,
+                patrol_location,
             )
                 .in_set(StoppedWhenPausedSet),
         );
@@ -33,38 +33,29 @@ pub struct GuardBundle {
     pub guard: Guard,
     pub actions_bundle: ActionsBundle,
     pub state_machine: StateMachine,
-    pub idle: Guarding,
+    pub idle: Patrol,
 }
 
 impl Default for GuardBundle {
     fn default() -> Self {
-        // AnyState -> StunnedEvent -> Stunned
-        // (Guarding, LostPlayer, InvestigateNoise) -> SawPlayerEvent -> Surprised
-        // Surprised -> done(None) -> ChasePlayer
-        // ChasePlayer -> SawPlayerEvent -> ChasePlayer
-        // (Guarding, LostPlayer, InvestigateNoise) -> HeardNoiseEvent -> InvestigateNoise
-        // Guarding -> AlarmEvent -> AlarmResponse
-        // (ChasePlayer, AlarmResponse) -> done(None) -> LostPlayer
-        // (Stunned, LostPlayer, InvestigateNoise) -> done(None) -> Guarding
-
-        // Change<> is implicitly Added<>, so use it for state updates?
-
-        // TODO: Maybe instead of global state machine, somehow have a
-        // sub-state machine that encapsulates all states of chase behavior?
-        // Maybe dynamically swap state machines?
+        // AnyState -> StunEvent -> Stunned
+        // AnyState -> done(None) -> Patrol
+        // (Patrol, CheckNoise, CheckAlarm) -> SawPlayerEvent -> ChasePlayer
+        // (Patrol, CheckNoise) -> AlarmEvent -> CheckAlarm
+        // (Patrol) -> HeardNoiseEvent -> CheckNoise
 
         Self {
             guard: Guard,
             actions_bundle: ActionsBundle::new(),
             state_machine: StateMachine::default()
                 // Stun response
-                .trans::<ChasingPlayer, _>(done(None), Guarding)
+                .trans::<ChasingPlayer, _>(done(None), Patrol)
                 // Alarm response
                 // Investigate noise
                 // Search for player
                 // Patrol
-                .trans::<Guarding, _>(done(None), ChasingPlayer),
-            idle: Guarding,
+                .trans::<Patrol, _>(done(None), ChasingPlayer),
+            idle: Patrol,
         }
     }
 }
@@ -123,7 +114,7 @@ pub struct PatrolState;
 
 #[derive(Clone, Component, Copy, Reflect)]
 #[component(storage = "SparseSet")]
-pub struct Guarding;
+pub struct Patrol;
 
 fn stun_response(
     mut commands: Commands,
@@ -282,9 +273,9 @@ fn patrolling(
     }
 }
 
-fn guarding_location(
+fn patrol_location(
     mut commands: Commands,
-    query: Query<Entity, (With<Guard>, Added<Guarding>)>,
+    query: Query<Entity, (With<Guard>, Added<Patrol>)>,
 ) {
     for entity in &query {
         // <generate path back to guard location>
