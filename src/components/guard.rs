@@ -220,13 +220,13 @@ fn chasing_player(
             agent_commands.add(MoveAction::new(MoveTo::Destination(point)));
         }
 
-        agent_commands.add_many(actions![
-            |agent: Entity, world: &mut World| -> bool {
-                world.entity_mut(agent).remove::<Path>();
-                true
-            },
-            InsertComponentAction::new(Done::Success)
-        ]);
+        agent_commands.add(|agent: Entity, world: &mut World| -> bool {
+            world
+                .entity_mut(agent)
+                .remove::<Path>()
+                .insert(Done::Success);
+            true
+        });
     }
 }
 
@@ -295,7 +295,10 @@ fn guarding_location(
         commands.actions(entity).add_many(actions![
             StartAnimationAction::new("idle".to_owned()),
             WaitAction::new(Duration::from_millis(IDLE_DELAY_MILLIS)),
-            InsertComponentAction::new(Done::Success)
+            |agent: Entity, world: &mut World| -> bool {
+                world.entity_mut(agent).insert(Done::Success);
+                true
+            },
         ]);
     }
 }

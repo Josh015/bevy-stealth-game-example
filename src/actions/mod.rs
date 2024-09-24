@@ -5,7 +5,6 @@ use crate::prelude::*;
 
 mod action_sequence;
 mod emote_action;
-mod insert_component_action;
 mod move_action;
 mod parallel_actions;
 mod repeat_action;
@@ -16,7 +15,6 @@ mod wait_action;
 
 pub use action_sequence::*;
 pub use emote_action::*;
-pub use insert_component_action::*;
 pub use move_action::*;
 pub use parallel_actions::*;
 pub use repeat_action::*;
