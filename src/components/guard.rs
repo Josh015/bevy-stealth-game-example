@@ -225,7 +225,7 @@ fn chasing_player(
                 world.entity_mut(agent).remove::<Path>();
                 true
             },
-            StateDoneAction::new(Done::Success)
+            InsertComponentAction::new(Done::Success)
         ]);
     }
 }
@@ -295,7 +295,7 @@ fn guarding_location(
         commands.actions(entity).add_many(actions![
             StartAnimationAction::new("idle".to_owned()),
             WaitAction::new(Duration::from_millis(IDLE_DELAY_MILLIS)),
-            StateDoneAction::new(Done::Success)
+            InsertComponentAction::new(Done::Success)
         ]);
     }
 }
