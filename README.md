@@ -4,10 +4,9 @@ My attempt to mimic the game mechanics of "SONAR" in the Bevy engine. It's gonna
 
 ## ToDo
 
-- [ ] Switch to Bevy component lifecycle hooks.
+- [ ] Figure out why first MoveToAction in sequences gets ignored!
 - [ ] Finish porting animation system to Bevy AnimationGraph API.
-- [ ] Use vleue_navigator for nav-mesh pathing.
-- [ ] Use bevy_rapier character controller integration.
+- [ ] Use Avian3D character controller integration.
 - [ ] Waypoint patrolling.
 - [ ] Use smooth-bevy-cameras to make camera follow the player.
 - [ ] Make custom level format and load from it.
@@ -20,6 +19,7 @@ My attempt to mimic the game mechanics of "SONAR" in the Bevy engine. It's gonna
 - [ ] Use bevy_fluent to implement localization support and migrate all user-facing strings.
 - [ ] Basic UI.
 - [ ] Menu animations.
+- [x] Use vleue_navigator for nav-mesh pathing.
 - [x] Load entities from YAML files rather than hard-coding them.
 - [x] Spawning entities from config files.
 - [x] Animated mesh entity.

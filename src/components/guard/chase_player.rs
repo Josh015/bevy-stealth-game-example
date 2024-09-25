@@ -1,3 +1,5 @@
+use std::time::Duration;
+
 use bevy::{color::palettes, pbr::NotShadowCaster, prelude::*};
 use bevy_sequential_actions::*;
 use rand::prelude::*;
@@ -13,6 +15,8 @@ impl Plugin for ChasePlayerPlugin {
         app.add_systems(Update, chase_player.in_set(StoppedWhenPausedSet));
     }
 }
+
+const ESCAPED_FACE_DIRECTION_DELAY: Duration = Duration::from_millis(1500);
 
 #[derive(Clone, Component, Copy, Default, Reflect)]
 #[component(storage = "SparseSet")]
@@ -136,11 +140,24 @@ fn chase_player(
             },
             Escaped => {
                 let mut agent_commands = commands.actions(entity);
+                let mut rng = SmallRng::from_entropy();
 
-                // Turn to random direction.
-                // Wait.
-                // Turn to random direction.
-                // Wait.
+                for _ in 0..2 {
+                    let mut random_vector = Vec3::ZERO;
+                    random_vector.x = rng.gen_range(-1.0..=1.0);
+                    random_vector.z = rng.gen_range(-1.0..=1.0);
+
+                    let random_direction =
+                        Dir3::new_unchecked(random_vector.normalize());
+
+                    agent_commands.add_many(actions![
+                        MoveAction::new(MoveTo::FaceDirection(
+                            random_direction
+                        )),
+                        WaitAction::new(ESCAPED_FACE_DIRECTION_DELAY),
+                    ]);
+                }
+
                 // Parallel Actions:
                 //   Emit "Frustrated" emote (blocking).
                 //   Play "Frustrated" animation (blocking, once).
