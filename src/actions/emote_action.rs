@@ -1,20 +1,14 @@
 use bevy::ecs::prelude::*;
 use bevy_sequential_actions::*;
+use derive_new::new;
 
 /// Pops up a temporary emote image sprite that hovers over the head of the
 /// entity that spawned it.
+#[derive(new)]
 pub struct EmoteAction {
     texture_name: String,
     // image_handle: Handle<Image>
     // duration: Duration
-}
-
-impl EmoteAction {
-    pub fn new(texture_name: impl Into<String>) -> Self {
-        Self {
-            texture_name: texture_name.into(),
-        }
-    }
 }
 
 impl Action for EmoteAction {

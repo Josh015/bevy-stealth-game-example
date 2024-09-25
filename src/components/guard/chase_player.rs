@@ -160,8 +160,8 @@ fn chase_player(
 
                 agent_commands.add_many(actions![
                     ParallelActions::new(actions![
-                        AnimationAction::new("frustrated"),
-                        EmoteAction::new("frustrated")
+                        AnimationAction::new("frustrated".into()),
+                        EmoteAction::new("frustrated".into())
                     ]),
                     |agent: Entity, world: &mut World| -> bool {
                         world.entity_mut(agent).insert(Done::Failure);

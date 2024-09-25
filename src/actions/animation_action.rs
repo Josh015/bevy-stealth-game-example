@@ -1,19 +1,13 @@
 use bevy::ecs::{prelude::*, system::SystemState};
 use bevy_sequential_actions::*;
+use derive_new::new;
 
 use crate::prelude::*;
 
 /// Plays an animation.
+#[derive(new)]
 pub struct AnimationAction {
     clip_name: String,
-}
-
-impl AnimationAction {
-    pub fn new(clip_name: impl Into<String>) -> Self {
-        Self {
-            clip_name: clip_name.into(),
-        }
-    }
 }
 
 impl Action for AnimationAction {
