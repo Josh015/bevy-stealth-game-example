@@ -4,23 +4,23 @@ use bevy_sequential_actions::*;
 use crate::prelude::*;
 
 mod action_sequence;
+mod animation_action;
 mod emote_action;
 mod move_action;
 mod parallel_actions;
 mod repeat_action;
 mod repeat_sequence;
 mod sound_action;
-mod start_animation_action;
 mod wait_action;
 
 pub use action_sequence::*;
+pub use animation_action::*;
 pub use emote_action::*;
 pub use move_action::*;
 pub use parallel_actions::*;
 pub use repeat_action::*;
 pub use repeat_sequence::*;
 pub use sound_action::*;
-pub use start_animation_action::*;
 pub use wait_action::*;
 
 pub(super) struct ActionsPlugin;
