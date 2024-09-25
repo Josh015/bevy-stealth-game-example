@@ -158,16 +158,16 @@ fn chase_player(
                     ]);
                 }
 
-                // Parallel Actions:
-                //   Emit "Frustrated" emote (blocking).
-                //   Play "Frustrated" animation (blocking, once).
-
-                agent_commands.add(
+                agent_commands.add_many(actions![
+                    ParallelActions::new(actions![
+                        AnimationAction::new("frustrated"),
+                        EmoteAction::new("frustrated")
+                    ]),
                     |agent: Entity, world: &mut World| -> bool {
                         world.entity_mut(agent).insert(Done::Failure);
                         true
                     },
-                );
+                ]);
             },
         }
     }

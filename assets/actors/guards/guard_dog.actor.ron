@@ -17,6 +17,7 @@
     "idle": "models/animated/Fox.glb#Animation0",
     "moving": "models/animated/Fox.glb#Animation2",
     "puzzled": "models/animated/Fox.glb#Animation0",
-    "shocked": "models/animated/Fox.glb#Animation1",
+    "surprised": "models/animated/Fox.glb#Animation1",
+    "frustrated": "models/animated/Fox.glb#Animation1",
   })
 ])
