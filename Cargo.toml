@@ -1,5 +1,5 @@
 [package]
-name = "bevy-stealth-sound-game"
+name = "bevy-stealth-game-example"
 version = "0.1.0"
 authors = ["Joshua Ols <joshua.d.ols@gmail.com>"]
 edition = "2021"
@@ -17,7 +17,7 @@ bevy-sequential-actions = "0.11.0"
 bevy_tweening = "0.11.0"
 derive-new = "0.7.0"
 leafwing-input-manager = "0.15.0"
-polyanya = "0.9.3"
+polyanya = "0.10.0"
 rand = { version = "0.8.5", features = ["small_rng"] }
 seldom_state = "0.11.0"
 serde = { version = "1.0.210", features = ["serde_derive"] }

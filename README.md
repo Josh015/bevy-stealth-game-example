@@ -1,4 +1,4 @@
-# Bevy Stealth Sound Game
+# Bevy Stealth Game Example
 
 My attempt to mimic the game mechanics of "SONAR" in the Bevy engine. It's gonna be mostly pseudo-code for a while, so be patient.
 

@@ -13,7 +13,7 @@ use bevy::{
     window::PresentMode,
 };
 use bevy_sequential_actions::*;
-use bevy_stealth_sound_game::*;
+use bevy_stealth_game_example::*;
 use bevy_tweening::*;
 use polyanya::Triangulation;
 use rand::Rng;
@@ -34,7 +34,7 @@ fn main() {
             DefaultPlugins
                 .set(WindowPlugin {
                     primary_window: Some(Window {
-                        title: "Bevy Stealth Sound Game".to_owned(),
+                        title: "Bevy Stealth Game Example".to_owned(),
                         present_mode: PresentMode::AutoVsync,
                         fit_canvas_to_parent: true,
                         ..default()
@@ -50,7 +50,7 @@ fn main() {
             SequentialActionsPlugin,
             StateMachinePlugin,
             TweeningPlugin,
-            BevyStealthSoundGamePlugin
+            BevyStealthGameExamplePlugin
         ))
 
         .add_systems(OnEnter(GameState::StartMenu), setup)

@@ -23,9 +23,9 @@ mod prelude {
 pub use bevy::prelude::*;
 pub use prelude::*;
 
-pub struct BevyStealthSoundGamePlugin;
+pub struct BevyStealthGameExamplePlugin;
 
-impl Plugin for BevyStealthSoundGamePlugin {
+impl Plugin for BevyStealthGameExamplePlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins((
             ActionsPlugin,
