@@ -13,8 +13,7 @@ impl Plugin for PatrolPlugin {
     }
 }
 
-const IDLE_DELAY_MILLIS: u64 = 1_000;
-const SPIN_DELAY_MILLIS: u64 = 400;
+const IDLE_DELAY: Duration = Duration::from_millis(1_000);
 
 #[derive(Clone, Component, Copy, Reflect)]
 #[component(storage = "SparseSet")]
@@ -38,7 +37,7 @@ fn patrol_location(
 
         commands.actions(entity).add_many(actions![
             AnimationAction::new("idle".into()),
-            WaitAction::new(Duration::from_millis(IDLE_DELAY_MILLIS)),
+            WaitAction::new(IDLE_DELAY),
             |agent: Entity, world: &mut World| -> bool {
                 world.entity_mut(agent).insert(Done::Success);
                 true

@@ -6,7 +6,7 @@ use std::time::Duration;
 
 use crate::prelude::*;
 
-const ANIMATION_TRANSITION_DELAY_MILLIS: u64 = 500;
+const ANIMATION_TRANSITION_DELAY: Duration = Duration::from_millis(500);
 
 /// Allows animations to easily be played on entities that support them.
 #[derive(SystemParam)]
@@ -30,9 +30,7 @@ impl<'w, 's> Animations<'w, 's> {
                     // animation_player
                     //     .play_with_transition(
                     //         animation_clip.clone_weak(),
-                    //         Duration::from_millis(
-                    //             ANIMATION_TRANSITION_DELAY_MILLIS,
-                    //         ),
+                    //         ANIMATION_TRANSITION_DELAY,
                     //     )
                     //     .repeat();
                 }
@@ -54,9 +52,7 @@ impl<'w, 's> Animations<'w, 's> {
                 // animation_player
                 //     .play_with_transition(
                 //         clip_handle.clone_weak(),
-                //         Duration::from_millis(
-                //             ANIMATION_TRANSITION_DELAY_MILLIS,
-                //         ),
+                //         ANIMATION_TRANSITION_DELAY,
                 //     )
                 //     .repeat();
             }
