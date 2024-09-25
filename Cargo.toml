@@ -22,8 +22,4 @@ rand = { version = "0.8.5", features = ["small_rng"] }
 seldom_state = "0.11.0"
 serde = { version = "1.0.210", features = ["serde_derive"] }
 strum = { version = "0.26.3", features = ["derive"] }
-
-[dependencies.vleue_navigator]
-git = 'https://github.com/vleue/vleue_navigator.git'
-branch = "main"
-features = ["avian3d"]
+vleue_navigator = { version = "0.9.0", features = ["avian3d"] }
