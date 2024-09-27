@@ -5,6 +5,8 @@ use derive_new::new;
 use crate::prelude::*;
 
 /// Move to a destination.
+///
+/// Will malfunction if used in [ParallelActions] with [FaceDirectionAction].
 #[derive(new)]
 pub struct MoveToAction {
     destination: Vec3,
