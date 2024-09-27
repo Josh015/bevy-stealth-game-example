@@ -5,6 +5,8 @@ use derive_new::new;
 use crate::prelude::*;
 
 /// Rotate to face a given direction.
+///
+/// Will malfunction if used in [ParallelActions] with [MoveToAction].
 #[derive(new)]
 pub struct FaceDirectionAction {
     direction: Dir3,

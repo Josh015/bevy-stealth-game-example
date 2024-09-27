@@ -31,12 +31,11 @@ impl Plugin for MovementPlugin {
     }
 }
 
-#[derive(Clone, Component, Debug)]
-pub struct StoredAnimation(pub Handle<AnimationClip>);
+/// A point that the entity will navigate to reach.
+#[derive(Clone, Component, Debug, Default)]
+pub struct Destination(pub Vec3);
 
-#[derive(Clone, Component, Debug)]
-pub struct Yaw(pub f32);
-
+/// A direction that the entity will rotate to face.
 #[derive(Clone, Component, Debug)]
 pub struct Heading(pub f32);
 
@@ -46,9 +45,15 @@ impl Heading {
     }
 }
 
-#[derive(Clone, Component, Debug, Default)]
-pub struct Destination(pub Vec3);
+/// Saved animation clip that can be restored later.
+#[derive(Clone, Component, Debug)]
+pub struct StoredAnimation(pub Handle<AnimationClip>);
 
+/// Rotation around the Y-axis required to reach a [Heading].
+#[derive(Clone, Component, Debug)]
+pub struct Yaw(pub f32);
+
+/// The navigation route an entity will take to reach a [Destination].
 #[derive(Clone, Component, Debug)]
 pub struct Route {
     pub next: Vec3,
