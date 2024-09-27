@@ -10,7 +10,7 @@ mod footsteps;
 mod for_state;
 mod glass;
 mod guard;
-mod move_to;
+mod movement;
 mod physics;
 mod pickup;
 mod player;
@@ -31,7 +31,7 @@ pub use footsteps::*;
 pub use for_state::*;
 pub use glass::*;
 pub use guard::*;
-pub use move_to::*;
+pub use movement::*;
 pub use physics::*;
 pub use pickup::*;
 pub use player::*;
@@ -51,7 +51,7 @@ impl Plugin for ComponentsPlugin {
             FootstepsPlugin,
             ForStatePlugin,
             GuardPlugin,
-            MoveToPlugin,
+            MovementPlugin,
             PhysicsPlugin,
             PickupPlugin,
             PlayerPlugin,

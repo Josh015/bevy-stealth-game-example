@@ -4,7 +4,6 @@ My attempt to mimic the game mechanics of "SONAR" in the Bevy engine. It's gonna
 
 ## ToDo
 
-- [ ] Figure out why first MoveToAction in sequences gets ignored!
 - [ ] Finish porting animation system to Bevy AnimationGraph API.
 - [ ] Use Avian3D character controller integration.
 - [ ] Waypoint patrolling.
@@ -19,7 +18,6 @@ My attempt to mimic the game mechanics of "SONAR" in the Bevy engine. It's gonna
 - [ ] Use bevy_fluent to implement localization support and migrate all user-facing strings.
 - [ ] Basic UI.
 - [ ] Menu animations.
-- [x] Use vleue_navigator for nav-mesh pathing.
 - [x] Load entities from YAML files rather than hard-coding them.
 - [x] Spawning entities from config files.
 - [x] Animated mesh entity.
@@ -28,3 +26,5 @@ My attempt to mimic the game mechanics of "SONAR" in the Bevy engine. It's gonna
 - [x] Smooth blended transitions between animations.
 - [x] Use leafwing-input-manager to add Player input movement.
 - [x] Replace Spew crate with Bevy observers.
+- [x] Use vleue_navigator for nav-mesh pathing.
+- [x] Figure out why first MoveToAction in sequences gets ignored!

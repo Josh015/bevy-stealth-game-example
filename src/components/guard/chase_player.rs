@@ -64,28 +64,23 @@ fn chase_player(
                 let Some(navmesh) = navmeshes.get(&Handle::default()) else {
                     continue;
                 };
-                let mut x = 0.0;
-                let mut z = 0.0;
-                for _ in 0..50 {
-                    x = rand::thread_rng().gen_range(-50.0..50.0);
-                    z = rand::thread_rng().gen_range(-25.0..25.0);
+                let mut destination = Vec3::ZERO;
+                let mut rng = SmallRng::from_entropy();
+                let mut valid_point = false;
 
-                    if navmesh.transformed_is_in_mesh(Vec3::new(x, 0.0, z)) {
+                for _ in 0..50 {
+                    destination.x = rng.gen_range(-50.0..50.0);
+                    destination.z = rng.gen_range(-25.0..25.0);
+                    valid_point = navmesh.transformed_is_in_mesh(destination);
+
+                    if valid_point {
                         break;
                     }
                 }
 
-                let Some(path) = navmesh.transformed_path(
-                    transform.translation,
-                    Vec3::new(x, 0.0, z),
-                ) else {
-                    commands.entity(entity).insert(Done::Failure);
+                if !valid_point {
                     continue;
-                };
-
-                let mut movement_path = path.path;
-
-                movement_path.insert(0, transform.translation);
+                }
 
                 for target in &targets {
                     commands.entity(target).despawn_recursive();
@@ -101,12 +96,11 @@ fn chase_player(
                                 emissive: (palettes::css::RED * 5.0).into(),
                                 ..default()
                             }),
-                            transform: Transform::from_xyz(x, 0.0, z),
+                            transform: Transform::from_translation(destination),
                             ..Default::default()
                         },
                         NotShadowCaster,
                         Target,
-                        Path(movement_path.clone()),
                     ))
                     .with_children(|target| {
                         target.spawn(PointLightBundle {
@@ -121,22 +115,13 @@ fn chase_player(
                         });
                     });
 
-                let mut agent_commands = commands.actions(entity);
-
-                for point in movement_path {
-                    agent_commands
-                        .add(MoveAction::new(MoveTo::Destination(point)));
-                }
-
-                agent_commands.add(
+                commands.actions(entity).add_many(actions![
+                    MoveToAction::new(destination),
                     |agent: Entity, world: &mut World| -> bool {
-                        world
-                            .entity_mut(agent)
-                            .remove::<Path>()
-                            .insert(Escaped);
+                        world.entity_mut(agent).insert(Escaped);
                         true
                     },
-                );
+                ]);
             },
             Escaped => {
                 let mut agent_commands = commands.actions(entity);
@@ -151,9 +136,7 @@ fn chase_player(
                         Dir3::new_unchecked(random_vector.normalize());
 
                     agent_commands.add_many(actions![
-                        MoveAction::new(MoveTo::FaceDirection(
-                            random_direction
-                        )),
+                        FaceDirectionAction::new(random_direction),
                         WaitAction::new(ESCAPED_FACE_DIRECTION_DELAY),
                     ]);
                 }
@@ -172,10 +155,6 @@ fn chase_player(
         }
     }
 }
-
-// TODO: Remove these once done debugging.
-#[derive(Component)]
-pub struct Path(pub Vec<Vec3>);
 
 #[derive(Component)]
 pub struct Target;

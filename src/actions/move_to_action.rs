@@ -4,19 +4,21 @@ use derive_new::new;
 
 use crate::prelude::*;
 
-/// Moves an entity.
+/// Move to a destination.
 #[derive(new)]
-pub struct MoveAction {
-    move_to: MoveTo,
+pub struct MoveToAction {
+    destination: Vec3,
 }
 
-impl Action for MoveAction {
+impl Action for MoveToAction {
     fn is_finished(&self, agent: Entity, world: &World) -> bool {
-        !world.entity(agent).contains::<MoveTo>()
+        !world.entity(agent).contains::<Destination>()
     }
 
     fn on_start(&mut self, agent: Entity, world: &mut World) -> bool {
-        world.entity_mut(agent).insert(self.move_to.clone());
+        world
+            .entity_mut(agent)
+            .insert(Destination(self.destination));
         false
     }
 
@@ -26,6 +28,6 @@ impl Action for MoveAction {
         world: &mut World,
         _reason: StopReason,
     ) {
-        world.entity_mut(agent).remove::<MoveTo>();
+        world.entity_mut(agent).remove::<Destination>();
     }
 }

@@ -23,7 +23,7 @@ use vleue_navigator::{
     prelude::{
         NavMeshBundle, NavMeshSettings, NavMeshUpdateMode, NavmeshUpdaterPlugin,
     },
-    NavMesh, NavMeshDebug, VleueNavigatorPlugin,
+    NavMesh, VleueNavigatorPlugin,
 };
 
 fn main() {
@@ -50,27 +50,22 @@ fn main() {
             SequentialActionsPlugin,
             StateMachinePlugin,
             TweeningPlugin,
-            BevyStealthGameExamplePlugin
+            BevyStealthGameExamplePlugin,
         ))
-
         .add_systems(OnEnter(GameState::StartMenu), setup)
         .add_systems(
             Update,
             check_textures.run_if(in_state(GameState::StartMenu)),
         )
         .add_systems(OnExit(GameState::StartMenu), setup_scene)
-    // .add_systems(
-    //     Update,
-    //     refresh_path.run_if(on_timer(Duration::from_secs_f32(0.1))),
-    // );
-    .add_systems(
-        Update,
-        (
-            target_activity,
-            display_navigator_path,
-            // despawn_obstacles
-        ).run_if(in_state(GameState::Gameplay))
-    );
+        .add_systems(
+            Update,
+            (
+                target_activity,
+                // despawn_obstacles
+            )
+                .run_if(in_state(GameState::Gameplay)),
+        );
     // .add_systems(
     //     Update,
     //     spawn_obstacles.run_if(on_timer(Duration::from_secs_f32(0.5))),
@@ -185,25 +180,19 @@ fn setup_scene(
                 Color::Srgba(palettes::css::ANTIQUE_WHITE).into();
             material.unlit = true;
 
-            commands.spawn((
-                NavMeshBundle {
-                    settings: NavMeshSettings {
-                        fixed: Triangulation::from_mesh(
-                            navmesh.get().as_ref(),
-                            0,
-                        ),
-                        build_timeout: Some(5.0),
-                        upward_shift: 0.5,
-                        ..default()
-                    },
-                    transform: Transform::from_rotation(Quat::from_rotation_x(
-                        FRAC_PI_2,
-                    )),
-                    update_mode: NavMeshUpdateMode::Direct,
-                    ..NavMeshBundle::with_default_id()
+            commands.spawn(NavMeshBundle {
+                settings: NavMeshSettings {
+                    fixed: Triangulation::from_mesh(navmesh.get().as_ref(), 0),
+                    build_timeout: Some(5.0),
+                    upward_shift: 0.5,
+                    ..default()
                 },
-                NavMeshDebug(palettes::tailwind::RED_400.into()),
-            ));
+                transform: Transform::from_rotation(Quat::from_rotation_x(
+                    FRAC_PI_2,
+                )),
+                update_mode: NavMeshUpdateMode::Direct,
+                ..NavMeshBundle::with_default_id()
+            });
         }
 
         commands
@@ -334,38 +323,3 @@ fn target_activity(
             (time.elapsed_seconds() * 10.0).sin().abs() * 100000.0;
     }
 }
-
-fn display_navigator_path(navigator: Query<&Path>, mut gizmos: Gizmos) {
-    for path in &navigator {
-        if !path.0.is_empty() {
-            gizmos.linestrip(
-                path.0.iter().map(|xz| Vec3::new(xz.x, 0.2, xz.z)),
-                palettes::tailwind::TEAL_400,
-            );
-        }
-    }
-}
-
-// fn refresh_path(
-//     mut object_query: Query<(&Transform, &mut Path)>,
-//     target: Query<&Transform, With<Target>>,
-//     navmeshes: Res<Assets<NavMesh>>,
-// ) {
-//     for (transform, mut path) in &mut object_query {
-//         let navmesh = navmeshes.get(&Handle::default()).unwrap();
-//         let Some(new_path) = navmesh.transformed_path(
-//             transform.translation,
-//             target.single().translation,
-//         ) else {
-//             break;
-//         };
-//         if let Some((first, remaining)) = new_path.path.split_first() {
-//             let mut remaining = remaining.to_vec();
-//             remaining.reverse();
-//             *path = Path {
-//                 current: *first,
-//                 next: remaining,
-//             };
-//         }
-//     }
-// }

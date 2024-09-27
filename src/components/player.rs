@@ -88,7 +88,7 @@ fn control_player(
 
     // Prevent snapping to facing forward on -Z when releasing stick.
     if move_direction != Vec3::ZERO {
-        commands.entity(entity).insert(MoveTo::Destination(
+        commands.entity(entity).insert(Destination(
             player_transform.translation
                 + move_direction * linear_speed.0 * time.delta_seconds(),
         ));
