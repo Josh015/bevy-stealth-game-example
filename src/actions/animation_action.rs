@@ -5,6 +5,8 @@ use derive_new::new;
 use crate::prelude::*;
 
 /// Plays an animation.
+///
+/// Will malfunction if used in [ParallelActions] with [MoveToAction] or [FaceDirectionAction].
 #[derive(new)]
 pub struct AnimationAction {
     clip_name: String,
