@@ -48,9 +48,19 @@ impl Default for GuardBundle {
                 .trans::<ChasePlayer, _>(done(None), Patrol)
                 .trans::<Patrol, _>(done(None), ChasePlayer::default())
 
-                // TODO: Implement events and test.
-                .trans::<AnyState, _>(on_event::<StunnedEnemyEvent>(), Stunned)
+                // done
                 .trans::<AnyState, _>(done(None), Patrol)
+
+                // Stunned
+                .trans::<AnyState, _>(on_event::<StunnedEnemyEvent>(), Stunned)
+
+                // Saw Player
+                .trans_builder(on_event::<SawPlayerEvent>(), |state, _| {
+                    match state {
+                        ChasePlayer::Escaped => Some(ChasePlayer::Surprised),
+                        _ => None,
+                    }
+                })
                 .trans::<Patrol, _>(
                     on_event::<SawPlayerEvent>(),
                     ChasePlayer::default(),
@@ -63,6 +73,14 @@ impl Default for GuardBundle {
                     on_event::<SawPlayerEvent>(),
                     ChasePlayer::default(),
                 )
+
+                // Alarm
+                .trans_builder(on_event::<AlarmEvent>(), |state, _| {
+                    match state {
+                        CheckAlarm::Searching => Some(CheckAlarm::Surprised),
+                        _ => None,
+                    }
+                })
                 .trans::<Patrol, _>(
                     on_event::<AlarmEvent>(),
                     CheckAlarm::default(),
@@ -71,6 +89,8 @@ impl Default for GuardBundle {
                     on_event::<AlarmEvent>(),
                     CheckAlarm::default(),
                 )
+
+                // Heard Noise
                 .trans::<Patrol, _>(on_event::<HeardNoiseEvent>(), CheckNoise),
             patrol: Patrol,
         }
