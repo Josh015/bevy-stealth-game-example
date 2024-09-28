@@ -6,6 +6,7 @@ use derive_new::new;
 /// entity that spawned it.
 #[derive(new)]
 pub struct EmoteAction {
+    #[new(into)]
     texture_name: String,
     blocking: bool,
     // image_handle: Handle<Image>

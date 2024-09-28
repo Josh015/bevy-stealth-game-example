@@ -46,11 +46,11 @@ fn chase_player(
                 agent_commands.add_many(actions![
                     // TODO: Turn to face direction of player.
                     ParallelActions::new(actions![
-                        SoundAction::new("alert".into(), true),
-                        AnimationAction::new("alert".into(), true),
-                        EmoteAction::new("alert".into(), true),
+                        SoundAction::new("alert", true),
+                        AnimationAction::new("alert", true),
+                        EmoteAction::new("alert", true),
                     ]),
-                    EmoteAction::new("chase".into(), false),
+                    EmoteAction::new("chase", false),
                     |agent: Entity, world: &mut World| -> bool {
                         world.entity_mut(agent).insert(Chasing);
                         true
@@ -141,8 +141,8 @@ fn chase_player(
 
                 agent_commands.add_many(actions![
                     ParallelActions::new(actions![
-                        AnimationAction::new("frustrated".into(), true),
-                        EmoteAction::new("frustrated".into(), true),
+                        AnimationAction::new("frustrated", true),
+                        EmoteAction::new("frustrated", true),
                     ]),
                     |agent: Entity, world: &mut World| -> bool {
                         world.entity_mut(agent).insert(Done::Failure);

@@ -5,6 +5,7 @@ use derive_new::new;
 /// Plays a sound from this entity.
 #[derive(new)]
 pub struct SoundAction {
+    #[new(into)]
     sound_name: String,
     blocking: bool,
 }

@@ -9,6 +9,7 @@ use crate::prelude::*;
 /// **WARNING**: Malfunctions when used in [`ParallelActions`] with [`MoveToAction`] or [`FaceDirectionAction`].
 #[derive(new)]
 pub struct AnimationAction {
+    #[new(into)]
     clip_name: String,
     blocking: bool,
 }
