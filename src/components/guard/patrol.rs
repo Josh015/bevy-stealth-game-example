@@ -36,7 +36,7 @@ fn patrol_location(
         // Start "idle" animation (blocking, repeating).
 
         commands.actions(entity).add_many(actions![
-            AnimationAction::new("idle", false),
+            AnimationAction::new("idle"),
             WaitAction::new(IDLE_DELAY),
             |agent: Entity, world: &mut World| -> bool {
                 world.entity_mut(agent).insert(Done::Success);

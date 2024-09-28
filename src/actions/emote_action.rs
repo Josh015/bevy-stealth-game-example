@@ -8,8 +8,19 @@ use derive_new::new;
 pub struct EmoteAction {
     #[new(into)]
     texture_name: String,
+
+    #[new(value = "true")]
     blocking: bool,
     // image_handle: Handle<Image>
+}
+
+impl EmoteAction {
+    pub fn non_blocking(texture_name: impl Into<String>) -> Self {
+        Self {
+            texture_name: texture_name.into(),
+            blocking: false,
+        }
+    }
 }
 
 impl Action for EmoteAction {

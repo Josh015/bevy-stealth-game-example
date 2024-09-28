@@ -7,7 +7,18 @@ use derive_new::new;
 pub struct SoundAction {
     #[new(into)]
     sound_name: String,
+
+    #[new(value = "true")]
     blocking: bool,
+}
+
+impl SoundAction {
+    pub fn non_blocking(sound_name: impl Into<String>) -> Self {
+        Self {
+            sound_name: sound_name.into(),
+            blocking: false,
+        }
+    }
 }
 
 impl Action for SoundAction {

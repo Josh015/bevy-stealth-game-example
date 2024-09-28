@@ -11,7 +11,18 @@ use crate::prelude::*;
 pub struct AnimationAction {
     #[new(into)]
     clip_name: String,
+
+    #[new(value = "true")]
     blocking: bool,
+}
+
+impl AnimationAction {
+    pub fn non_blocking(clip_name: impl Into<String>) -> Self {
+        Self {
+            clip_name: clip_name.into(),
+            blocking: false,
+        }
+    }
 }
 
 impl Action for AnimationAction {
