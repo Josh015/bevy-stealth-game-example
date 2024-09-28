@@ -10,8 +10,10 @@ pub use chase_player::*;
 pub use check_alarm::*;
 pub use check_noise::*;
 pub use patrol::*;
-use seldom_state::prelude::*;
+use seldom_state::prelude::{done, AnyState, StateMachine};
 pub use stunned::*;
+
+use crate::prelude::*;
 
 pub(super) struct GuardPlugin;
 
@@ -42,13 +44,34 @@ impl Default for GuardBundle {
             guard: Guard,
             actions_bundle: ActionsBundle::new(),
             state_machine: StateMachine::default()
-                // AnyState -> StunEvent -> Stunned
-                // .trans::<AnyState, _>(done(None), Patrol)
+                // TODO: Remove once events wired up.
                 .trans::<ChasePlayer, _>(done(None), Patrol)
-                .trans::<Patrol, _>(done(None), ChasePlayer::default()),
-            // (Patrol, CheckNoise, CheckAlarm) -> SawPlayerEvent -> ChasePlayer
-            // (Patrol, CheckNoise) -> AlarmEvent -> CheckAlarm
-            // (Patrol) -> HeardNoiseEvent -> CheckNoise
+                .trans::<Patrol, _>(done(None), ChasePlayer::default())
+
+                // TODO: Implement events and test.
+                .trans::<AnyState, _>(on_event::<StunnedEnemyEvent>(), Stunned)
+                .trans::<AnyState, _>(done(None), Patrol)
+                .trans::<Patrol, _>(
+                    on_event::<SawPlayerEvent>(),
+                    ChasePlayer::default(),
+                )
+                .trans::<CheckNoise, _>(
+                    on_event::<SawPlayerEvent>(),
+                    ChasePlayer::default(),
+                )
+                .trans::<CheckAlarm, _>(
+                    on_event::<SawPlayerEvent>(),
+                    ChasePlayer::default(),
+                )
+                .trans::<Patrol, _>(
+                    on_event::<AlarmEvent>(),
+                    CheckAlarm::default(),
+                )
+                .trans::<CheckNoise, _>(
+                    on_event::<AlarmEvent>(),
+                    CheckAlarm::default(),
+                )
+                .trans::<Patrol, _>(on_event::<HeardNoiseEvent>(), CheckNoise),
             patrol: Patrol,
         }
     }

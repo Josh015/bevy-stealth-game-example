@@ -4,10 +4,17 @@ pub struct EventsPlugin;
 
 impl Plugin for EventsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_event::<SawPlayerEvent>()
-            .add_event::<HeardSoundEvent>()
+        app.add_event::<AlarmEvent>()
+            .add_event::<SawPlayerEvent>()
+            .add_event::<HeardNoiseEvent>()
             .add_event::<StunnedEnemyEvent>();
     }
+}
+
+/// Fired when a camera vision cone intersects the visible player.
+#[derive(Clone, Debug, Event)]
+pub struct AlarmEvent {
+    pub witness: Entity,
 }
 
 /// Fired when an enemy vision cone intersects the visible player.
@@ -18,7 +25,7 @@ pub struct SawPlayerEvent {
 
 /// Fired when a sound wave collides with an enemy's hearing radius.
 #[derive(Clone, Debug, Event)]
-pub struct HeardSoundEvent {
+pub struct HeardNoiseEvent {
     pub sound_position: Vec3,
 }
 
