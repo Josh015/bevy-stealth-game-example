@@ -30,7 +30,7 @@ fn check_alarm(
     for (entity, check_alarm) in &query {
         match check_alarm {
             Surprised => {
-                let mut agent_commands = commands.actions(entity);
+                let mut sequential_actions = commands.actions(entity);
 
                 // Turn to face direction of player.
                 // Parallel Actions:
@@ -38,7 +38,7 @@ fn check_alarm(
                 //   Emit "!" emote (blocking).
                 // Emit emphasized "!" emote (non-blocking).
 
-                agent_commands.add(
+                sequential_actions.add(
                     |agent: Entity, world: &mut World| -> bool {
                         world.entity_mut(agent).insert(GoTo);
                         true
@@ -46,11 +46,11 @@ fn check_alarm(
                 );
             },
             GoTo => {
-                let mut agent_commands = commands.actions(entity);
+                let mut sequential_actions = commands.actions(entity);
 
                 // <path to player last known location.>
 
-                agent_commands.add(
+                sequential_actions.add(
                     |agent: Entity, world: &mut World| -> bool {
                         world.entity_mut(agent).insert(Searching);
                         true
@@ -58,14 +58,14 @@ fn check_alarm(
                 );
             },
             Searching => {
-                let mut agent_commands = commands.actions(entity);
+                let mut sequential_actions = commands.actions(entity);
 
                 // Turn to random direction.
                 // Wait.
                 // Turn to random direction.
                 // Wait.
 
-                agent_commands.add(
+                sequential_actions.add(
                     |agent: Entity, world: &mut World| -> bool {
                         world.entity_mut(agent).insert(Done::Failure);
                         true

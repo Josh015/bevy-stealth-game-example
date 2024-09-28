@@ -31,6 +31,7 @@ fn chase_player(
         (Entity, &Transform, &ChasePlayer),
         (With<Guard>, Changed<ChasePlayer>),
     >,
+    player_query: Query<&Transform, With<Player>>,
     targets: Query<Entity, With<Target>>,
     navmeshes: Res<Assets<NavMesh>>,
     mut meshes: ResMut<Assets<Mesh>>,
@@ -41,10 +42,15 @@ fn chase_player(
     for (entity, transform, chase_player) in &query {
         match chase_player {
             Surprised => {
-                let mut agent_commands = commands.actions(entity);
+                let mut sequential_actions = commands.actions(entity);
+                let player_position = player_query.single().translation;
+                let guard_position = transform.translation;
+                let face_player_direction = Dir3::new_unchecked(
+                    (player_position - guard_position).normalize_or_zero(),
+                );
 
-                agent_commands.add_many(actions![
-                    // TODO: Turn to face direction of player.
+                sequential_actions.add_many(actions![
+                    FaceDirectionAction::new(face_player_direction),
                     ParallelActions::new(actions![
                         SoundAction::new("alert"),
                         AnimationAction::new("alert"),
@@ -122,7 +128,7 @@ fn chase_player(
                 ]);
             },
             Escaped => {
-                let mut agent_commands = commands.actions(entity);
+                let mut sequential_actions = commands.actions(entity);
                 let mut rng = SmallRng::from_entropy();
 
                 for _ in 0..2 {
@@ -131,15 +137,15 @@ fn chase_player(
                     random_vector.z = rng.gen_range(-1.0..=1.0);
 
                     let random_direction =
-                        Dir3::new_unchecked(random_vector.normalize());
+                        Dir3::new_unchecked(random_vector.normalize_or_zero());
 
-                    agent_commands.add_many(actions![
+                    sequential_actions.add_many(actions![
                         FaceDirectionAction::new(random_direction),
                         WaitAction::new(Duration::from_millis(1500)),
                     ]);
                 }
 
-                agent_commands.add_many(actions![
+                sequential_actions.add_many(actions![
                     ParallelActions::new(actions![
                         AnimationAction::new("frustrated"),
                         EmoteAction::new("frustrated"),
