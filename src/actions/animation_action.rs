@@ -10,6 +10,7 @@ use crate::prelude::*;
 #[derive(new)]
 pub struct AnimationAction {
     clip_name: String,
+    blocking: bool,
 }
 
 impl Action for AnimationAction {
@@ -21,8 +22,13 @@ impl Action for AnimationAction {
         let mut system_state: SystemState<Animations> = SystemState::new(world);
         let mut animations = system_state.get_mut(world);
 
-        animations.play_clip(agent, &self.clip_name);
-        true
+        if !self.blocking {
+            animations.play_clip(agent, &self.clip_name);
+            true
+        } else {
+            // TODO: Implement logic to play once and detect completion.
+            false
+        }
     }
 
     fn on_stop(

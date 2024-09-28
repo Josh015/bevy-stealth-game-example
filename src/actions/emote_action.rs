@@ -7,8 +7,8 @@ use derive_new::new;
 #[derive(new)]
 pub struct EmoteAction {
     texture_name: String,
+    blocking: bool,
     // image_handle: Handle<Image>
-    // duration: Duration
 }
 
 impl Action for EmoteAction {
@@ -18,7 +18,7 @@ impl Action for EmoteAction {
 
     fn on_start(&mut self, _agent: Entity, _world: &mut World) -> bool {
         // TODO: Implement this functionality later.
-        true
+        !self.blocking
     }
 
     fn on_stop(

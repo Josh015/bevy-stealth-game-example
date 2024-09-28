@@ -16,8 +16,6 @@ impl Plugin for ChasePlayerPlugin {
     }
 }
 
-const ESCAPED_FACE_DIRECTION_DELAY: Duration = Duration::from_millis(1500);
-
 #[derive(Clone, Component, Copy, Default, Reflect)]
 #[component(storage = "SparseSet")]
 pub enum ChasePlayer {
@@ -45,19 +43,19 @@ fn chase_player(
             Surprised => {
                 let mut agent_commands = commands.actions(entity);
 
-                // Turn to face direction of player.
-                // Parallel Actions:
-                //   Play "Surprised" sound (blocking, once).
-                //   Play "Surprised" animation (blocking, once).
-                //   Emit "!" emote (blocking).
-                // Emit emphasized "!" emote (non-blocking).
-
-                agent_commands.add(
+                agent_commands.add_many(actions![
+                    // TODO: Turn to face direction of player.
+                    ParallelActions::new(actions![
+                        SoundAction::new("alert".into(), true),
+                        AnimationAction::new("alert".into(), true),
+                        EmoteAction::new("alert".into(), true),
+                    ]),
+                    EmoteAction::new("chase".into(), false),
                     |agent: Entity, world: &mut World| -> bool {
                         world.entity_mut(agent).insert(Chasing);
                         true
                     },
-                );
+                ]);
             },
             Chasing => {
                 // TODO: Isolate this code behind SawPlayerEvent!
@@ -137,14 +135,14 @@ fn chase_player(
 
                     agent_commands.add_many(actions![
                         FaceDirectionAction::new(random_direction),
-                        WaitAction::new(ESCAPED_FACE_DIRECTION_DELAY),
+                        WaitAction::new(Duration::from_millis(1500)),
                     ]);
                 }
 
                 agent_commands.add_many(actions![
                     ParallelActions::new(actions![
-                        AnimationAction::new("frustrated".into()),
-                        EmoteAction::new("frustrated".into())
+                        AnimationAction::new("frustrated".into(), true),
+                        EmoteAction::new("frustrated".into(), true),
                     ]),
                     |agent: Entity, world: &mut World| -> bool {
                         world.entity_mut(agent).insert(Done::Failure);

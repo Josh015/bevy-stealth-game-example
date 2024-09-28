@@ -4,7 +4,10 @@ use derive_new::new;
 
 /// Plays a sound from this entity.
 #[derive(new)]
-pub struct SoundAction;
+pub struct SoundAction {
+    sound_name: String,
+    blocking: bool,
+}
 
 impl Action for SoundAction {
     fn is_finished(&self, _agent: Entity, _world: &World) -> bool {
@@ -13,7 +16,7 @@ impl Action for SoundAction {
 
     fn on_start(&mut self, _agent: Entity, _world: &mut World) -> bool {
         // TODO: Implement this functionality later.
-        true
+        !self.blocking
     }
 
     fn on_stop(
