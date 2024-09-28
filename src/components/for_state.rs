@@ -1,4 +1,5 @@
 use bevy::{ecs::prelude::*, prelude::*};
+use derive_new::new;
 use strum::IntoEnumIterator;
 
 use crate::prelude::*;
@@ -17,8 +18,11 @@ impl Plugin for ForStatePlugin {
 }
 
 /// Tags an entity to only exist in the provided game states.
-#[derive(Clone, Component, Debug)]
-pub struct ForStates<S: States>(pub Vec<S>);
+#[derive(Clone, Component, Debug, new)]
+pub struct ForStates<S: States> {
+    #[new(into_iter = "S")]
+    states: Vec<S>,
+}
 
 fn despawn_invalid_entities_for_state<S: States>(
     mut commands: Commands,
@@ -26,7 +30,7 @@ fn despawn_invalid_entities_for_state<S: States>(
     query: Query<(Entity, &ForStates<S>)>,
 ) {
     for (entity, for_states) in &query {
-        if !for_states.0.contains(game_state.get()) {
+        if !for_states.states.contains(game_state.get()) {
             commands.entity(entity).despawn_recursive();
         }
     }

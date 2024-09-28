@@ -128,8 +128,11 @@ fn spawn_actor_from_config_with_matrix(
 
     let handle = game_assets.actors.get(filename.as_str()).unwrap();
     let actor_config = actor_configs.get(handle).unwrap();
-    let mut entity_commands = commands
-        .spawn(ForStates(vec![GameState::Gameplay, GameState::GameOver]));
+    let mut entity_commands = commands.spawn(ForStates::new([
+        GameState::Paused,
+        GameState::Gameplay,
+        GameState::GameOver,
+    ]));
 
     for property in &actor_config.0 {
         match property {
