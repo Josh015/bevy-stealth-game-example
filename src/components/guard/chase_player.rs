@@ -52,7 +52,7 @@ fn chase_player(
                 sequential_actions.add_many(actions![
                     FaceDirectionAction::new(face_player_direction),
                     ParallelActions::new(actions![
-                        SoundAction::new("alert"),
+                        SoundAction::new("alerted"),
                         AnimationAction::new("alert"),
                         EmoteAction::new("alert"),
                     ]),
