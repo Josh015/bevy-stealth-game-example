@@ -34,7 +34,6 @@ impl GuardBundle {
             guard: Guard::Guarding(starting_transform),
             actions_bundle: ActionsBundle::new(),
             state_machine: StateMachine::default()
-                .trans::<AnyState, _>(done(None), Guarding(starting_transform))
                 .trans::<AnyState, _>(stunned, Stunned)
                 .trans_builder(saw_player, |guard, player_location| match guard
                 {
@@ -62,7 +61,8 @@ impl GuardBundle {
                         | LostPlayer => Some(CheckNoise(noise_direction)),
                         _ => None,
                     },
-                ),
+                )
+                .trans::<AnyState, _>(done(None), Guarding(starting_transform)),
         }
     }
 }
@@ -71,15 +71,15 @@ impl GuardBundle {
 #[derive(Clone, Component, Copy, Reflect)]
 #[component(storage = "SparseSet")]
 pub enum Guard {
-    Guarding(Transform),
-    CheckNoise(Dir3),
-    Alarmed(Vec3),
-    GoToAlarm(Vec3),
-    SearchNearAlarm,
+    Stunned,
     SawPlayer(Vec3),
     ChasePlayer(Vec3),
     LostPlayer,
-    Stunned,
+    Alarmed(Vec3),
+    GoToAlarm(Vec3),
+    SearchNearAlarm,
+    CheckNoise(Dir3),
+    Guarding(Transform),
 }
 
 /// A [`Guard`] that's able to be stunned.
@@ -176,78 +176,19 @@ fn guard_states(
         sequential_actions.clear();
 
         match guard {
-            Guarding(starting_transform) => {
-                // TODO: Takes an optional level script at spawn time?
-                // If none is provided, use default that returns to starting location and facing direction?
-
-                sequential_actions.add_many(actions![
-                    MoveToAction::new(starting_transform.translation),
-                    FaceDirectionAction::new(-starting_transform.forward()),
-                    AnimationAction::new("idle"),
-                ]);
-            },
-            CheckNoise(noise_direction) => {
+            Stunned => {
                 sequential_actions.add_many(actions![
                     ParallelActions::new(actions![
-                        SoundAction::new("distracted"),
-                        EmoteAction::new("sound"),
-                        FaceDirectionAction::new(*noise_direction),
+                        AnimationAction::new("stun"),
+                        SoundAction::new("stun"),
                     ]),
-                    AnimationAction::new("confused"),
+                    WaitAction::new(Duration::from_secs(3)),
+                    AnimationAction::new("unstun"),
                     |agent: Entity, world: &mut World| -> bool {
-                        world.entity_mut(agent).insert(Done::Failure);
+                        world.entity_mut(agent).insert(Done::Success);
                         true
                     },
                 ]);
-            },
-            Alarmed(player_location) => {
-                let player_location = player_location.clone();
-
-                sequential_actions.add_many(actions![
-                    ParallelActions::new(actions![
-                        AnimationAction::new("alert"),
-                        EmoteAction::new("alert"),
-                    ]),
-                    move |agent: Entity, world: &mut World| -> bool {
-                        world
-                            .entity_mut(agent)
-                            .insert(GoToAlarm(player_location));
-                        true
-                    },
-                ]);
-            },
-            GoToAlarm(player_location) => {
-                commands.actions(entity).add_many(actions![
-                    MoveToAction::new(*player_location),
-                    |agent: Entity, world: &mut World| -> bool {
-                        world.entity_mut(agent).insert(SearchNearAlarm);
-                        true
-                    },
-                ]);
-            },
-            SearchNearAlarm => {
-                let mut rng = SmallRng::from_entropy();
-
-                for _ in 0..2 {
-                    let mut random_vector = Vec3::ZERO;
-                    random_vector.x = rng.gen_range(-1.0..=1.0);
-                    random_vector.z = rng.gen_range(-1.0..=1.0);
-
-                    let random_direction =
-                        Dir3::new_unchecked(random_vector.normalize_or_zero());
-
-                    sequential_actions.add_many(actions![
-                        FaceDirectionAction::new(random_direction),
-                        WaitAction::new(Duration::from_millis(1500)),
-                    ]);
-                }
-
-                sequential_actions.add(
-                    |agent: Entity, world: &mut World| -> bool {
-                        world.entity_mut(agent).insert(Done::Failure);
-                        true
-                    },
-                );
             },
             SawPlayer(player_location) => {
                 let player_location = player_location.clone();
@@ -309,18 +250,77 @@ fn guard_states(
                     },
                 ]);
             },
-            Stunned => {
+            Alarmed(player_location) => {
+                let player_location = player_location.clone();
+
                 sequential_actions.add_many(actions![
                     ParallelActions::new(actions![
-                        AnimationAction::new("stun"),
-                        SoundAction::new("stun"),
+                        AnimationAction::new("alert"),
+                        EmoteAction::new("alert"),
                     ]),
-                    WaitAction::new(Duration::from_secs(3)),
-                    AnimationAction::new("unstun"),
-                    |agent: Entity, world: &mut World| -> bool {
-                        world.entity_mut(agent).insert(Done::Success);
+                    move |agent: Entity, world: &mut World| -> bool {
+                        world
+                            .entity_mut(agent)
+                            .insert(GoToAlarm(player_location));
                         true
                     },
+                ]);
+            },
+            GoToAlarm(player_location) => {
+                commands.actions(entity).add_many(actions![
+                    MoveToAction::new(*player_location),
+                    |agent: Entity, world: &mut World| -> bool {
+                        world.entity_mut(agent).insert(SearchNearAlarm);
+                        true
+                    },
+                ]);
+            },
+            SearchNearAlarm => {
+                let mut rng = SmallRng::from_entropy();
+
+                for _ in 0..2 {
+                    let mut random_vector = Vec3::ZERO;
+                    random_vector.x = rng.gen_range(-1.0..=1.0);
+                    random_vector.z = rng.gen_range(-1.0..=1.0);
+
+                    let random_direction =
+                        Dir3::new_unchecked(random_vector.normalize_or_zero());
+
+                    sequential_actions.add_many(actions![
+                        FaceDirectionAction::new(random_direction),
+                        WaitAction::new(Duration::from_millis(1500)),
+                    ]);
+                }
+
+                sequential_actions.add(
+                    |agent: Entity, world: &mut World| -> bool {
+                        world.entity_mut(agent).insert(Done::Failure);
+                        true
+                    },
+                );
+            },
+            CheckNoise(noise_direction) => {
+                sequential_actions.add_many(actions![
+                    ParallelActions::new(actions![
+                        SoundAction::new("distracted"),
+                        EmoteAction::new("sound"),
+                        FaceDirectionAction::new(*noise_direction),
+                    ]),
+                    AnimationAction::new("confused"),
+                    |agent: Entity, world: &mut World| -> bool {
+                        world.entity_mut(agent).insert(Done::Failure);
+                        true
+                    },
+                ]);
+            },
+            Guarding(starting_transform) => {
+                // TODO: Takes an optional level script at spawn time?
+                // If none is provided, use default that returns to starting location and facing direction?
+
+                sequential_actions.add_many(actions![
+                    MoveToAction::new(starting_transform.translation),
+                    FaceDirectionAction::new(-starting_transform.forward()),
+                    AnimationAction::new("idle"),
                 ]);
             },
         }
