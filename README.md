@@ -7,7 +7,7 @@ My attempt to mimic the game mechanics of "SONAR" in the Bevy engine. It's gonna
 - [ ] Finish porting animation system to Bevy AnimationGraph API.
 - [ ] Add sound loading and management via bevy_kira_audio.
 - [ ] Add background music via bevy_kira_audio and CC songs.
-- [ ] Use Avian3D character controller for Player movement & collisions.
+- [ ] Use bevy-tnua character controller for Player movement & collisions.
 - [ ] Create level deserialization and spawning.
 - [ ] Make custom level format and load from it.
 - [ ] Set up embedded scripts as enum arrays in level file format.
