@@ -27,11 +27,11 @@ pub struct GuardBundle {
 }
 
 impl GuardBundle {
-    pub fn with_starting_transform(starting_transform: Transform) -> Self {
+    pub fn with_starting_location(starting_location: Transform) -> Self {
         use Guard::*;
 
         Self {
-            guard: Guard::Guarding(starting_transform),
+            guard: Guard::Guarding(starting_location),
             actions_bundle: ActionsBundle::new(),
             state_machine: StateMachine::default()
                 .trans::<AnyState, _>(stunned, Stunned)
@@ -62,7 +62,7 @@ impl GuardBundle {
                         _ => None,
                     },
                 )
-                .trans::<AnyState, _>(done(None), Guarding(starting_transform)),
+                .trans::<AnyState, _>(done(None), Guarding(starting_location)),
         }
     }
 }
@@ -313,13 +313,13 @@ fn guard_states(
                     },
                 ]);
             },
-            Guarding(starting_transform) => {
+            Guarding(starting_location) => {
                 // TODO: Takes an optional level script at spawn time?
                 // If none is provided, use default that returns to starting location and facing direction?
 
                 sequential_actions.add_many(actions![
-                    MoveToAction::new(starting_transform.translation),
-                    FaceDirectionAction::new(-starting_transform.forward()),
+                    MoveToAction::new(starting_location.translation),
+                    FaceDirectionAction::new(-starting_location.forward()),
                     AnimationAction::new("idle"),
                 ]);
             },
