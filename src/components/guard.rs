@@ -1,6 +1,5 @@
 use bevy::prelude::*;
 use bevy_sequential_actions::*;
-use derive_new::new;
 use rand::prelude::*;
 use seldom_state::prelude::*;
 use std::time::Duration;
@@ -108,17 +107,17 @@ fn stunned(In(entity): In<Entity>, query: Query<Has<Stunnable>>) -> bool {
 
 fn saw_player(
     In(entity): In<Entity>,
-    query: Query<Has<Vision>>,
-    targets: Query<&Transform, With<Target>>,
+    guard_query: Query<Has<Vision>>,
+    player_query: Query<&Transform, With<Target>>,
 ) -> Option<Vec3> {
     // TODO: Use parent observer to bubble event up from child component.
-    let has_vision = query.get(entity).unwrap();
+    let has_vision = guard_query.get(entity).unwrap();
 
     if !has_vision {
         return None;
     }
 
-    let Ok(player_transform) = targets.get_single() else {
+    let Ok(player_transform) = player_query.get_single() else {
         return None;
     };
 
