@@ -1,5 +1,6 @@
 use bevy::{ecs::system::SystemState, prelude::*, utils::HashMap};
 use bevy_common_assets::ron::RonAssetPlugin;
+use derive_new::new;
 use serde::Deserialize;
 
 use crate::prelude::*;
@@ -15,9 +16,11 @@ impl Plugin for BlueprintsPlugin {
     }
 }
 
-#[derive(Event)]
-pub enum SpawnBlueprint {
-    WithTransform(String, Mat4),
+#[derive(Event, new)]
+pub struct SpawnBlueprint {
+    #[new(into)]
+    filename: String,
+    matrix: Mat4,
 }
 
 /// Blueprint entity configuration.
@@ -124,10 +127,7 @@ fn spawn_blueprint_from_config_with_matrix(
     mut commands: Commands,
     preloaded_blueprint_assets: Res<PreloadedBlueprintAssets>,
 ) {
-    let (filename, matrix) = match trigger.event() {
-        SpawnBlueprint::WithTransform(filename, matrix) => (filename, matrix),
-    };
-
+    let SpawnBlueprint { filename, matrix } = trigger.event();
     let handle = game_assets.blueprints.get(filename.as_str()).unwrap();
     let blueprint_config = blueprint_configs.get(handle).unwrap();
     let mut entity_commands = commands.spawn(ForStates::new([

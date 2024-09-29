@@ -229,8 +229,8 @@ fn setup_scene(
             });
     }
 
-    commands.trigger(SpawnBlueprint::WithTransform(
-        "birthday_cake_pickup.blueprint".to_string(),
+    commands.trigger(SpawnBlueprint::new(
+        "birthday_cake_pickup.blueprint",
         Mat4::from_scale_rotation_translation(
             Vec3::splat(PICKUP_HALF_SIZE),
             Quat::IDENTITY,
@@ -242,8 +242,8 @@ fn setup_scene(
         ),
     ));
 
-    commands.trigger(SpawnBlueprint::WithTransform(
-        "guard_dog.blueprint".to_string(),
+    commands.trigger(SpawnBlueprint::new(
+        "guard_dog.blueprint",
         Mat4::from_scale_rotation_translation(
             Vec3::splat(0.025),
             Quat::IDENTITY,
@@ -251,8 +251,8 @@ fn setup_scene(
         ),
     ));
 
-    commands.trigger(SpawnBlueprint::WithTransform(
-        "player.blueprint".to_string(),
+    commands.trigger(SpawnBlueprint::new(
+        "player.blueprint",
         Mat4::from_scale_rotation_translation(
             Vec3::splat(0.025),
             Quat::IDENTITY,
