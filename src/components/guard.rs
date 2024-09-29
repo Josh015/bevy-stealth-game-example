@@ -23,25 +23,23 @@ impl Plugin for GuardPlugin {
 #[derive(Bundle)]
 pub struct GuardBundle {
     pub guard: Guard,
-    pub starting_transform: StartingTransform,
     pub actions_bundle: ActionsBundle,
     pub state_machine: StateMachine,
 }
 
 impl GuardBundle {
-    pub fn with_starting_transform(transform: Transform) -> Self {
+    pub fn with_starting_transform(starting_transform: Transform) -> Self {
         use Guard::*;
 
         Self {
-            guard: Guard::Guarding,
-            starting_transform: StartingTransform::new(transform),
+            guard: Guard::Guarding(starting_transform),
             actions_bundle: ActionsBundle::new(),
             state_machine: StateMachine::default()
-                .trans::<AnyState, _>(done(None), Guarding)
+                .trans::<AnyState, _>(done(None), Guarding(starting_transform))
                 .trans::<AnyState, _>(stunned, Stunned)
                 .trans_builder(saw_player, |guard, player_location| match guard
                 {
-                    Guarding | CheckNoise(_) | SearchNearAlarm
+                    Guarding(_) | CheckNoise(_) | SearchNearAlarm
                     | GoToAlarm(_) | Alarmed(_) => {
                         Some(SawPlayer(player_location))
                     },
@@ -51,7 +49,7 @@ impl GuardBundle {
                 .trans_builder(
                     heard_alarm,
                     |guard, player_location| match guard {
-                        Guarding | CheckNoise(_) | LostPlayer => {
+                        Guarding(_) | CheckNoise(_) | LostPlayer => {
                             Some(Alarmed(player_location))
                         },
                         SearchNearAlarm => Some(GoToAlarm(player_location)),
@@ -61,7 +59,7 @@ impl GuardBundle {
                 .trans_builder(
                     heard_noise,
                     |guard, noise_direction| match guard {
-                        Guarding | CheckNoise(_) | SearchNearAlarm
+                        Guarding(_) | CheckNoise(_) | SearchNearAlarm
                         | LostPlayer => Some(CheckNoise(noise_direction)),
                         _ => None,
                     },
@@ -70,17 +68,11 @@ impl GuardBundle {
     }
 }
 
-#[derive(Clone, Component, Debug, Default, new)]
-pub struct StartingTransform {
-    transform: Transform,
-}
-
 /// Designates a guard entity and represents its current state.
-#[derive(Clone, Component, Copy, Default, Reflect)]
+#[derive(Clone, Component, Copy, Reflect)]
 #[component(storage = "SparseSet")]
 pub enum Guard {
-    #[default]
-    Guarding,
+    Guarding(Transform),
     CheckNoise(Dir3),
     Alarmed(Vec3),
     GoToAlarm(Vec3),
@@ -175,28 +167,23 @@ fn trigger_game_over_on_player_collision(
 
 fn guard_states(
     mut commands: Commands,
-    query: Query<
-        (Entity, &Transform, &Guard, &StartingTransform),
-        Changed<Guard>,
-    >,
+    query: Query<(Entity, &Transform, &Guard), Changed<Guard>>,
 ) {
     use Guard::*;
 
-    for (entity, transform, guard, starting_transform) in &query {
+    for (entity, transform, guard) in &query {
         let mut sequential_actions = commands.actions(entity);
 
         sequential_actions.clear();
 
         match guard {
-            Guarding => {
+            Guarding(starting_transform) => {
                 // TODO: Takes an optional level script at spawn time?
                 // If none is provided, use default that returns to starting location and facing direction?
 
                 sequential_actions.add_many(actions![
-                    MoveToAction::new(starting_transform.transform.translation),
-                    FaceDirectionAction::new(
-                        -starting_transform.transform.forward()
-                    ),
+                    MoveToAction::new(starting_transform.translation),
+                    FaceDirectionAction::new(-starting_transform.forward()),
                     AnimationAction::new("idle"),
                 ]);
             },
