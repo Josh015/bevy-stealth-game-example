@@ -15,10 +15,7 @@ mod physics;
 mod pickup;
 mod player;
 mod security_camera;
-mod spawn_point;
 mod speed;
-mod start_location;
-mod waypoint;
 mod weapon;
 
 pub use animations_clips::*;
@@ -36,10 +33,7 @@ pub use physics::*;
 pub use pickup::*;
 pub use player::*;
 pub use security_camera::*;
-pub use spawn_point::*;
 pub use speed::*;
-pub use start_location::*;
-pub use waypoint::*;
 pub use weapon::*;
 
 pub(super) struct ComponentsPlugin;
