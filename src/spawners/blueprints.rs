@@ -4,29 +4,31 @@ use serde::Deserialize;
 
 use crate::prelude::*;
 
-pub(super) struct ActorsPlugin;
+pub(super) struct BlueprintsPlugin;
 
-impl Plugin for ActorsPlugin {
+impl Plugin for BlueprintsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugins(RonAssetPlugin::<ActorConfig>::new(&["actor.ron"]))
-            .observe(spawn_actor_from_config_with_matrix);
+        app.add_plugins(RonAssetPlugin::<BlueprintConfig>::new(&[
+            "blueprint.ron",
+        ]))
+        .observe(spawn_blueprint_from_config_with_matrix);
     }
 }
 
 #[derive(Event)]
-pub enum SpawnActor {
+pub enum SpawnBlueprint {
     WithTransform(String, Mat4),
 }
 
-/// Actor entity configuration.
+/// Blueprint entity configuration.
 #[derive(Asset, Debug, Deserialize, Resource, TypePath)]
-pub struct ActorConfig(pub Vec<ActorProp>);
+pub struct BlueprintConfig(pub Vec<BlueprintProp>);
 
-/// Properties for configuring actor entities.
+/// Properties for configuring blueprint entities.
 ///
 /// Don't necessarily map 1:1 to the entity's components.
 #[derive(Clone, Debug, Deserialize)]
-pub enum ActorProp {
+pub enum BlueprintProp {
     Player,
     Guard,
     SecurityCamera,
@@ -59,33 +61,33 @@ pub enum ActorProp {
 
 /// Assets that need to be loaded in advance of spawning entities.
 #[derive(Debug, Resource)]
-pub struct PreloadedActorAssets {
+pub struct PreloadedBlueprintAssets {
     pub scenes: HashMap<String, Handle<Scene>>,
     pub animation_clips: HashMap<String, Handle<AnimationClip>>,
 }
 
-impl FromWorld for PreloadedActorAssets {
+impl FromWorld for PreloadedBlueprintAssets {
     fn from_world(world: &mut World) -> Self {
         let mut system_state: SystemState<(
             Res<AssetServer>,
             Res<GameAssets>,
-            Res<Assets<ActorConfig>>,
+            Res<Assets<BlueprintConfig>>,
         )> = SystemState::new(world);
-        let (asset_server, game_assets, actor_config_assets) =
+        let (asset_server, game_assets, blueprint_config_assets) =
             system_state.get_mut(world);
         let mut scenes: HashMap<String, Handle<Scene>> = HashMap::default();
         let mut animation_clips: HashMap<String, Handle<AnimationClip>> =
             HashMap::default();
 
-        for (_, actor) in &game_assets.actors {
-            let Some(actor) = actor_config_assets.get(actor) else {
+        for (_, blueprint) in &game_assets.blueprints {
+            let Some(blueprint) = blueprint_config_assets.get(blueprint) else {
                 continue;
             };
 
             // Preload all referenced assets in entity configs.
-            for property in &actor.0 {
+            for property in &blueprint.0 {
                 match property {
-                    ActorProp::Scene(path) => {
+                    BlueprintProp::Scene(path) => {
                         if scenes.get(path).is_none() {
                             scenes.insert(
                                 path.to_string(),
@@ -93,7 +95,7 @@ impl FromWorld for PreloadedActorAssets {
                             );
                         }
                     },
-                    ActorProp::AnimationClips(mappings) => {
+                    BlueprintProp::AnimationClips(mappings) => {
                         for (_, path) in mappings {
                             if animation_clips.get(path).is_none() {
                                 animation_clips.insert(
@@ -115,56 +117,56 @@ impl FromWorld for PreloadedActorAssets {
     }
 }
 
-fn spawn_actor_from_config_with_matrix(
-    trigger: Trigger<SpawnActor>,
-    actor_configs: Res<Assets<ActorConfig>>,
+fn spawn_blueprint_from_config_with_matrix(
+    trigger: Trigger<SpawnBlueprint>,
+    blueprint_configs: Res<Assets<BlueprintConfig>>,
     game_assets: Res<GameAssets>,
     mut commands: Commands,
-    preloaded_actor_assets: Res<PreloadedActorAssets>,
+    preloaded_blueprint_assets: Res<PreloadedBlueprintAssets>,
 ) {
     let (filename, matrix) = match trigger.event() {
-        SpawnActor::WithTransform(filename, matrix) => (filename, matrix),
+        SpawnBlueprint::WithTransform(filename, matrix) => (filename, matrix),
     };
 
-    let handle = game_assets.actors.get(filename.as_str()).unwrap();
-    let actor_config = actor_configs.get(handle).unwrap();
+    let handle = game_assets.blueprints.get(filename.as_str()).unwrap();
+    let blueprint_config = blueprint_configs.get(handle).unwrap();
     let mut entity_commands = commands.spawn(ForStates::new([
         GameState::Paused,
         GameState::Gameplay,
         GameState::GameOver,
     ]));
 
-    for property in &actor_config.0 {
+    for property in &blueprint_config.0 {
         match property {
-            ActorProp::Player => {
+            BlueprintProp::Player => {
                 entity_commands.insert(PlayerBundle::default());
             },
-            ActorProp::Guard => {
+            BlueprintProp::Guard => {
                 entity_commands.insert(GuardBundle::with_starting_location(
                     Transform::from_matrix(*matrix),
                 ));
             },
-            ActorProp::SecurityCamera => {
+            BlueprintProp::SecurityCamera => {
                 entity_commands.insert(SecurityCameraBundle::default());
             },
-            ActorProp::Pickup => {
+            BlueprintProp::Pickup => {
                 entity_commands.insert(PickupBundle::default());
             },
-            ActorProp::Weapon => {
+            BlueprintProp::Weapon => {
                 entity_commands.insert(Weapon::default());
             },
             //Trigger {} // TODO: Probably want to have a sub-enum with
             // pre-allowed events?
-            ActorProp::FloorSwitch => {
+            BlueprintProp::FloorSwitch => {
                 entity_commands.insert(FloorSwitchBundle::default());
             },
-            ActorProp::Door => {
+            BlueprintProp::Door => {
                 entity_commands.insert(DoorBundle::default());
             },
-            ActorProp::Glass => {
+            BlueprintProp::Glass => {
                 entity_commands.insert(GlassBundle::default());
             },
-            ActorProp::Speed {
+            BlueprintProp::Speed {
                 linear_speed,
                 angular_speed,
             } => {
@@ -174,10 +176,10 @@ fn spawn_actor_from_config_with_matrix(
                     ..default()
                 });
             },
-            ActorProp::Physics { radius } => {
+            BlueprintProp::Physics { radius } => {
                 // TODO: Need a component for this one.
             },
-            ActorProp::Footsteps { sound_wave } => {
+            BlueprintProp::Footsteps { sound_wave } => {
                 let sound_wave_handle =
                     game_assets.sound_waves.get(sound_wave.as_str()).unwrap();
 
@@ -187,36 +189,36 @@ fn spawn_actor_from_config_with_matrix(
                     },
                 });
             },
-            ActorProp::DropShadow => {
+            BlueprintProp::DropShadow => {
                 entity_commands.insert(DropShadow::default());
             },
-            ActorProp::Vision => {
+            BlueprintProp::Vision => {
                 // TODO: Implement setting the fields.
                 entity_commands.insert(Vision::default());
             },
-            ActorProp::Hearing => {
+            BlueprintProp::Hearing => {
                 // TODO: Implement setting the fields.
                 entity_commands.insert(Hearing::default());
             },
-            ActorProp::Stunnable => {
+            BlueprintProp::Stunnable => {
                 entity_commands.insert(Stunnable::default());
             },
-            ActorProp::Barrier => {
+            BlueprintProp::Barrier => {
                 entity_commands.insert(Barrier::default());
             },
-            ActorProp::BlocksVision => {
+            BlueprintProp::BlocksVision => {
                 entity_commands.insert(BlocksVision::default());
             },
-            ActorProp::DeflectsSounds => {
+            BlueprintProp::DeflectsSounds => {
                 entity_commands.insert(DeflectsSounds::default());
             },
-            ActorProp::AnimationClips(clips) => {
+            BlueprintProp::AnimationClips(clips) => {
                 let mut loaded_clips = HashMap::default();
 
                 for (k, v) in clips {
                     loaded_clips.insert(
                         k.to_string(),
-                        preloaded_actor_assets
+                        preloaded_blueprint_assets
                             .animation_clips
                             .get(v)
                             .unwrap()
@@ -226,9 +228,9 @@ fn spawn_actor_from_config_with_matrix(
 
                 entity_commands.insert(AnimationClips(loaded_clips));
             },
-            ActorProp::Scene(scene) => {
+            BlueprintProp::Scene(scene) => {
                 entity_commands.insert(SceneBundle {
-                    scene: preloaded_actor_assets
+                    scene: preloaded_blueprint_assets
                         .scenes
                         .get(scene)
                         .unwrap()

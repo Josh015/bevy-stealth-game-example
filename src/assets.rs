@@ -14,15 +14,15 @@ impl Plugin for AssetsPlugin {
         .configure_loading_state(
             LoadingStateConfig::new(GameState::AssetLoading)
                 .load_collection::<GameAssets>()
-                .init_resource::<PreloadedActorAssets>(),
+                .init_resource::<PreloadedBlueprintAssets>(),
         );
     }
 }
 
 #[derive(AssetCollection, Resource)]
 pub struct GameAssets {
-    #[asset(path = "actors", collection(mapped, typed))]
-    pub actors: HashMap<AssetFileStem, Handle<ActorConfig>>,
+    #[asset(path = "blueprints", collection(mapped, typed))]
+    pub blueprints: HashMap<AssetFileStem, Handle<BlueprintConfig>>,
 
     #[asset(path = "emotes", collection(mapped, typed))]
     pub emotes: HashMap<AssetFileStem, Handle<EmoteConfig>>,
