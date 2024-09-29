@@ -217,7 +217,7 @@ fn guard_states(
                     EmoteAction::non_blocking("chase"),
                     MoveToAction::new(*player_location),
                     |agent: Entity, world: &mut World| -> bool {
-                        world.entity_mut(agent).insert(SearchNearAlarm);
+                        world.entity_mut(agent).insert(LostPlayer);
                         true
                     },
                 ]);
