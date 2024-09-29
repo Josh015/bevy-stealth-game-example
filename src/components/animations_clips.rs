@@ -13,6 +13,8 @@ impl Plugin for AnimationClipsPlugin {
             pause_all_animation_players,
         )
         .add_systems(OnExit(GameState::Paused), resume_all_animation_players)
+        .add_systems(OnEnter(GameState::GameOver), pause_all_animation_players)
+        .add_systems(OnExit(GameState::GameOver), resume_all_animation_players)
         .add_systems(
             Update,
             (

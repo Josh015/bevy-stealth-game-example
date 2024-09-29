@@ -31,6 +31,8 @@ impl Plugin for ActionsPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(OnEnter(GameState::Paused), pause_all_action_queues)
             .add_systems(OnExit(GameState::Paused), resume_all_action_queues)
+            .add_systems(OnEnter(GameState::GameOver), pause_all_action_queues)
+            .add_systems(OnExit(GameState::GameOver), resume_all_action_queues)
             .add_systems(
                 Update,
                 pause_added_action_queues.in_set(ActiveWhenPausedSet),
