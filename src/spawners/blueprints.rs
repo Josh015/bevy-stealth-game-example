@@ -19,7 +19,7 @@ impl Plugin for BlueprintsPlugin {
 #[derive(Event, new)]
 pub struct SpawnBlueprint {
     #[new(into)]
-    filename: String,
+    file_stem: String,
     matrix: Mat4,
 }
 
@@ -127,8 +127,8 @@ fn spawn_blueprint_from_config_with_matrix(
     mut commands: Commands,
     preloaded_blueprint_assets: Res<PreloadedBlueprintAssets>,
 ) {
-    let SpawnBlueprint { filename, matrix } = trigger.event();
-    let handle = game_assets.blueprints.get(filename.as_str()).unwrap();
+    let SpawnBlueprint { file_stem, matrix } = trigger.event();
+    let handle = game_assets.blueprints.get(file_stem.as_str()).unwrap();
     let blueprint_config = blueprint_configs.get(handle).unwrap();
     let mut entity_commands = commands.spawn(ForStates::new([
         GameState::Paused,
