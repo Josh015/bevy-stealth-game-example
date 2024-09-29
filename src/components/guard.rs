@@ -45,20 +45,20 @@ impl GuardBundle {
                     _ => None,
                 })
                 .trans_builder(
-                    heard_alarm,
-                    |guard, player_location| match guard {
-                        Guarding(_) | InvestigateNoise(_) | LostPlayer => {
-                            Some(Alarmed(player_location))
-                        },
-                        SearchNearAlarm => Some(GoToAlarm(player_location)),
-                        _ => None,
-                    },
-                )
-                .trans_builder(
                     heard_noise,
                     |guard, noise_direction| match guard {
                         Guarding(_) | InvestigateNoise(_) | SearchNearAlarm
                         | LostPlayer => Some(InvestigateNoise(noise_direction)),
+                        _ => None,
+                    },
+                )
+                .trans_builder(
+                    heard_alarm,
+                    |guard, player_location| match guard {
+                        Guarding(_) | InvestigateNoise(_) => {
+                            Some(Alarmed(player_location))
+                        },
+                        SearchNearAlarm => Some(GoToAlarm(player_location)),
                         _ => None,
                     },
                 )
@@ -75,10 +75,10 @@ pub enum Guard {
     SawPlayer(Vec3),
     ChasePlayer(Vec3),
     LostPlayer,
+    InvestigateNoise(Dir3),
     Alarmed(Vec3),
     GoToAlarm(Vec3),
     SearchNearAlarm,
-    InvestigateNoise(Dir3),
     Guarding(Transform),
 }
 
@@ -250,6 +250,20 @@ fn guard_states(
                     },
                 ]);
             },
+            InvestigateNoise(noise_direction) => {
+                sequential_actions.add_many(actions![
+                    ParallelActions::new(actions![
+                        SoundAction::new("distracted"),
+                        EmoteAction::new("sound"),
+                        FaceDirectionAction::new(*noise_direction),
+                    ]),
+                    AnimationAction::new("confused"),
+                    |agent: Entity, world: &mut World| -> bool {
+                        world.entity_mut(agent).insert(Done::Failure);
+                        true
+                    },
+                ]);
+            },
             Alarmed(player_location) => {
                 let player_location = player_location.clone();
 
@@ -298,20 +312,6 @@ fn guard_states(
                         true
                     },
                 );
-            },
-            InvestigateNoise(noise_direction) => {
-                sequential_actions.add_many(actions![
-                    ParallelActions::new(actions![
-                        SoundAction::new("distracted"),
-                        EmoteAction::new("sound"),
-                        FaceDirectionAction::new(*noise_direction),
-                    ]),
-                    AnimationAction::new("confused"),
-                    |agent: Entity, world: &mut World| -> bool {
-                        world.entity_mut(agent).insert(Done::Failure);
-                        true
-                    },
-                ]);
             },
             Guarding(starting_location) => {
                 // TODO: Takes an optional level script at spawn time?
