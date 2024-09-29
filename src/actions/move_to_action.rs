@@ -4,7 +4,7 @@ use derive_new::new;
 
 use crate::prelude::*;
 
-/// Move to a destination.
+/// Move to a destination using navmesh.
 ///
 /// **WARNING**: Malfunctions when used in [`ParallelActions`] with [`FaceDirectionAction`].
 #[derive(new)]

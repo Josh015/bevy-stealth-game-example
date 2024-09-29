@@ -140,7 +140,7 @@ fn spawn_actor_from_config_with_matrix(
                 entity_commands.insert(PlayerBundle::default());
             },
             ActorProp::Guard => {
-                entity_commands.insert(GuardBundle::with_start_location(
+                entity_commands.insert(GuardBundle::with_starting_transform(
                     Transform::from_matrix(*matrix),
                 ));
             },

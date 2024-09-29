@@ -13,7 +13,7 @@ impl Plugin for GuardPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(
             Update,
-            (guarding, trigger_game_over_on_player_collision)
+            (guard_states, trigger_game_over_on_player_collision)
                 .in_set(StoppedWhenPausedSet),
         );
     }
@@ -23,33 +23,35 @@ impl Plugin for GuardPlugin {
 #[derive(Bundle)]
 pub struct GuardBundle {
     pub guard: Guard,
-    pub patrol_start_location: PatrolStartLocation,
+    pub starting_transform: StartingTransform,
     pub actions_bundle: ActionsBundle,
     pub state_machine: StateMachine,
 }
 
 impl GuardBundle {
-    pub fn with_start_location(transform: Transform) -> Self {
+    pub fn with_starting_transform(transform: Transform) -> Self {
         use Guard::*;
 
         Self {
-            guard: Guard::Patrol,
-            patrol_start_location: PatrolStartLocation::new(transform),
+            guard: Guard::Guarding,
+            starting_transform: StartingTransform::new(transform),
             actions_bundle: ActionsBundle::new(),
             state_machine: StateMachine::default()
-                .trans::<AnyState, _>(done(None), Patrol)
+                .trans::<AnyState, _>(done(None), Guarding)
                 .trans::<AnyState, _>(stunned, Stunned)
                 .trans_builder(saw_player, |guard, player_location| match guard
                 {
-                    Patrol | CheckNoise(_) | SearchNearAlarm | GoToAlarm(_)
-                    | Alarmed(_) => Some(SawPlayer(player_location)),
+                    Guarding | CheckNoise(_) | SearchNearAlarm
+                    | GoToAlarm(_) | Alarmed(_) => {
+                        Some(SawPlayer(player_location))
+                    },
                     LostPlayer => Some(ChasePlayer(player_location)),
                     _ => None,
                 })
                 .trans_builder(
                     heard_alarm,
                     |guard, player_location| match guard {
-                        Patrol | CheckNoise(_) | LostPlayer => {
+                        Guarding | CheckNoise(_) | LostPlayer => {
                             Some(Alarmed(player_location))
                         },
                         SearchNearAlarm => Some(GoToAlarm(player_location)),
@@ -59,7 +61,7 @@ impl GuardBundle {
                 .trans_builder(
                     heard_noise,
                     |guard, noise_direction| match guard {
-                        Patrol | CheckNoise(_) | SearchNearAlarm
+                        Guarding | CheckNoise(_) | SearchNearAlarm
                         | LostPlayer => Some(CheckNoise(noise_direction)),
                         _ => None,
                     },
@@ -69,7 +71,7 @@ impl GuardBundle {
 }
 
 #[derive(Clone, Component, Debug, Default, new)]
-pub struct PatrolStartLocation {
+pub struct StartingTransform {
     transform: Transform,
 }
 
@@ -78,7 +80,7 @@ pub struct PatrolStartLocation {
 #[component(storage = "SparseSet")]
 pub enum Guard {
     #[default]
-    Patrol,
+    Guarding,
     CheckNoise(Dir3),
     Alarmed(Vec3),
     GoToAlarm(Vec3),
@@ -171,31 +173,29 @@ fn trigger_game_over_on_player_collision(
     }
 }
 
-fn guarding(
+fn guard_states(
     mut commands: Commands,
     query: Query<
-        (Entity, &Transform, &Guard, &PatrolStartLocation),
+        (Entity, &Transform, &Guard, &StartingTransform),
         Changed<Guard>,
     >,
 ) {
     use Guard::*;
 
-    for (entity, transform, guard, patrol_start_location) in &query {
+    for (entity, transform, guard, starting_transform) in &query {
         let mut sequential_actions = commands.actions(entity);
 
         sequential_actions.clear();
 
         match guard {
-            Patrol => {
+            Guarding => {
                 // TODO: Takes an optional level script at spawn time?
                 // If none is provided, use default that returns to starting location and facing direction?
 
                 sequential_actions.add_many(actions![
-                    MoveToAction::new(
-                        patrol_start_location.transform.translation
-                    ),
+                    MoveToAction::new(starting_transform.transform.translation),
                     FaceDirectionAction::new(
-                        -patrol_start_location.transform.forward()
+                        -starting_transform.transform.forward()
                     ),
                     AnimationAction::new("idle"),
                 ]);
