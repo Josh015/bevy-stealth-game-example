@@ -16,7 +16,7 @@ use bevy_sequential_actions::*;
 use bevy_stealth_game_example::*;
 use bevy_tweening::*;
 use polyanya::Triangulation;
-use rand::Rng;
+use rand::prelude::*;
 use seldom_state::prelude::*;
 use std::{f32::consts::FRAC_PI_2, time::Duration};
 use vleue_navigator::{
@@ -65,6 +65,11 @@ fn main() {
                 // despawn_obstacles
             )
                 .run_if(in_state(GameState::Gameplay)),
+        )
+        .add_systems(
+            Update,
+            spawn_target_at_random_location
+                .run_if(on_timer(Duration::from_secs(10))),
         );
     // .add_systems(
     //     Update,
@@ -312,6 +317,67 @@ fn setup_scene(
 //         }
 //     }
 // }
+
+fn spawn_target_at_random_location(
+    mut commands: Commands,
+    targets: Query<Entity, With<Target>>,
+    navmeshes: Res<Assets<NavMesh>>,
+    mut meshes: ResMut<Assets<Mesh>>,
+    mut materials: ResMut<Assets<StandardMaterial>>,
+) {
+    let Some(navmesh) = navmeshes.get(&Handle::default()) else {
+        return;
+    };
+    let mut destination = Vec3::ZERO;
+    let mut rng = SmallRng::from_entropy();
+    let mut valid_point = false;
+
+    for _ in 0..50 {
+        destination.x = rng.gen_range(-50.0..50.0);
+        destination.z = rng.gen_range(-25.0..25.0);
+        valid_point = navmesh.transformed_is_in_mesh(destination);
+
+        if valid_point {
+            break;
+        }
+    }
+
+    if !valid_point {
+        return;
+    }
+
+    for target in &targets {
+        commands.entity(target).despawn_recursive();
+    }
+
+    commands
+        .spawn((
+            PbrBundle {
+                mesh: meshes.add(Mesh::from(Sphere { radius: 0.5 })),
+                material: materials.add(StandardMaterial {
+                    base_color: palettes::css::RED.into(),
+                    emissive: (palettes::css::RED * 5.0).into(),
+                    ..default()
+                }),
+                transform: Transform::from_translation(destination),
+                ..Default::default()
+            },
+            NotShadowCaster,
+            Target,
+        ))
+        .with_children(|target| {
+            target.spawn(PointLightBundle {
+                point_light: PointLight {
+                    color: palettes::css::RED.into(),
+                    shadows_enabled: true,
+                    range: 10.0,
+                    ..default()
+                },
+                transform: Transform::from_xyz(0.0, 1.5, 0.0),
+                ..default()
+            });
+        });
+}
 
 fn target_activity(
     target: Query<&Children, With<Target>>,
