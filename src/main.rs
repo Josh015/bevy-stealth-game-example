@@ -69,7 +69,7 @@ fn main() {
         .add_systems(
             Update,
             spawn_target_at_random_location
-                .run_if(on_timer(Duration::from_secs(10))),
+                .run_if(on_timer(Duration::from_secs(20))),
         );
     // .add_systems(
     //     Update,
@@ -247,7 +247,7 @@ fn setup_scene(
         Mat4::from_scale_rotation_translation(
             Vec3::splat(0.025),
             Quat::IDENTITY,
-            Vec3::ZERO,
+            Vec3::X,
         ),
     ));
 

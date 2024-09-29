@@ -1,5 +1,6 @@
 use bevy::prelude::*;
 use bevy_sequential_actions::*;
+use derive_new::new;
 use rand::prelude::*;
 use seldom_state::prelude::*;
 use std::time::Duration;
@@ -22,16 +23,18 @@ impl Plugin for GuardPlugin {
 #[derive(Bundle)]
 pub struct GuardBundle {
     pub guard: Guard,
+    pub patrol_start_location: PatrolStartLocation,
     pub actions_bundle: ActionsBundle,
     pub state_machine: StateMachine,
 }
 
-impl Default for GuardBundle {
-    fn default() -> Self {
+impl GuardBundle {
+    pub fn with_start_location(transform: Transform) -> Self {
         use Guard::*;
 
         Self {
             guard: Guard::Patrol,
+            patrol_start_location: PatrolStartLocation::new(transform),
             actions_bundle: ActionsBundle::new(),
             state_machine: StateMachine::default()
                 .trans::<AnyState, _>(done(None), Patrol)
@@ -63,6 +66,11 @@ impl Default for GuardBundle {
                 ),
         }
     }
+}
+
+#[derive(Clone, Component, Debug, Default, new)]
+pub struct PatrolStartLocation {
+    transform: Transform,
 }
 
 /// Designates a guard entity and represents its current state.
@@ -165,17 +173,29 @@ fn trigger_game_over_on_player_collision(
 
 fn guarding(
     mut commands: Commands,
-    query: Query<(Entity, &Transform, &Guard), Changed<Guard>>,
+    query: Query<
+        (Entity, &Transform, &Guard, &PatrolStartLocation),
+        Changed<Guard>,
+    >,
 ) {
     use Guard::*;
 
-    for (entity, transform, guard) in &query {
+    for (entity, transform, guard, patrol_start_location) in &query {
         let mut sequential_actions = commands.actions(entity);
 
         sequential_actions.clear();
 
         match guard {
             Patrol => {
+                sequential_actions.add_many(actions![
+                    MoveToAction::new(
+                        patrol_start_location.transform.translation
+                    ),
+                    FaceDirectionAction::new(
+                        -patrol_start_location.transform.forward()
+                    )
+                ]);
+
                 // Repeat Sequence (forever):
                 //   <generate for all patrol points>:
                 //     Move to next point.
