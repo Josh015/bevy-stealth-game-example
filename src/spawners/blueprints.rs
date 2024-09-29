@@ -9,10 +9,8 @@ pub(super) struct BlueprintsPlugin;
 
 impl Plugin for BlueprintsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugins(RonAssetPlugin::<BlueprintConfig>::new(&[
-            "blueprint.ron",
-        ]))
-        .observe(spawn_blueprint_from_config_with_matrix);
+        app.add_plugins(RonAssetPlugin::<Blueprint>::new(&["blueprint.ron"]))
+            .observe(spawn_blueprint_with_matrix);
     }
 }
 
@@ -25,7 +23,7 @@ pub struct SpawnBlueprint {
 
 /// Blueprint entity configuration.
 #[derive(Asset, Debug, Deserialize, Resource, TypePath)]
-pub struct BlueprintConfig(pub Vec<BlueprintProp>);
+pub struct Blueprint(pub Vec<BlueprintProp>);
 
 /// Properties for configuring blueprint entities.
 ///
@@ -37,7 +35,6 @@ pub enum BlueprintProp {
     SecurityCamera,
     Pickup,
     Weapon,
-    //Trigger {} // Probably want to have a sub-enum with pre-allowed events?
     FloorSwitch,
     Door,
     Glass,
@@ -74,16 +71,16 @@ impl FromWorld for PreloadedBlueprintAssets {
         let mut system_state: SystemState<(
             Res<AssetServer>,
             Res<GameAssets>,
-            Res<Assets<BlueprintConfig>>,
+            Res<Assets<Blueprint>>,
         )> = SystemState::new(world);
-        let (asset_server, game_assets, blueprint_config_assets) =
+        let (asset_server, game_assets, blueprint_assets) =
             system_state.get_mut(world);
         let mut scenes: HashMap<String, Handle<Scene>> = HashMap::default();
         let mut animation_clips: HashMap<String, Handle<AnimationClip>> =
             HashMap::default();
 
-        for (_, blueprint) in &game_assets.blueprints {
-            let Some(blueprint) = blueprint_config_assets.get(blueprint) else {
+        for (_, blueprint_handle) in &game_assets.blueprints {
+            let Some(blueprint) = blueprint_assets.get(blueprint_handle) else {
                 continue;
             };
 
@@ -120,23 +117,23 @@ impl FromWorld for PreloadedBlueprintAssets {
     }
 }
 
-fn spawn_blueprint_from_config_with_matrix(
+fn spawn_blueprint_with_matrix(
     trigger: Trigger<SpawnBlueprint>,
-    blueprint_configs: Res<Assets<BlueprintConfig>>,
-    game_assets: Res<GameAssets>,
     mut commands: Commands,
+    blueprints: Res<Assets<Blueprint>>,
+    game_assets: Res<GameAssets>,
     preloaded_blueprint_assets: Res<PreloadedBlueprintAssets>,
 ) {
     let SpawnBlueprint { file_stem, matrix } = trigger.event();
     let handle = game_assets.blueprints.get(file_stem.as_str()).unwrap();
-    let blueprint_config = blueprint_configs.get(handle).unwrap();
+    let blueprint = blueprints.get(handle).unwrap();
     let mut entity_commands = commands.spawn(ForStates::new([
         GameState::Paused,
         GameState::Gameplay,
         GameState::GameOver,
     ]));
 
-    for property in &blueprint_config.0 {
+    for property in &blueprint.0 {
         match property {
             BlueprintProp::Player => {
                 entity_commands.insert(PlayerBundle::default());

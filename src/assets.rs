@@ -22,7 +22,7 @@ impl Plugin for AssetsPlugin {
 #[derive(AssetCollection, Resource)]
 pub struct GameAssets {
     #[asset(path = "blueprints", collection(mapped, typed))]
-    pub blueprints: HashMap<AssetFileStem, Handle<BlueprintConfig>>,
+    pub blueprints: HashMap<AssetFileStem, Handle<Blueprint>>,
 
     #[asset(path = "emotes", collection(mapped, typed))]
     pub emotes: HashMap<AssetFileStem, Handle<EmoteConfig>>,
