@@ -37,8 +37,7 @@ impl GuardBundle {
                 .trans::<AnyState, _>(stunned, Stunned)
                 .trans_builder(saw_player, |guard, player_location| match guard
                 {
-                    Guarding(_) | InvestigateNoise(_) | SearchNearAlarm
-                    | GoToAlarm(_) | Alarmed(_) => {
+                    Guarding(_) | InvestigateNoise(_) | GoToAlarm(_) => {
                         Some(SawPlayer(player_location))
                     },
                     LostPlayer => Some(ChasePlayer(player_location)),
@@ -47,7 +46,7 @@ impl GuardBundle {
                 .trans_builder(
                     heard_noise,
                     |guard, noise_direction| match guard {
-                        Guarding(_) | InvestigateNoise(_) | SearchNearAlarm
+                        Guarding(_) | InvestigateNoise(_) | GoToAlarm(_)
                         | LostPlayer => Some(InvestigateNoise(noise_direction)),
                         _ => None,
                     },
@@ -56,9 +55,8 @@ impl GuardBundle {
                     heard_alarm,
                     |guard, player_location| match guard {
                         Guarding(_) | InvestigateNoise(_) => {
-                            Some(Alarmed(player_location))
+                            Some(GoToAlarm(player_location))
                         },
-                        SearchNearAlarm => Some(GoToAlarm(player_location)),
                         _ => None,
                     },
                 )
@@ -76,9 +74,7 @@ pub enum Guard {
     ChasePlayer(Vec3),
     LostPlayer,
     InvestigateNoise(Dir3),
-    Alarmed(Vec3),
     GoToAlarm(Vec3),
-    SearchNearAlarm,
     Guarding(Transform),
 }
 
@@ -264,32 +260,15 @@ fn guard_states(
                     },
                 ]);
             },
-            Alarmed(player_location) => {
-                let player_location = player_location.clone();
-
+            GoToAlarm(player_location) => {
                 sequential_actions.add_many(actions![
                     ParallelActions::new(actions![
                         AnimationAction::new("alert"),
                         EmoteAction::new("alert"),
                     ]),
-                    move |agent: Entity, world: &mut World| -> bool {
-                        world
-                            .entity_mut(agent)
-                            .insert(GoToAlarm(player_location));
-                        true
-                    },
-                ]);
-            },
-            GoToAlarm(player_location) => {
-                commands.actions(entity).add_many(actions![
                     MoveToAction::new(*player_location),
-                    |agent: Entity, world: &mut World| -> bool {
-                        world.entity_mut(agent).insert(SearchNearAlarm);
-                        true
-                    },
                 ]);
-            },
-            SearchNearAlarm => {
+
                 let mut rng = SmallRng::from_entropy();
 
                 for _ in 0..2 {
