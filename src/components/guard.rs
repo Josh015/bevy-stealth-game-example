@@ -37,7 +37,7 @@ impl GuardBundle {
                 .trans::<AnyState, _>(stunned, Stunned)
                 .trans_builder(saw_player, |guard, player_location| match guard
                 {
-                    Guarding(_) | CheckNoise(_) | SearchNearAlarm
+                    Guarding(_) | InvestigateNoise(_) | SearchNearAlarm
                     | GoToAlarm(_) | Alarmed(_) => {
                         Some(SawPlayer(player_location))
                     },
@@ -47,7 +47,7 @@ impl GuardBundle {
                 .trans_builder(
                     heard_alarm,
                     |guard, player_location| match guard {
-                        Guarding(_) | CheckNoise(_) | LostPlayer => {
+                        Guarding(_) | InvestigateNoise(_) | LostPlayer => {
                             Some(Alarmed(player_location))
                         },
                         SearchNearAlarm => Some(GoToAlarm(player_location)),
@@ -57,8 +57,8 @@ impl GuardBundle {
                 .trans_builder(
                     heard_noise,
                     |guard, noise_direction| match guard {
-                        Guarding(_) | CheckNoise(_) | SearchNearAlarm
-                        | LostPlayer => Some(CheckNoise(noise_direction)),
+                        Guarding(_) | InvestigateNoise(_) | SearchNearAlarm
+                        | LostPlayer => Some(InvestigateNoise(noise_direction)),
                         _ => None,
                     },
                 )
@@ -78,7 +78,7 @@ pub enum Guard {
     Alarmed(Vec3),
     GoToAlarm(Vec3),
     SearchNearAlarm,
-    CheckNoise(Dir3),
+    InvestigateNoise(Dir3),
     Guarding(Transform),
 }
 
@@ -299,7 +299,7 @@ fn guard_states(
                     },
                 );
             },
-            CheckNoise(noise_direction) => {
+            InvestigateNoise(noise_direction) => {
                 sequential_actions.add_many(actions![
                     ParallelActions::new(actions![
                         SoundAction::new("distracted"),
