@@ -187,28 +187,18 @@ fn guarding(
 
         match guard {
             Patrol => {
+                // TODO: Takes an optional level script at spawn time?
+                // If none is provided, use default that returns to starting location and facing direction?
+
                 sequential_actions.add_many(actions![
                     MoveToAction::new(
                         patrol_start_location.transform.translation
                     ),
                     FaceDirectionAction::new(
                         -patrol_start_location.transform.forward()
-                    )
+                    ),
+                    AnimationAction::new("idle"),
                 ]);
-
-                // Repeat Sequence (forever):
-                //   <generate for all patrol points>:
-                //     Move to next point.
-                //     Turn to face next point.
-                //     Wait.
-
-                // <generate path back to guard location>
-                //   Move to next point.
-                // Turn to face guard direction.
-                // Start "idle" animation (blocking, repeating).
-
-                // TODO: Takes an optional level script at spawn time?
-                // If none is provided, use default that returns to starting location and facing direction?
             },
             CheckNoise(noise_direction) => {
                 sequential_actions.add_many(actions![
