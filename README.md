@@ -4,7 +4,6 @@ My attempt to mimic the game mechanics of "SONAR" in the Bevy engine. It's gonna
 
 ## ToDo
 
-- [ ] Finish porting animation system to Bevy AnimationGraph API.
 - [ ] Add sound loading and management via bevy_kira_audio.
 - [ ] Add background music via bevy_kira_audio and CC songs.
 - [ ] Use bevy-tnua character controller for Player movement & collisions.
@@ -40,3 +39,4 @@ My attempt to mimic the game mechanics of "SONAR" in the Bevy engine. It's gonna
 - [x] Replace Spew crate with Bevy observers.
 - [x] Use vleue_navigator for nav-mesh pathing.
 - [x] Figure out why first MoveToAction in sequences gets ignored!
+- [x] Finish porting animation system to Bevy AnimationGraph API.

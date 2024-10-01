@@ -19,15 +19,31 @@ impl Plugin for AnimationClipsPlugin {
             Update,
             (
                 pause_added_animation_players.in_set(ActiveWhenPausedSet),
-                (start_default_animation, link_animation_players).chain(),
+                (
+                    start_default_animation,
+                    link_animation_players,
+                    attach_animation_graph_and_transitions,
+                )
+                    .chain(),
             ),
         );
     }
 }
 
+/// Required components for animations.
+#[derive(Bundle)]
+pub struct AnimationsBundle {
+    pub animation_graph_handle: AnimationGraphHandle,
+    pub animation_clips: AnimationClips,
+}
+
+/// Stores an [`AnimationGraph`] handle.
+#[derive(Clone, Component, Debug, Default)]
+pub struct AnimationGraphHandle(pub Handle<AnimationGraph>);
+
 /// Stores human-friendly names mapped to [`AnimationClip`] handles.
 #[derive(Clone, Component, Debug, Default)]
-pub struct AnimationClips(pub HashMap<String, Handle<AnimationClip>>);
+pub struct AnimationClips(pub HashMap<String, AnimationNodeIndex>);
 
 /// Allows a parent entity to access the [`AnimationPlayer`] entity buried
 /// within its [`Scene`] hierarchy.
@@ -63,7 +79,7 @@ fn start_default_animation(
     query: Query<Entity, (With<AnimationClips>, Added<AnimationEntityLink>)>,
 ) {
     for entity in &query {
-        animations.play_clip(entity, DEFAULT_ANIMATION);
+        animations.play_clip_name(entity, DEFAULT_ANIMATION);
     }
 }
 
@@ -112,4 +128,21 @@ fn get_top_parent(
     }
 
     current_entity
+}
+
+fn attach_animation_graph_and_transitions(
+    mut commands: Commands,
+    animations_entity_link_query: Query<
+        (&AnimationEntityLink, &AnimationGraphHandle),
+        Or<(Added<AnimationEntityLink>, Added<AnimationGraphHandle>)>,
+    >,
+) {
+    for (entity_with_animation_player, animation_graph_handle) in
+        animations_entity_link_query.iter()
+    {
+        commands.entity(entity_with_animation_player.0).insert((
+            animation_graph_handle.0.clone(),
+            AnimationTransitions::new(),
+        ));
+    }
 }

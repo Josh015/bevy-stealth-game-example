@@ -47,7 +47,7 @@ impl Heading {
 
 /// Saved animation clip that can be restored later.
 #[derive(Clone, Component, Debug)]
-pub struct StoredAnimation(pub Handle<AnimationClip>);
+pub struct StoredAnimation(pub AnimationNodeIndex);
 
 /// Rotation around the Y-axis required to reach a [Heading].
 #[derive(Clone, Component, Debug)]
@@ -71,14 +71,16 @@ fn store_current_animation(
         ),
     >,
 ) {
-    // TODO: Implement the new AnimationGraph stuff!
     for entity in &query {
-        // if let Some(current_animation) = animations.get_current_clip(entity)
-        // {
-        //     commands.entity(entity).insert(StoredAnimation(current_animation));
-        // }
+        if let Some(current_animation) =
+            animations.get_current_animation(entity)
+        {
+            commands
+                .entity(entity)
+                .insert(StoredAnimation(current_animation));
+        }
 
-        // animations.play_clip(entity, MOVING_ANIMATION);
+        animations.play_clip_name(entity, MOVING_ANIMATION);
     }
 }
 
@@ -90,10 +92,8 @@ fn restart_stored_animation(
         (Without<Destination>, Without<Heading>),
     >,
 ) {
-    // TODO: Implement the new AnimationGraph stuff!
     for (entity, stored_animation) in &query {
-        // animations
-        //     .play_clip_handle(entity, stored_animation.0.clone_weak());
+        animations.play_clip(entity, stored_animation.0);
 
         commands.entity(entity).remove::<StoredAnimation>();
     }

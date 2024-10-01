@@ -120,6 +120,7 @@ impl FromWorld for PreloadedBlueprintAssets {
 fn spawn_blueprint_with_matrix(
     trigger: Trigger<SpawnBlueprint>,
     mut commands: Commands,
+    mut graphs: ResMut<Assets<AnimationGraph>>,
     blueprints: Res<Assets<Blueprint>>,
     game_assets: Res<GameAssets>,
     preloaded_blueprint_assets: Res<PreloadedBlueprintAssets>,
@@ -211,19 +212,24 @@ fn spawn_blueprint_with_matrix(
             },
             BlueprintProp::AnimationClips(clips) => {
                 let mut loaded_clips = HashMap::default();
+                let mut graph = AnimationGraph::new();
 
-                for (k, v) in clips {
-                    loaded_clips.insert(
-                        k.to_string(),
-                        preloaded_blueprint_assets
-                            .animation_clips
-                            .get(v)
-                            .unwrap()
-                            .clone(),
-                    );
+                for (animation_name, animation_file_path) in clips {
+                    let handle = preloaded_blueprint_assets
+                        .animation_clips
+                        .get(animation_file_path)
+                        .unwrap()
+                        .clone();
+                    let node_index = graph.add_clip(handle, 1.0, graph.root);
+                    loaded_clips.insert(animation_name.clone(), node_index);
                 }
 
-                entity_commands.insert(AnimationClips(loaded_clips));
+                let handle = graphs.add(graph);
+
+                entity_commands.insert(AnimationsBundle {
+                    animation_graph_handle: AnimationGraphHandle(handle),
+                    animation_clips: AnimationClips(loaded_clips),
+                });
             },
             BlueprintProp::Scene(scene) => {
                 entity_commands.insert(SceneBundle {

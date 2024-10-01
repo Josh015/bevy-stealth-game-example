@@ -69,7 +69,7 @@ fn main() {
         .add_systems(
             Update,
             spawn_target_at_random_location
-                .run_if(on_timer(Duration::from_secs(20))),
+                .run_if(on_timer(Duration::from_secs(10))),
         );
     // .add_systems(
     //     Update,

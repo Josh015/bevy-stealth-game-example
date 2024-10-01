@@ -11,69 +11,79 @@ const ANIMATION_TRANSITION_DELAY: Duration = Duration::from_millis(500);
 /// Allows animations to easily be played on entities that support them.
 #[derive(SystemParam)]
 pub struct Animations<'w, 's> {
-    query:
+    linked_entities_query:
         Query<'w, 's, (&'static AnimationClips, &'static AnimationEntityLink)>,
-    animation_players: Query<'w, 's, &'static mut AnimationPlayer>,
+    animation_players_query: Query<
+        'w,
+        's,
+        (
+            &'static mut AnimationPlayer,
+            &'static mut AnimationTransitions,
+        ),
+    >,
 }
 
 impl<'w, 's> Animations<'w, 's> {
     /// Looks up an animation clip by name and plays it on an entity.
-    pub fn play_clip(&mut self, entity: Entity, clip_name: &str) {
-        if let Ok((animation_clips, animation_entity_link)) =
-            self.query.get_mut(entity)
+    pub fn play_clip_name(&mut self, entity: Entity, clip_name: &str) {
+        let Ok((animation_clips, animation_entity_link)) =
+            self.linked_entities_query.get_mut(entity)
+        else {
+            return;
+        };
+
+        let Some(animation_clip) = animation_clips.0.get(clip_name) else {
+            return;
+        };
+
+        if let Ok((mut player, mut transitions)) = self
+            .animation_players_query
+            .get_mut(animation_entity_link.0)
         {
-            if let Some(animation_clip) = animation_clips.0.get(clip_name) {
-                if let Ok(mut animation_player) =
-                    self.animation_players.get_mut(animation_entity_link.0)
-                {
-                    // TODO: Implement the new AnimationGraph stuff!
-                    // animation_player
-                    //     .play_with_transition(
-                    //         animation_clip.clone_weak(),
-                    //         ANIMATION_TRANSITION_DELAY,
-                    //     )
-                    //     .repeat();
-                }
-            }
+            transitions
+                .play(&mut player, *animation_clip, ANIMATION_TRANSITION_DELAY)
+                .repeat();
         }
     }
 
     /// Plays an animation clip on an entity.
-    pub fn play_clip_handle(
+    pub fn play_clip(
         &mut self,
         entity: Entity,
-        clip_handle: Handle<AnimationClip>,
+        animation_clip: AnimationNodeIndex,
     ) {
-        if let Ok((_, animation_entity_link)) = self.query.get_mut(entity) {
-            if let Ok(mut animation_player) =
-                self.animation_players.get_mut(animation_entity_link.0)
-            {
-                // TODO: Implement the new AnimationGraph stuff!
-                // animation_player
-                //     .play_with_transition(
-                //         clip_handle.clone_weak(),
-                //         ANIMATION_TRANSITION_DELAY,
-                //     )
-                //     .repeat();
-            }
+        let Ok((_, animation_entity_link)) =
+            self.linked_entities_query.get_mut(entity)
+        else {
+            return;
+        };
+
+        if let Ok((mut player, mut transitions)) = self
+            .animation_players_query
+            .get_mut(animation_entity_link.0)
+        {
+            transitions
+                .play(&mut player, animation_clip, ANIMATION_TRANSITION_DELAY)
+                .repeat();
         }
     }
 
-    // TODO: Implement the new AnimationGraph stuff!
-    // /// Gets the handle for this entity's currently playing animation.
-    // pub fn get_current_clip(
-    //     &self,
-    //     entity: Entity,
-    // ) -> Option<Handle<AnimationClip>> {
-    //     let Ok((_, animation_entity_link)) = self.query.get(entity) else {
-    //         return None;
-    //     };
-    //     let Ok(animation_player) =
-    //         self.animation_players.get(animation_entity_link.0)
-    //     else {
-    //         return None;
-    //     };
+    /// Gets the index for this entity's currently playing animation.
+    pub fn get_current_animation(
+        &self,
+        entity: Entity,
+    ) -> Option<AnimationNodeIndex> {
+        let Ok((_, animation_entity_link)) =
+            self.linked_entities_query.get(entity)
+        else {
+            return None;
+        };
+        let Ok((_, transitions)) =
+            self.animation_players_query.get(animation_entity_link.0)
+        else {
+            return None;
+        };
 
-    //     Some(animation_player.animation_clip().clone())
-    // }
+        transitions.get_main_animation()
+    }
 }

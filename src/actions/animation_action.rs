@@ -35,7 +35,7 @@ impl Action for AnimationAction {
         let mut animations = system_state.get_mut(world);
 
         if !self.blocking {
-            animations.play_clip(agent, &self.clip_name);
+            animations.play_clip_name(agent, &self.clip_name);
             true
         } else {
             // TODO: Implement logic to play once and detect completion.
