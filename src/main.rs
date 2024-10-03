@@ -229,7 +229,7 @@ fn setup_scene(
             });
     }
 
-    commands.trigger(SpawnBlueprint::new(
+    commands.trigger(SpawnEntityFromBlueprint::new(
         "birthday_cake_pickup.blueprint",
         Mat4::from_scale_rotation_translation(
             Vec3::splat(PICKUP_HALF_SIZE),
@@ -242,7 +242,7 @@ fn setup_scene(
         ),
     ));
 
-    commands.trigger(SpawnBlueprint::new(
+    commands.trigger(SpawnEntityFromBlueprint::new(
         "guard_dog.blueprint",
         Mat4::from_scale_rotation_translation(
             Vec3::splat(0.025),
@@ -251,7 +251,7 @@ fn setup_scene(
         ),
     ));
 
-    commands.trigger(SpawnBlueprint::new(
+    commands.trigger(SpawnEntityFromBlueprint::new(
         "player.blueprint",
         Mat4::from_scale_rotation_translation(
             Vec3::splat(0.025),

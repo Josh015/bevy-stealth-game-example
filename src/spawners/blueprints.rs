@@ -10,24 +10,25 @@ pub(super) struct BlueprintsPlugin;
 impl Plugin for BlueprintsPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins(RonAssetPlugin::<Blueprint>::new(&["blueprint.ron"]))
-            .observe(spawn_blueprint_with_matrix);
+            .observe(spawn_entity_from_blueprint);
     }
 }
 
+/// Spawn an entity from a blueprint asset.
 #[derive(Event, new)]
-pub struct SpawnBlueprint {
+pub struct SpawnEntityFromBlueprint {
     #[new(into)]
-    file_stem: String,
+    blueprint_name: String,
     matrix: Mat4,
 }
 
-/// Blueprint entity configuration.
+/// Asset for spawning and configuring entities.
 #[derive(Asset, Debug, Deserialize, Resource, TypePath)]
 pub struct Blueprint(pub Vec<BlueprintProp>);
 
-/// Properties for configuring blueprint entities.
+/// Blueprint properties for configuring entities.
 ///
-/// Don't necessarily map 1:1 to the entity's components.
+/// These don't necessarily map 1:1 with components.
 #[derive(Clone, Debug, Deserialize)]
 pub enum BlueprintProp {
     Player,
@@ -117,16 +118,19 @@ impl FromWorld for PreloadedBlueprintAssets {
     }
 }
 
-fn spawn_blueprint_with_matrix(
-    trigger: Trigger<SpawnBlueprint>,
+fn spawn_entity_from_blueprint(
+    trigger: Trigger<SpawnEntityFromBlueprint>,
     mut commands: Commands,
     mut graphs: ResMut<Assets<AnimationGraph>>,
     blueprints: Res<Assets<Blueprint>>,
     game_assets: Res<GameAssets>,
     preloaded_blueprint_assets: Res<PreloadedBlueprintAssets>,
 ) {
-    let SpawnBlueprint { file_stem, matrix } = trigger.event();
-    let handle = game_assets.blueprints.get(file_stem.as_str()).unwrap();
+    let SpawnEntityFromBlueprint {
+        blueprint_name,
+        matrix,
+    } = trigger.event();
+    let handle = game_assets.blueprints.get(blueprint_name.as_str()).unwrap();
     let blueprint = blueprints.get(handle).unwrap();
     let mut entity_commands = commands.spawn(ForStates::new([
         GameState::Paused,
