@@ -21,7 +21,7 @@ impl Repeat {
     pub fn advance(&mut self) {
         match self {
             Repeat::Forever | Repeat::Times(0) => {},
-            Repeat::Times(ref mut repeat) => {
+            Repeat::Times(repeat) => {
                 *repeat -= 1;
             },
         };
