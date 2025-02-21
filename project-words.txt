@@ -53,6 +53,7 @@ rngs
 rrggbb
 rustfmt
 seedable
+serde
 shatterable
 signum
 slerp
