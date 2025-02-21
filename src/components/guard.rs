@@ -18,6 +18,23 @@ impl Plugin for GuardPlugin {
     }
 }
 
+// TODO: Remove this later.
+#[derive(Component)]
+pub struct Target;
+
+/// Designates a guard entity and represents its current state.
+#[derive(Clone, Component, Copy, Reflect)]
+#[component(storage = "SparseSet")]
+pub enum Guard {
+    Stunned,
+    SawPlayer(Vec3),
+    ChasePlayer(Vec3),
+    LostPlayer,
+    InvestigateNoise(Dir3),
+    GoToAlarm(Vec3),
+    Guarding(Transform),
+}
+
 /// Required components for a [`Guard`] entity.
 #[derive(Bundle)]
 pub struct GuardBundle {
@@ -63,19 +80,6 @@ impl GuardBundle {
                 .trans::<AnyState, _>(done(None), Guarding(starting_location)),
         }
     }
-}
-
-/// Designates a guard entity and represents its current state.
-#[derive(Clone, Component, Copy, Reflect)]
-#[component(storage = "SparseSet")]
-pub enum Guard {
-    Stunned,
-    SawPlayer(Vec3),
-    ChasePlayer(Vec3),
-    LostPlayer,
-    InvestigateNoise(Dir3),
-    GoToAlarm(Vec3),
-    Guarding(Transform),
 }
 
 /// A [`Guard`] that's able to be stunned.
@@ -305,7 +309,3 @@ fn guard_states(
         }
     }
 }
-
-// TODO: Remove this later.
-#[derive(Component)]
-pub struct Target;

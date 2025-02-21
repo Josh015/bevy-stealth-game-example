@@ -14,7 +14,7 @@ impl Plugin for BlueprintsPlugin {
     }
 }
 
-/// Spawn an entity from a blueprint asset.
+/// Spawns and configures an entity using a blueprint asset.
 #[derive(Event, new)]
 pub struct SpawnEntityFromBlueprint {
     #[new(into)]
