@@ -223,12 +223,12 @@ fn guard_states(
                 ]);
             },
             LostPlayer => {
-                let mut rng = SmallRng::from_entropy();
+                let mut rng = SmallRng::from_os_rng();
 
                 for _ in 0..2 {
                     let mut random_vector = Vec3::ZERO;
-                    random_vector.x = rng.gen_range(-1.0..=1.0);
-                    random_vector.z = rng.gen_range(-1.0..=1.0);
+                    random_vector.x = rng.random_range(-1.0..=1.0);
+                    random_vector.z = rng.random_range(-1.0..=1.0);
 
                     let random_direction =
                         Dir3::new_unchecked(random_vector.normalize_or_zero());
@@ -273,12 +273,12 @@ fn guard_states(
                     MoveToAction::new(*player_location),
                 ]);
 
-                let mut rng = SmallRng::from_entropy();
+                let mut rng = SmallRng::from_os_rng();
 
                 for _ in 0..2 {
                     let mut random_vector = Vec3::ZERO;
-                    random_vector.x = rng.gen_range(-1.0..=1.0);
-                    random_vector.z = rng.gen_range(-1.0..=1.0);
+                    random_vector.x = rng.random_range(-1.0..=1.0);
+                    random_vector.z = rng.random_range(-1.0..=1.0);
 
                     let random_direction =
                         Dir3::new_unchecked(random_vector.normalize_or_zero());

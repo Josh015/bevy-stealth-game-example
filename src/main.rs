@@ -20,10 +20,10 @@ use rand::prelude::*;
 use seldom_state::prelude::*;
 use std::{f32::consts::FRAC_PI_2, time::Duration};
 use vleue_navigator::{
+    NavMesh, VleueNavigatorPlugin,
     prelude::{
         NavMeshBundle, NavMeshSettings, NavMeshUpdateMode, NavmeshUpdaterPlugin,
     },
-    NavMesh, VleueNavigatorPlugin,
 };
 
 fn main() {
@@ -266,21 +266,21 @@ fn setup_scene(
 //     mut meshes: ResMut<Assets<Mesh>>,
 //     mut materials: ResMut<Assets<StandardMaterial>>,
 // ) {
-//     let size = rand::thread_rng().gen_range(1.5..2.0);
+//     let size = rand::thread_rng().random_range(1.5..2.0);
 //     commands.spawn((
 //         PbrBundle {
 //             mesh: meshes.add(Cuboid::new(size, size, size)),
 //             material: materials.add(Color::srgb(0.2, 0.7, 0.9)),
 //             transform: Transform::from_xyz(
-//                 rand::thread_rng().gen_range(-50.0..50.0),
+//                 rand::thread_rng().random_range(-50.0..50.0),
 //                 10.0,
-//                 rand::thread_rng().gen_range(-25.0..25.0),
+//                 rand::thread_rng().random_range(-25.0..25.0),
 //             )
 //             .looking_to(
 //                 Vec3::new(
-//                     rand::thread_rng().gen_range(-1.0..1.0),
-//                     rand::thread_rng().gen_range(-1.0..1.0),
-//                     rand::thread_rng().gen_range(-1.0..1.0),
+//                     rand::thread_rng().random_range(-1.0..1.0),
+//                     rand::thread_rng().random_range(-1.0..1.0),
+//                     rand::thread_rng().random_range(-1.0..1.0),
 //                 )
 //                 .normalize(),
 //                 Vec3::Y,
@@ -329,12 +329,12 @@ fn spawn_target_at_random_location(
         return;
     };
     let mut destination = Vec3::ZERO;
-    let mut rng = SmallRng::from_entropy();
+    let mut rng = SmallRng::from_os_rng();
     let mut valid_point = false;
 
     for _ in 0..50 {
-        destination.x = rng.gen_range(-50.0..50.0);
-        destination.z = rng.gen_range(-25.0..25.0);
+        destination.x = rng.random_range(-50.0..50.0);
+        destination.z = rng.random_range(-25.0..25.0);
         valid_point = navmesh.transformed_is_in_mesh(destination);
 
         if valid_point {
