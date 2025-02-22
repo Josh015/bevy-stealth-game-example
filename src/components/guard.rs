@@ -298,7 +298,8 @@ fn guard_states(
             },
             Guarding(starting_location) => {
                 // TODO: Takes an optional level script at spawn time?
-                // If none is provided, use default that returns to starting location and facing direction?
+                // If none is provided, use default that returns to starting
+                // location and facing direction?
 
                 sequential_actions.add_many(actions![
                     MoveToAction::new(starting_location.translation),

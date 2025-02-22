@@ -6,7 +6,8 @@ use crate::prelude::*;
 
 /// Rotate to face a given direction.
 ///
-/// **WARNING**: Malfunctions when used in [`ParallelActions`] with [`MoveToAction`].
+/// **WARNING**: Malfunctions when used in [`ParallelActions`] with
+/// [`MoveToAction`].
 #[derive(new)]
 pub struct FaceDirectionAction {
     direction: Dir3,

@@ -6,7 +6,8 @@ pub(super) struct FootstepsPlugin;
 
 impl Plugin for FootstepsPlugin {
     fn build(&self, app: &mut App) {
-        // app.add_systems(Update, (ping, pong).chain().in_set(StopWhenPausedSet));
+        // app.add_systems(Update, (ping,
+        // pong).chain().in_set(StopWhenPausedSet));
     }
 }
 

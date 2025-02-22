@@ -1,7 +1,6 @@
 #![allow(clippy::too_many_arguments, clippy::type_complexity)]
 
 use avian3d::prelude::*;
-use bevy::prelude::*;
 use bevy::{
     asset::LoadState,
     color::palettes,

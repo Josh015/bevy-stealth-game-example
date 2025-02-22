@@ -12,9 +12,7 @@ pub enum Repeat {
 
 impl Repeat {
     /// Says whether the item is finished repeating.
-    pub fn is_finished(&self) -> bool {
-        matches!(self, Self::Times(0))
-    }
+    pub fn is_finished(&self) -> bool { matches!(self, Self::Times(0)) }
 
     /// Reduces the number of times the item will repeat by 1. Does nothing if
     /// the item has already reached its limit or is set to repeat forever.

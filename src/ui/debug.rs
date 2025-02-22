@@ -1,6 +1,6 @@
 use bevy::{color::palettes, prelude::*};
 pub use leafwing_input_manager::prelude::*;
-use vleue_navigator::{prelude::*, NavMeshDebug};
+use vleue_navigator::{NavMeshDebug, prelude::*};
 
 use crate::prelude::*;
 
