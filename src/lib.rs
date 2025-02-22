@@ -3,7 +3,6 @@ mod assets;
 mod components;
 mod events;
 mod game_state;
-mod spawners;
 mod system_params;
 mod ui;
 mod util;
@@ -11,7 +10,7 @@ mod util;
 mod prelude {
     pub use crate::{
         actions::*, assets::*, components::*, events::*, game_state::*,
-        spawners::*, system_params::*, ui::*, util::*,
+        system_params::*, ui::*, util::*,
     };
 }
 
@@ -28,7 +27,6 @@ impl Plugin for BevyStealthGameExamplePlugin {
             ComponentsPlugin,
             GameStatePlugin,
             EventsPlugin,
-            SpawnersPlugin,
             UiPlugin,
         ));
     }

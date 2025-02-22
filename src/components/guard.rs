@@ -84,10 +84,12 @@ impl GuardBundle {
 
 /// A [`Guard`] that's able to be stunned.
 #[derive(Clone, Component, Debug, Default)]
+// #[require(Guard)]
 pub struct Stunnable;
 
 /// A [`Guard`] that can see the player.
 #[derive(Clone, Component, Debug, Default)]
+// #[require(Guard)]
 pub struct Vision {
     pub distance: f32,
     pub fov: f32,
@@ -95,6 +97,7 @@ pub struct Vision {
 
 /// A [`Guard`] that can hear and respond to sound waves.
 #[derive(Clone, Component, Debug, Default)]
+// #[require(Guard)]
 pub struct Hearing {
     pub radius: f32,
 }

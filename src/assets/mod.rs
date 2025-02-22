@@ -1,3 +1,13 @@
+mod blueprints;
+mod emotes;
+mod script_commands;
+mod sound_waves;
+
+pub use blueprints::*;
+pub use emotes::*;
+pub use script_commands::*;
+pub use sound_waves::*;
+
 use bevy::{prelude::*, utils::HashMap};
 use bevy_asset_loader::prelude::*;
 
@@ -15,7 +25,12 @@ impl Plugin for AssetsPlugin {
             LoadingStateConfig::new(GameState::AssetLoading)
                 .load_collection::<GameAssets>()
                 .init_resource::<PreloadedBlueprintAssets>(),
-        );
+        )
+        .add_plugins((
+            BlueprintsPlugin,
+            EmotesPlugin,
+            SoundWavesPlugin,
+        ));
     }
 }
 
