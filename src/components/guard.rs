@@ -39,7 +39,7 @@ pub enum Guard {
 #[derive(Bundle)]
 pub struct GuardBundle {
     pub guard: Guard,
-    pub actions_bundle: ActionsBundle,
+    pub sequential_actions: SequentialActions,
     pub state_machine: StateMachine,
 }
 
@@ -49,7 +49,7 @@ impl GuardBundle {
 
         Self {
             guard: Guard::Guarding(starting_location),
-            actions_bundle: ActionsBundle::new(),
+            sequential_actions: SequentialActions::default(),
             state_machine: StateMachine::default()
                 .trans::<AnyState, _>(stunned, Stunned)
                 .trans_builder(saw_player, |guard, player_location| match guard

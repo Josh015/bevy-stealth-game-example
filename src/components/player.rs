@@ -12,26 +12,9 @@ impl Plugin for PlayerPlugin {
     }
 }
 
-/// Required components for a [`Player`] entity.
-#[derive(Bundle)]
-pub struct PlayerBundle {
-    pub player: Player,
-    pub input_manager_bundle: InputManagerBundle<PlayerAction>,
-}
-
-impl Default for PlayerBundle {
-    fn default() -> Self {
-        Self {
-            player: Player,
-            input_manager_bundle: InputManagerBundle::<PlayerAction>::with_map(
-                PlayerAction::default_input_map(),
-            ),
-        }
-    }
-}
-
 /// Entity that can be targeted by enemy units.
 #[derive(Clone, Component, Debug, Default)]
+#[require(Transform, LinearSpeed, ActionState<PlayerAction>, InputMap<PlayerAction>(player_input_map))]
 pub struct Player;
 
 /// Blocks the Player from being seen by Vision.
@@ -51,25 +34,22 @@ pub enum PlayerAction {
     Move,
 }
 
-impl PlayerAction {
-    pub fn default_input_map() -> InputMap<Self> {
-        use PlayerAction::*;
-
-        let input_map = InputMap::default()
-            .with_dual_axis(Move, GamepadStick::LEFT)
-            .with_dual_axis(Move, VirtualDPad::arrow_keys())
-            .with_dual_axis(Move, VirtualDPad::wasd())
-            .with_dual_axis(Move, VirtualDPad::numpad());
-        input_map
-    }
-}
-
 impl Actionlike for PlayerAction {
     fn input_control_kind(&self) -> InputControlKind {
         match self {
             PlayerAction::Move => InputControlKind::DualAxis,
         }
     }
+}
+
+fn player_input_map() -> InputMap<PlayerAction> {
+    use PlayerAction::*;
+
+    InputMap::default()
+        .with_dual_axis(Move, GamepadStick::LEFT)
+        .with_dual_axis(Move, VirtualDPad::arrow_keys())
+        .with_dual_axis(Move, VirtualDPad::wasd())
+        .with_dual_axis(Move, VirtualDPad::numpad())
 }
 
 fn control_player(

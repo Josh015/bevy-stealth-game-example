@@ -8,23 +8,9 @@ impl Plugin for PickupPlugin {
     }
 }
 
-/// Required components for a [`Pickup`] entity.
-#[derive(Bundle, Clone, Debug)]
-pub struct PickupBundle {
-    pub pickup: Pickup,
-}
-
-impl Default for PickupBundle {
-    fn default() -> Self {
-        // TODO: Need states to represent it being visible, disappearing,
-        // disappeared, and reappearing after a set delay.
-
-        Self { pickup: Pickup }
-    }
-}
-
 /// Items that player can pick up by colliding with them.
 #[derive(Clone, Component, Debug, Default)]
+#[require(Transform)]
 pub struct Pickup;
 
 fn spinning_rise_and_fall_effect(

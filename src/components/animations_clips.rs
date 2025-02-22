@@ -30,15 +30,9 @@ impl Plugin for AnimationClipsPlugin {
     }
 }
 
-/// Required components for animations.
-#[derive(Bundle)]
-pub struct AnimationsBundle {
-    pub animation_graph_handle: AnimationGraphHandle,
-    pub animation_clips: AnimationClips,
-}
-
 /// Stores human-friendly names mapped to [`AnimationClip`] handles.
 #[derive(Clone, Component, Debug, Default)]
+#[require(AnimationGraphHandle)]
 pub struct AnimationClips(pub HashMap<String, AnimationNodeIndex>);
 
 /// Allows a parent entity to access the [`AnimationPlayer`] entity buried

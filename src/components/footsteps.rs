@@ -11,13 +11,6 @@ impl Plugin for FootstepsPlugin {
     }
 }
 
-/// Required components for a [`Footsteps`] entity.
-#[derive(Bundle)]
-pub struct FootstepsBundle {
-    pub footsteps: Footsteps,
-    // TODO: Probably sprite bundle?
-}
-
 // Causes entity to emit sound-waves while translating, but not rotating.
 // Specify globally defined sound-wave type.
 #[derive(Clone, Component, Debug)]

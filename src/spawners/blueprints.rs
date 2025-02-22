@@ -39,16 +39,10 @@ pub enum BlueprintProp {
     FloorSwitch,
     Door,
     Glass,
-    Speed {
-        linear_speed: f32,
-        angular_speed: f32,
-    },
-    Physics {
-        radius: f32,
-    },
-    Footsteps {
-        sound_wave: String,
-    },
+    LinearSpeed(f32),
+    AngularSpeed(f32),
+    Physics { radius: f32 },
+    Footsteps { sound_wave: String },
     DropShadow,
     Vision,
     Hearing,
@@ -141,7 +135,7 @@ fn spawn_entity_from_blueprint(
     for property in &blueprint.0 {
         match property {
             BlueprintProp::Player => {
-                entity_commands.insert(PlayerBundle::default());
+                entity_commands.insert(Player::default());
             },
             BlueprintProp::Guard => {
                 entity_commands.insert(GuardBundle::with_starting_location(
@@ -149,10 +143,10 @@ fn spawn_entity_from_blueprint(
                 ));
             },
             BlueprintProp::SecurityCamera => {
-                entity_commands.insert(SecurityCameraBundle::default());
+                entity_commands.insert(SecurityCamera::default());
             },
             BlueprintProp::Pickup => {
-                entity_commands.insert(PickupBundle::default());
+                entity_commands.insert(Pickup::default());
             },
             BlueprintProp::Weapon => {
                 entity_commands.insert(Weapon::default());
@@ -160,23 +154,19 @@ fn spawn_entity_from_blueprint(
             //Trigger {} // TODO: Probably want to have a sub-enum with
             // pre-allowed events?
             BlueprintProp::FloorSwitch => {
-                entity_commands.insert(FloorSwitchBundle::default());
+                entity_commands.insert(FloorSwitch::default());
             },
             BlueprintProp::Door => {
-                entity_commands.insert(DoorBundle::default());
+                entity_commands.insert(Door::default());
             },
             BlueprintProp::Glass => {
-                entity_commands.insert(GlassBundle::default());
+                entity_commands.insert(Glass::default());
             },
-            BlueprintProp::Speed {
-                linear_speed,
-                angular_speed,
-            } => {
-                entity_commands.insert(SpeedBundle {
-                    linear_speed: LinearSpeed(*linear_speed),
-                    angular_speed: AngularSpeed(*angular_speed),
-                    ..default()
-                });
+            BlueprintProp::LinearSpeed(linear_speed) => {
+                entity_commands.insert(LinearSpeed(*linear_speed));
+            },
+            BlueprintProp::AngularSpeed(angular_speed) => {
+                entity_commands.insert(AngularSpeed(*angular_speed));
             },
             BlueprintProp::Physics { radius } => {
                 // TODO: Need a component for this one.
@@ -185,10 +175,8 @@ fn spawn_entity_from_blueprint(
                 let sound_wave_handle =
                     game_assets.sound_waves.get(sound_wave.as_str()).unwrap();
 
-                entity_commands.insert(FootstepsBundle {
-                    footsteps: Footsteps {
-                        sound_wave: sound_wave_handle.clone(),
-                    },
+                entity_commands.insert(Footsteps {
+                    sound_wave: sound_wave_handle.clone(),
                 });
             },
             BlueprintProp::DropShadow => {
@@ -230,10 +218,10 @@ fn spawn_entity_from_blueprint(
 
                 let handle = graphs.add(graph);
 
-                entity_commands.insert(AnimationsBundle {
-                    animation_graph_handle: AnimationGraphHandle(handle),
-                    animation_clips: AnimationClips(loaded_clips),
-                });
+                entity_commands.insert((
+                    AnimationClips(loaded_clips),
+                    AnimationGraphHandle(handle),
+                ));
             },
             BlueprintProp::Scene(scene) => {
                 entity_commands.insert((
