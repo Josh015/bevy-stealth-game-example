@@ -39,10 +39,11 @@ impl Action for WaitAction {
 
     fn on_stop(
         &mut self,
-        agent: Entity,
+        agent: Option<Entity>,
         world: &mut World,
         reason: StopReason,
     ) {
+        let Some(agent) = agent else { return };
         let wait_timer = world.entity_mut(agent).take::<WaitTimer>();
 
         if reason == StopReason::Paused {

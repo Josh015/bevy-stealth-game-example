@@ -31,7 +31,7 @@ impl<const N: usize> Action for ParallelActions<N> {
 
     fn on_stop(
         &mut self,
-        agent: Entity,
+        agent: Option<Entity>,
         world: &mut World,
         reason: StopReason,
     ) {
@@ -40,7 +40,7 @@ impl<const N: usize> Action for ParallelActions<N> {
             .for_each(|action| action.on_stop(agent, world, reason));
     }
 
-    fn on_remove(&mut self, agent: Entity, world: &mut World) {
+    fn on_remove(&mut self, agent: Option<Entity>, world: &mut World) {
         self.actions
             .iter_mut()
             .for_each(|action| action.on_remove(agent, world));

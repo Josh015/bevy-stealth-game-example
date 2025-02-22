@@ -36,7 +36,7 @@ fn spinning_rise_and_fall_effect(
         transform.rotation = (transform.rotation
             * Quat::from_axis_angle(
                 Vec3::Y,
-                std::f32::consts::FRAC_PI_2 * time.delta_seconds(),
+                std::f32::consts::FRAC_PI_2 * time.delta_secs(),
             ))
         .normalize();
 

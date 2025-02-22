@@ -37,10 +37,6 @@ pub struct AnimationsBundle {
     pub animation_clips: AnimationClips,
 }
 
-/// Stores an [`AnimationGraph`] handle.
-#[derive(Clone, Component, Debug, Default)]
-pub struct AnimationGraphHandle(pub Handle<AnimationGraph>);
-
 /// Stores human-friendly names mapped to [`AnimationClip`] handles.
 #[derive(Clone, Component, Debug, Default)]
 pub struct AnimationClips(pub HashMap<String, AnimationNodeIndex>);
@@ -141,7 +137,7 @@ fn attach_animation_graph_and_transitions(
         animations_entity_link_query.iter()
     {
         commands.entity(entity_with_animation_player.0).insert((
-            animation_graph_handle.0.clone(),
+            animation_graph_handle.clone(),
             AnimationTransitions::new(),
         ));
     }

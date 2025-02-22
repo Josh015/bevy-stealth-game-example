@@ -15,6 +15,8 @@ pub struct RepeatSequence<const N: usize> {
 
     #[new(default)]
     index: usize,
+    #[new(default)]
+    canceled: bool,
 }
 
 impl<const N: usize> Action for RepeatSequence<N> {
@@ -34,39 +36,46 @@ impl<const N: usize> Action for RepeatSequence<N> {
 
     fn on_stop(
         &mut self,
-        agent: Entity,
+        agent: Option<Entity>,
         world: &mut World,
         reason: StopReason,
     ) {
         self.actions[self.index].on_stop(agent, world, reason);
+        self.canceled = reason == StopReason::Canceled;
+    }
 
-        if reason == StopReason::Canceled {
-            self.index = self.actions.len();
-        }
+    fn on_remove(&mut self, agent: Option<Entity>, world: &mut World) {
+        self.actions[self.index].on_remove(agent, world);
     }
 
     fn on_drop(
         mut self: Box<Self>,
-        agent: Entity,
+        agent: Option<Entity>,
         world: &mut World,
         reason: DropReason,
     ) {
         self.index += 1;
 
-        if self.index >= self.actions.len() {
+        if self.index >= N {
             self.repeat.advance();
             self.index = 0;
         }
 
-        if self.repeat.is_finished() || reason != DropReason::Done {
+        if self.canceled
+            || self.repeat.is_finished()
+            || reason != DropReason::Done
+        {
             self.actions
                 .iter_mut()
                 .for_each(|action| action.on_remove(agent, world));
-        } else {
-            world
-                .get_mut::<ActionQueue>(agent)
-                .unwrap()
-                .push_front(self);
         }
+
+        let Some(agent) = agent else { return };
+
+        world
+            .actions(agent)
+            .start(false)
+            .order(AddOrder::Front)
+            .add(self as BoxedAction);
     }
 }

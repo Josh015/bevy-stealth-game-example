@@ -57,9 +57,9 @@ impl PlayerAction {
 
         let input_map = InputMap::default()
             .with_dual_axis(Move, GamepadStick::LEFT)
-            .with_dual_axis(Move, KeyboardVirtualDPad::ARROW_KEYS)
-            .with_dual_axis(Move, KeyboardVirtualDPad::WASD)
-            .with_dual_axis(Move, KeyboardVirtualDPad::NUMPAD);
+            .with_dual_axis(Move, VirtualDPad::arrow_keys())
+            .with_dual_axis(Move, VirtualDPad::wasd())
+            .with_dual_axis(Move, VirtualDPad::numpad());
         input_map
     }
 }
@@ -90,7 +90,7 @@ fn control_player(
     if move_direction != Vec3::ZERO {
         commands.entity(entity).insert(Destination(
             player_transform.translation
-                + move_direction * linear_speed.0 * time.delta_seconds(),
+                + move_direction * linear_speed.0 * time.delta_secs(),
         ));
     }
 }

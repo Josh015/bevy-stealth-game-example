@@ -177,7 +177,7 @@ fn guard_states(
 
         match guard {
             Stunned => {
-                sequential_actions.add_many(actions![
+                sequential_actions.add((
                     ParallelActions::new(actions![
                         AnimationAction::new("stun"),
                         SoundAction::new("stun"),
@@ -188,7 +188,7 @@ fn guard_states(
                         world.entity_mut(agent).insert(Done::Success);
                         true
                     },
-                ]);
+                ));
             },
             SawPlayer(player_location) => {
                 let player_location = player_location.clone();
@@ -197,7 +197,7 @@ fn guard_states(
                     (player_location - guard_position).normalize_or_zero(),
                 );
 
-                sequential_actions.add_many(actions![
+                sequential_actions.add((
                     FaceDirectionAction::new(face_player_direction),
                     ParallelActions::new(actions![
                         SoundAction::new("alerted"),
@@ -210,17 +210,17 @@ fn guard_states(
                             .insert(ChasePlayer(player_location));
                         true
                     },
-                ]);
+                ));
             },
             ChasePlayer(player_location) => {
-                commands.actions(entity).add_many(actions![
+                sequential_actions.add((
                     EmoteAction::non_blocking("chase"),
                     MoveToAction::new(*player_location),
                     |agent: Entity, world: &mut World| -> bool {
                         world.entity_mut(agent).insert(LostPlayer);
                         true
                     },
-                ]);
+                ));
             },
             LostPlayer => {
                 let mut rng = SmallRng::from_os_rng();
@@ -233,13 +233,13 @@ fn guard_states(
                     let random_direction =
                         Dir3::new_unchecked(random_vector.normalize_or_zero());
 
-                    sequential_actions.add_many(actions![
+                    sequential_actions.add((
                         FaceDirectionAction::new(random_direction),
                         WaitAction::new(Duration::from_millis(1500)),
-                    ]);
+                    ));
                 }
 
-                sequential_actions.add_many(actions![
+                sequential_actions.add((
                     ParallelActions::new(actions![
                         AnimationAction::new("frustrated"),
                         EmoteAction::new("frustrated"),
@@ -248,10 +248,10 @@ fn guard_states(
                         world.entity_mut(agent).insert(Done::Failure);
                         true
                     },
-                ]);
+                ));
             },
             InvestigateNoise(noise_direction) => {
-                sequential_actions.add_many(actions![
+                sequential_actions.add((
                     ParallelActions::new(actions![
                         SoundAction::new("distracted"),
                         EmoteAction::new("sound"),
@@ -262,16 +262,16 @@ fn guard_states(
                         world.entity_mut(agent).insert(Done::Failure);
                         true
                     },
-                ]);
+                ));
             },
             GoToAlarm(player_location) => {
-                sequential_actions.add_many(actions![
+                sequential_actions.add((
                     ParallelActions::new(actions![
                         AnimationAction::new("alert"),
                         EmoteAction::new("alert"),
                     ]),
                     MoveToAction::new(*player_location),
-                ]);
+                ));
 
                 let mut rng = SmallRng::from_os_rng();
 
@@ -283,10 +283,10 @@ fn guard_states(
                     let random_direction =
                         Dir3::new_unchecked(random_vector.normalize_or_zero());
 
-                    sequential_actions.add_many(actions![
+                    sequential_actions.add((
                         FaceDirectionAction::new(random_direction),
                         WaitAction::new(Duration::from_millis(1500)),
-                    ]);
+                    ));
                 }
 
                 sequential_actions.add(
@@ -301,11 +301,11 @@ fn guard_states(
                 // If none is provided, use default that returns to starting
                 // location and facing direction?
 
-                sequential_actions.add_many(actions![
+                sequential_actions.add((
                     MoveToAction::new(starting_location.translation),
                     FaceDirectionAction::new(-starting_location.forward()),
                     AnimationAction::new("idle"),
-                ]);
+                ));
             },
         }
     }

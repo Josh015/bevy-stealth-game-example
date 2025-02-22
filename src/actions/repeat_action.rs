@@ -30,7 +30,7 @@ impl<A: Action> Action for RepeatAction<A> {
 
     fn on_stop(
         &mut self,
-        agent: Entity,
+        agent: Option<Entity>,
         world: &mut World,
         reason: StopReason,
     ) {
@@ -39,16 +39,17 @@ impl<A: Action> Action for RepeatAction<A> {
 
     fn on_drop(
         mut self: Box<Self>,
-        agent: Entity,
+        agent: Option<Entity>,
         world: &mut World,
         reason: DropReason,
     ) {
         if self.repeat.is_finished() || reason != DropReason::Done {
-            self.action.on_remove(agent, world);
             return;
         }
 
+        let Some(agent) = agent else { return };
+
         self.repeat.advance();
-        world.get_mut::<ActionQueue>(agent).unwrap().push_back(self);
+        world.actions(agent).start(false).add(self as BoxedAction);
     }
 }

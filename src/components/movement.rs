@@ -3,7 +3,7 @@ use std::time::Duration;
 use bevy::{
     ecs::query::QueryFilter, prelude::*, time::common_conditions::on_timer,
 };
-use vleue_navigator::NavMesh;
+use vleue_navigator::{NavMesh, prelude::ManagedNavMesh};
 
 use crate::prelude::*;
 
@@ -122,7 +122,7 @@ fn turn_toward_heading(
         // Rotate to face next point on path.
         let diff = wrap_angle(heading.0 - yaw.0);
         let dir = diff.signum();
-        let delta = dir * angular_speed.0 * time.delta_seconds();
+        let delta = dir * angular_speed.0 * time.delta_secs();
         let rotation_finished = diff.abs() < delta.abs();
 
         yaw.0 = if rotation_finished {
@@ -144,10 +144,11 @@ fn turn_toward_heading(
 fn refresh_route<QF: QueryFilter>(
     mut commands: Commands,
     navmeshes: Res<Assets<NavMesh>>,
+    navmesh: Query<&ManagedNavMesh>,
     query: Query<(Entity, &Destination, &Transform), QF>,
 ) {
     for (entity, destination, transform) in &query {
-        let Some(navmesh) = navmeshes.get(&Handle::default()) else {
+        let Some(navmesh) = navmeshes.get(navmesh.single()) else {
             continue;
         };
         let Some(path) =
@@ -207,13 +208,13 @@ fn follow_route_to_destination(
         transform.translation = if translation_finished {
             path_to.next
         } else {
-            transform.translation + dir * linear_speed.0 * time.delta_seconds()
+            transform.translation + dir * linear_speed.0 * time.delta_secs()
         };
 
         // Rotate to face next point on path.
         let diff = wrap_angle(heading.0 - yaw.0);
         let dir = diff.signum();
-        let delta = dir * angular_speed.0 * time.delta_seconds();
+        let delta = dir * angular_speed.0 * time.delta_secs();
         let rotation_finished = diff.abs() < delta.abs();
 
         yaw.0 = if rotation_finished {

@@ -10,7 +10,7 @@ pub(super) struct BlueprintsPlugin;
 impl Plugin for BlueprintsPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins(RonAssetPlugin::<Blueprint>::new(&["blueprint.ron"]))
-            .observe(spawn_entity_from_blueprint);
+            .add_observer(spawn_entity_from_blueprint);
     }
 }
 
@@ -236,15 +236,16 @@ fn spawn_entity_from_blueprint(
                 });
             },
             BlueprintProp::Scene(scene) => {
-                entity_commands.insert(SceneBundle {
-                    scene: preloaded_blueprint_assets
-                        .scenes
-                        .get(scene)
-                        .unwrap()
-                        .clone(),
-                    transform: Transform::from_matrix(*matrix),
-                    ..default()
-                });
+                entity_commands.insert((
+                    SceneRoot(
+                        preloaded_blueprint_assets
+                            .scenes
+                            .get(scene)
+                            .unwrap()
+                            .clone(),
+                    ),
+                    Transform::from_matrix(*matrix),
+                ));
             },
         }
     }

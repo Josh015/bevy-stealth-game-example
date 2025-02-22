@@ -27,10 +27,12 @@ impl Action for MoveToAction {
 
     fn on_stop(
         &mut self,
-        agent: Entity,
+        agent: Option<Entity>,
         world: &mut World,
         _reason: StopReason,
     ) {
+        let Some(agent) = agent else { return };
+
         world.entity_mut(agent).remove::<Destination>();
     }
 }

@@ -5,6 +5,7 @@ use bevy::{
     asset::LoadState,
     color::palettes,
     gltf::{Gltf, GltfMesh},
+    log,
     math::Vec3Swizzles,
     pbr::NotShadowCaster,
     prelude::*,
@@ -21,14 +22,14 @@ use std::{f32::consts::FRAC_PI_2, time::Duration};
 use vleue_navigator::{
     NavMesh, VleueNavigatorPlugin,
     prelude::{
-        NavMeshBundle, NavMeshSettings, NavMeshUpdateMode, NavmeshUpdaterPlugin,
+        ManagedNavMesh, NavMeshSettings, NavMeshUpdateMode,
+        NavmeshUpdaterPlugin,
     },
 };
 
 fn main() {
     let mut app = App::new();
-    app.insert_resource(Msaa::default())
-        .insert_resource(ClearColor(Color::srgb(0., 0., 0.01)))
+    app.insert_resource(ClearColor(Color::srgb(0., 0., 0.01)))
         .add_plugins((
             DefaultPlugins
                 .set(WindowPlugin {
@@ -97,27 +98,26 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands
         .insert_resource(GltfHandle(asset_server.load("models/navmesh.glb")));
 
-    commands.spawn(DirectionalLightBundle {
-        directional_light: DirectionalLight {
+    commands.spawn((
+        DirectionalLight {
             illuminance: 3000.0,
             shadows_enabled: true,
             ..default()
         },
-        transform: Transform::default()
-            .looking_at(Vec3::new(-1.0, -2.5, -1.5), Vec3::Y),
-        ..default()
-    });
+        Transform::default().looking_at(Vec3::new(-1.0, -2.5, -1.5), Vec3::Y),
+    ));
 
-    commands.spawn(Camera3dBundle {
-        camera: Camera {
+    commands.spawn((
+        Camera {
             #[cfg(not(target_arch = "wasm32"))]
             hdr: true,
             ..default()
         },
-        transform: Transform::from_xyz(0.0, 70.0, 5.0)
+        Camera3d::default(),
+        Msaa::Sample8,
+        Transform::from_xyz(0.0, 70.0, 5.0)
             .looking_at(Vec3::new(0.0, 0.3, 0.0), Vec3::Y),
-        ..Default::default()
-    });
+    ));
 }
 
 fn check_textures(
@@ -148,22 +148,18 @@ fn setup_scene(
             Color::Srgba(palettes::css::GRAY).into();
         material.perceptual_roughness = 1.0;
         commands.spawn((
-            PbrBundle {
-                mesh: mesh.primitives[0].mesh.clone(),
-                material: materials.add(material),
-                ..default()
-            },
+            Mesh3d(mesh.primitives[0].mesh.clone()),
+            MeshMaterial3d(materials.add(material)),
             RigidBody::Static,
             ColliderConstructor::TrimeshFromMesh,
         ));
 
         let mesh = gltf_meshes.get(&gltf.named_meshes["plane"]).unwrap();
-        commands.spawn(PbrBundle {
-            mesh: mesh.primitives[0].mesh.clone(),
-            transform: Transform::from_xyz(0.0, 0.01, 0.0),
-            material: ground_material.clone(),
-            ..default()
-        });
+        commands.spawn((
+            Mesh3d(mesh.primitives[0].mesh.clone()),
+            MeshMaterial3d(ground_material.clone()),
+            Transform::from_xyz(0.0, 0.01, 0.0),
+        ));
     }
 
     if let Some(gltf) = gltfs.get(gltf.id()) {
@@ -184,47 +180,41 @@ fn setup_scene(
                 Color::Srgba(palettes::css::ANTIQUE_WHITE).into();
             material.unlit = true;
 
-            commands.spawn(NavMeshBundle {
-                settings: NavMeshSettings {
+            commands.spawn((
+                NavMeshSettings {
                     fixed: Triangulation::from_mesh(navmesh.get().as_ref(), 0),
                     build_timeout: Some(5.0),
                     upward_shift: 0.5,
+                    merge_steps: 2,
                     ..default()
                 },
-                transform: Transform::from_rotation(Quat::from_rotation_x(
-                    FRAC_PI_2,
-                )),
-                update_mode: NavMeshUpdateMode::Direct,
-                ..NavMeshBundle::with_default_id()
-            });
+                Transform::from_rotation(Quat::from_rotation_x(FRAC_PI_2)),
+                NavMeshUpdateMode::Direct,
+            ));
         }
 
         commands
             .spawn((
-                PbrBundle {
-                    mesh: meshes.add(Mesh::from(Capsule3d { ..default() })),
-                    material: materials.add(StandardMaterial {
-                        base_color: palettes::css::BLUE.into(),
-                        emissive: (palettes::css::BLUE * 5.0).into(),
-                        ..default()
-                    }),
-                    transform: Transform::from_xyz(-1.0, 0.0, -2.0),
-                    ..Default::default()
-                },
+                Mesh3d(meshes.add(Mesh::from(Capsule3d { ..default() }))),
+                MeshMaterial3d(materials.add(StandardMaterial {
+                    base_color: palettes::css::BLUE.into(),
+                    emissive: (palettes::css::BLUE * 5.0).into(),
+                    ..default()
+                })),
+                Transform::from_xyz(-1.0, 0.0, -2.0),
                 NotShadowCaster,
             ))
             .with_children(|object| {
-                object.spawn(PointLightBundle {
-                    point_light: PointLight {
+                object.spawn((
+                    PointLight {
                         color: palettes::css::BLUE.into(),
                         range: 500.0,
                         intensity: 100000.0,
                         shadows_enabled: true,
                         ..default()
                     },
-                    transform: Transform::from_xyz(0.0, 1.2, 0.0),
-                    ..default()
-                });
+                    Transform::from_xyz(0.0, 1.2, 0.0),
+                ));
             });
     }
 
@@ -321,10 +311,13 @@ fn spawn_target_at_random_location(
     mut commands: Commands,
     targets: Query<Entity, With<Target>>,
     navmeshes: Res<Assets<NavMesh>>,
+    navmesh: Query<&ManagedNavMesh>,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
-    let Some(navmesh) = navmeshes.get(&Handle::default()) else {
+    log::info!("target spawning");
+
+    let Some(navmesh) = navmeshes.get(navmesh.single()) else {
         return;
     };
     let mut destination = Vec3::ZERO;
@@ -351,31 +344,29 @@ fn spawn_target_at_random_location(
 
     commands
         .spawn((
-            PbrBundle {
-                mesh: meshes.add(Mesh::from(Sphere { radius: 0.5 })),
-                material: materials.add(StandardMaterial {
-                    base_color: palettes::css::RED.into(),
-                    emissive: (palettes::css::RED * 5.0).into(),
-                    ..default()
-                }),
-                transform: Transform::from_translation(destination),
-                ..Default::default()
-            },
+            Mesh3d(meshes.add(Mesh::from(Sphere { radius: 0.5 }))),
+            MeshMaterial3d(materials.add(StandardMaterial {
+                base_color: palettes::css::RED.into(),
+                emissive: (palettes::css::RED * 5.0).into(),
+                ..default()
+            })),
+            Transform::from_translation(destination),
             NotShadowCaster,
             Target,
         ))
         .with_children(|target| {
-            target.spawn(PointLightBundle {
-                point_light: PointLight {
+            target.spawn((
+                PointLight {
                     color: palettes::css::RED.into(),
                     shadows_enabled: true,
                     range: 10.0,
                     ..default()
                 },
-                transform: Transform::from_xyz(0.0, 1.5, 0.0),
-                ..default()
-            });
+                Transform::from_xyz(0.0, 1.5, 0.0),
+            ));
         });
+
+    log::info!("target spawned");
 }
 
 fn target_activity(
@@ -385,6 +376,6 @@ fn target_activity(
 ) {
     for children in &target {
         point_light.get_mut(children[0]).unwrap().intensity =
-            (time.elapsed_seconds() * 10.0).sin().abs() * 100000.0;
+            (time.elapsed_secs() * 10.0).sin().abs() * 100000.0;
     }
 }

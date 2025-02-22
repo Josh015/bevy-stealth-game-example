@@ -8,18 +8,18 @@ rust-version = "1.85.0"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-avian3d = "0.1"
-bevy = { version = "0.14.2", features = ["bevy_asset", "file_watcher"] }
-bevy_asset_loader = { version = "0.21.0", features = ["standard_dynamic_assets"] }
-bevy_common_assets = "0.11.0"
-bevy_hanabi = "0.12.2"
-bevy-sequential-actions = "0.11.0"
-bevy_tweening = "0.11.0"
+avian3d = "0.2.1"
+bevy = { version = "0.15.2", features = ["bevy_asset", "file_watcher"] }
+bevy_asset_loader = { version = "0.22.0", features = ["standard_dynamic_assets"] }
+bevy_common_assets = "0.12.0"
+bevy_hanabi = "0.14.0"
+bevy-sequential-actions = "0.12.0"
+bevy_tweening = "0.12.0"
 derive-new = "0.7.0"
-leafwing-input-manager = "0.15.0"
-polyanya = "0.10.0"
+leafwing-input-manager = "0.16.0"
+polyanya = "0.12.0"
 rand = { version = "0.9.0", features = ["small_rng"] }
-seldom_state = "0.11.0"
+seldom_state = "0.12.0"
 serde = { version = "1.0.218", features = ["serde_derive"] }
 strum = { version = "0.27.1", features = ["derive"] }
-vleue_navigator = { version = "0.9.0", features = ["avian3d"] }
+vleue_navigator = { version = "0.11.1", features = ["avian3d"] }

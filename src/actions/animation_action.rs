@@ -44,7 +44,7 @@ impl Action for AnimationAction {
 
     fn on_stop(
         &mut self,
-        _agent: Entity,
+        _agent: Option<Entity>,
         _world: &mut World,
         _reason: StopReason,
     ) {
