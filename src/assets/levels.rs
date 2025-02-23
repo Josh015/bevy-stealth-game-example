@@ -1,4 +1,21 @@
-pub enum ScriptCommands {
+use bevy::prelude::*;
+use bevy_common_assets::ron::RonAssetPlugin;
+use serde::Deserialize;
+
+pub(super) struct LevelsPlugin;
+
+impl Plugin for LevelsPlugin {
+    fn build(&self, app: &mut App) {
+        app.add_plugins(RonAssetPlugin::<LevelConfig>::new(&["level.ron"]));
+    }
+}
+
+#[derive(Asset, Debug, Deserialize, Resource, TypePath)]
+pub struct LevelConfig {
+    title: String,
+}
+
+pub enum ScriptCommandConfig {
     OpenDoor,     // Takes entity's map ID, non-blocking.
     CloseDoor,    // Takes entity's map ID, non-blocking.
     ToggleDoor,   // Takes entity's map ID, non-blocking.

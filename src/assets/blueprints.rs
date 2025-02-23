@@ -9,8 +9,10 @@ pub(super) struct BlueprintsPlugin;
 
 impl Plugin for BlueprintsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugins(RonAssetPlugin::<Blueprint>::new(&["blueprint.ron"]))
-            .add_observer(spawn_entity_from_blueprint);
+        app.add_plugins(RonAssetPlugin::<BlueprintConfig>::new(&[
+            "blueprint.ron",
+        ]))
+        .add_observer(spawn_entity_from_blueprint);
     }
 }
 
@@ -24,7 +26,7 @@ pub struct SpawnEntityFromBlueprint {
 
 /// Asset for spawning and configuring entities.
 #[derive(Asset, Debug, Deserialize, Resource, TypePath)]
-pub struct Blueprint(pub Vec<BlueprintProp>);
+pub struct BlueprintConfig(pub Vec<BlueprintProp>);
 
 /// Blueprint properties for configuring entities.
 ///
@@ -66,7 +68,7 @@ impl FromWorld for PreloadedBlueprintAssets {
         let mut system_state: SystemState<(
             Res<AssetServer>,
             Res<GameAssets>,
-            Res<Assets<Blueprint>>,
+            Res<Assets<BlueprintConfig>>,
         )> = SystemState::new(world);
         let (asset_server, game_assets, blueprint_assets) =
             system_state.get_mut(world);
@@ -116,7 +118,7 @@ fn spawn_entity_from_blueprint(
     trigger: Trigger<SpawnEntityFromBlueprint>,
     mut commands: Commands,
     mut graphs: ResMut<Assets<AnimationGraph>>,
-    blueprints: Res<Assets<Blueprint>>,
+    blueprints: Res<Assets<BlueprintConfig>>,
     game_assets: Res<GameAssets>,
     preloaded_blueprint_assets: Res<PreloadedBlueprintAssets>,
 ) {

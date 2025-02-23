@@ -1,11 +1,13 @@
 mod blueprints;
+mod campaigns;
 mod emotes;
-mod script_commands;
+mod levels;
 mod sound_waves;
 
 pub use blueprints::*;
+pub use campaigns::*;
 pub use emotes::*;
-pub use script_commands::*;
+pub use levels::*;
 pub use sound_waves::*;
 
 use bevy::{prelude::*, utils::HashMap};
@@ -28,7 +30,9 @@ impl Plugin for AssetsPlugin {
         )
         .add_plugins((
             BlueprintsPlugin,
+            CampaignsPlugin,
             EmotesPlugin,
+            LevelsPlugin,
             SoundWavesPlugin,
         ));
     }
@@ -37,10 +41,16 @@ impl Plugin for AssetsPlugin {
 #[derive(AssetCollection, Resource)]
 pub struct GameAssets {
     #[asset(path = "blueprints", collection(mapped, typed))]
-    pub blueprints: HashMap<AssetFileStem, Handle<Blueprint>>,
+    pub blueprints: HashMap<AssetFileStem, Handle<BlueprintConfig>>,
 
     #[asset(path = "emotes", collection(mapped, typed))]
     pub emotes: HashMap<AssetFileStem, Handle<EmoteConfig>>,
+
+    #[asset(path = "campaigns", collection(mapped, typed))]
+    pub campaigns: HashMap<AssetFileStem, Handle<CampaignConfig>>,
+
+    #[asset(path = "levels", collection(mapped, typed))]
+    pub levels: HashMap<AssetFileStem, Handle<LevelConfig>>,
 
     #[asset(path = "sound_waves", collection(mapped, typed))]
     pub sound_waves: HashMap<AssetFileStem, Handle<SoundWaveConfig>>,
