@@ -14,7 +14,7 @@ impl Plugin for PlayerPlugin {
 
 /// Entity that can be targeted by enemy units.
 #[derive(Clone, Component, Debug, Default)]
-#[require(Transform, LinearSpeed, ActionState<PlayerAction>, InputMap<PlayerAction>(player_input_map))]
+#[require(Transform, MoveSpeed, ActionState<PlayerAction>, InputMap<PlayerAction>(player_input_map))]
 pub struct Player;
 
 /// Blocks the Player from being seen by Vision.
@@ -56,11 +56,11 @@ fn control_player(
     mut commands: Commands,
     time: Res<Time>,
     query: Query<
-        (Entity, &Transform, &LinearSpeed, &ActionState<PlayerAction>),
+        (Entity, &Transform, &MoveSpeed, &ActionState<PlayerAction>),
         With<Player>,
     >,
 ) {
-    let (entity, player_transform, linear_speed, action_state) = query.single();
+    let (entity, player_transform, move_speed, action_state) = query.single();
 
     let clamped_axis = action_state.clamped_axis_pair(&PlayerAction::Move).xy();
     let move_direction =
@@ -70,7 +70,7 @@ fn control_player(
     if move_direction != Vec3::ZERO {
         commands.entity(entity).insert(Destination(
             player_transform.translation
-                + move_direction * linear_speed.0 * time.delta_secs(),
+                + move_direction * move_speed.0 * time.delta_secs(),
         ));
     }
 }

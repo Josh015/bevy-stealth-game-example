@@ -6,8 +6,8 @@
   Stunnable,
   Physics(radius: 0.375),
   Footsteps(sound_wave: "guard.sound_wave"),
-  LinearSpeed(0.5),
-  AngularSpeed(6.2832),
+  MoveSpeed(0.5),
+  RotateSpeed(6.2832),
   // Scene("models/animated/Fox.glb#Scene0"),
   // AnimationClips({
   //   "idle": "models/animated/Fox.glb#Animation0",

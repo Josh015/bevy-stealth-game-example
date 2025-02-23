@@ -114,15 +114,15 @@ fn turn_toward_heading(
     time: Res<Time>,
     mut commands: Commands,
     mut query: Query<
-        (Entity, &mut Transform, &mut Yaw, &Heading, &AngularSpeed),
+        (Entity, &mut Transform, &mut Yaw, &Heading, &RotateSpeed),
         (Without<Destination>, With<Heading>),
     >,
 ) {
-    for (entity, mut transform, mut yaw, heading, angular_speed) in &mut query {
+    for (entity, mut transform, mut yaw, heading, rotate_speed) in &mut query {
         // Rotate to face next point on path.
         let diff = wrap_angle(heading.0 - yaw.0);
         let dir = diff.signum();
-        let delta = dir * angular_speed.0 * time.delta_secs();
+        let delta = dir * rotate_speed.0 * time.delta_secs();
         let rotation_finished = diff.abs() < delta.abs();
 
         yaw.0 = if rotation_finished {
@@ -184,8 +184,8 @@ fn follow_route_to_destination(
         &mut Transform,
         &mut Yaw,
         &mut Heading,
-        &LinearSpeed,
-        &AngularSpeed,
+        &MoveSpeed,
+        &RotateSpeed,
     )>,
 ) {
     for (
@@ -194,8 +194,8 @@ fn follow_route_to_destination(
         mut transform,
         mut yaw,
         mut heading,
-        linear_speed,
-        angular_speed,
+        move_speed,
+        rotate_speed,
     ) in &mut query
     {
         // Translate toward next point on path.
@@ -208,13 +208,13 @@ fn follow_route_to_destination(
         transform.translation = if translation_finished {
             path_to.next
         } else {
-            transform.translation + dir * linear_speed.0 * time.delta_secs()
+            transform.translation + dir * move_speed.0 * time.delta_secs()
         };
 
         // Rotate to face next point on path.
         let diff = wrap_angle(heading.0 - yaw.0);
         let dir = diff.signum();
-        let delta = dir * angular_speed.0 * time.delta_secs();
+        let delta = dir * rotate_speed.0 * time.delta_secs();
         let rotation_finished = diff.abs() < delta.abs();
 
         yaw.0 = if rotation_finished {

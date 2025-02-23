@@ -41,8 +41,8 @@ pub enum BlueprintProp {
     FloorSwitch,
     Door,
     Glass,
-    LinearSpeed(f32),
-    AngularSpeed(f32),
+    MoveSpeed(f32),
+    RotateSpeed(f32),
     Physics { radius: f32 },
     Footsteps { sound_wave: String },
     DropShadow,
@@ -164,11 +164,11 @@ fn spawn_entity_from_blueprint(
             BlueprintProp::Glass => {
                 entity_commands.insert(Glass::default());
             },
-            BlueprintProp::LinearSpeed(linear_speed) => {
-                entity_commands.insert(LinearSpeed(*linear_speed));
+            BlueprintProp::MoveSpeed(move_speed) => {
+                entity_commands.insert(MoveSpeed(*move_speed));
             },
-            BlueprintProp::AngularSpeed(angular_speed) => {
-                entity_commands.insert(AngularSpeed(*angular_speed));
+            BlueprintProp::RotateSpeed(rotate_speed) => {
+                entity_commands.insert(RotateSpeed(*rotate_speed));
             },
             BlueprintProp::Physics { radius } => {
                 // TODO: Need a component for this one.
