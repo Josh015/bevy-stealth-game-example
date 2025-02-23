@@ -13,19 +13,43 @@ impl Plugin for LevelsPlugin {
 #[derive(Asset, Debug, Deserialize, Resource, TypePath)]
 pub struct LevelConfig {
     title: String,
+    //map
+    entities: Vec<EntityLevelConfig>,
+    scripts: ScriptsLevelConfig,
+    //glass
+    //grates
 }
 
+#[derive(Clone, Debug, Deserialize)]
+pub struct EntityLevelConfig {
+    id: String,
+    blueprint: String,
+    //transform,
+    idle: ScriptCommands,
+    trigger: ScriptCommands,
+}
+
+#[derive(Clone, Debug, Deserialize)]
+pub struct ScriptsLevelConfig {
+    start: ScriptCommands,
+    alert: ScriptCommands,
+    escape: ScriptCommands,
+}
+
+pub type ScriptCommands = Option<Vec<ScriptCommandConfig>>;
+
+#[derive(Clone, Debug, Deserialize)]
 pub enum ScriptCommandConfig {
-    OpenDoor,     // Takes entity's map ID, non-blocking.
-    CloseDoor,    // Takes entity's map ID, non-blocking.
-    ToggleDoor,   // Takes entity's map ID, non-blocking.
-    MoveTo,       // Takes waypoint's map ID, blocking.
-    LookAt,       // Takes waypoint's map ID, blocking.
-    Wait,         // Takes delay in seconds, blocking.
-    Repeat,       // non-blocking.
-    PlayAudio,    // Sound handle and text, non-blocking.
-    TickCount,    // Something to do with action synchronization?
-    Sync,         // blocking, blocks until both MoveTo and LookAt complete?
-    Reset,        // Used to reset floor switches to their off state.
-    SetDoorTimer, // Shows door timer UI, takes countdown time, non-blocking.
+    OpenDoor,     // (door ID), non-blocking.
+    CloseDoor,    // (door ID), non-blocking.
+    ToggleDoor,   // (door ID), non-blocking.
+    MoveTo,       // (waypoint ID), blocking.
+    LookAt,       // (waypoint ID), blocking.
+    Wait,         // (delay), blocking.
+    Repeat,       // (), non-blocking, Repeats the script indefinitely.
+    PlayAudio,    // (sound name, text), non-blocking.
+    TickCount,    // (tick count), Pair with sync? Set how long actions take?
+    Sync,         // (), blocking, Blocks until other actions complete?
+    Reset,        // (self), Reset floor switches to their off state.
+    SetDoorTimer, // (countdown time), Shows door timer UI, non-blocking.
 }

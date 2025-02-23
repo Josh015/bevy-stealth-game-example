@@ -1,3 +1,6 @@
+#![enable(implicit_some)]
 (
-  title: "Test 00"
+  title: "Test 00",
+  entities: [],
+  scripts: (),
 )
