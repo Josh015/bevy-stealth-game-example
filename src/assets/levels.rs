@@ -15,7 +15,9 @@ pub struct LevelConfig {
     title: String,
     //map
     entities: Vec<EntityLevelConfig>,
-    scripts: ScriptsLevelConfig,
+    on_start: ScriptCommands,
+    on_alert: ScriptCommands,
+    on_escape: ScriptCommands,
     //glass
     //grates
 }
@@ -25,15 +27,8 @@ pub struct EntityLevelConfig {
     id: String,
     blueprint: String,
     //transform,
-    idle: ScriptCommands,
-    trigger: ScriptCommands,
-}
-
-#[derive(Clone, Debug, Deserialize)]
-pub struct ScriptsLevelConfig {
-    start: ScriptCommands,
-    alert: ScriptCommands,
-    escape: ScriptCommands,
+    on_idle: ScriptCommands,
+    on_trigger: ScriptCommands,
 }
 
 pub type ScriptCommands = Option<Vec<ScriptCommandConfig>>;
