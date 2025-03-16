@@ -27,7 +27,9 @@ impl AnimationAction {
 }
 
 impl Action for AnimationAction {
-    fn is_finished(&self, _agent: Entity, _world: &World) -> bool { true }
+    fn is_finished(&self, _agent: Entity, _world: &World) -> bool {
+        true
+    }
 
     fn on_start(&mut self, agent: Entity, world: &mut World) -> bool {
         let mut system_state: SystemState<Animations> = SystemState::new(world);

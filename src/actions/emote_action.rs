@@ -24,7 +24,9 @@ impl EmoteAction {
 }
 
 impl Action for EmoteAction {
-    fn is_finished(&self, _agent: Entity, _world: &World) -> bool { true }
+    fn is_finished(&self, _agent: Entity, _world: &World) -> bool {
+        true
+    }
 
     fn on_start(&mut self, _agent: Entity, _world: &mut World) -> bool {
         // TODO: Implement this functionality later.

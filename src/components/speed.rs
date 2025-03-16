@@ -5,7 +5,9 @@ use bevy::prelude::*;
 pub struct MoveSpeed(pub f32);
 
 impl Default for MoveSpeed {
-    fn default() -> Self { Self(1.0) }
+    fn default() -> Self {
+        Self(1.0)
+    }
 }
 
 /// Angular speed in `radians/second`.
@@ -13,5 +15,7 @@ impl Default for MoveSpeed {
 pub struct RotateSpeed(pub f32);
 
 impl Default for RotateSpeed {
-    fn default() -> Self { Self(std::f32::consts::TAU) }
+    fn default() -> Self {
+        Self(std::f32::consts::TAU)
+    }
 }
