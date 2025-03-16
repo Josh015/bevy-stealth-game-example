@@ -13,7 +13,7 @@ use bevy::{
     window::PresentMode,
 };
 use bevy_sequential_actions::*;
-use bevy_stealth_game_example::*;
+use bevy_stealth_game_example::{prelude::*, *};
 use bevy_tweening::*;
 use polyanya::Triangulation;
 use rand::prelude::*;
@@ -50,8 +50,8 @@ fn main() {
             SequentialActionsPlugin,
             StateMachinePlugin,
             TweeningPlugin,
-            BevyStealthGameExamplePlugin,
         ))
+        .add_plugins(LibPlugin)
         .add_systems(OnEnter(GameState::StartMenu), setup)
         .add_systems(
             Update,

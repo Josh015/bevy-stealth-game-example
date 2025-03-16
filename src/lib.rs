@@ -7,7 +7,7 @@ mod system_params;
 mod ui;
 mod util;
 
-mod prelude {
+pub mod prelude {
     pub use crate::{
         actions::*, assets::*, components::*, events::*, game_state::*,
         system_params::*, ui::*, util::*,
@@ -15,19 +15,18 @@ mod prelude {
 }
 
 pub use bevy::prelude::*;
-pub use prelude::*;
 
-pub struct BevyStealthGameExamplePlugin;
+pub struct LibPlugin;
 
-impl Plugin for BevyStealthGameExamplePlugin {
+impl Plugin for LibPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins((
-            ActionsPlugin,
-            AssetsPlugin,
-            ComponentsPlugin,
-            GameStatePlugin,
-            EventsPlugin,
-            UiPlugin,
+            actions::ActionsPlugin,
+            assets::AssetsPlugin,
+            components::ComponentsPlugin,
+            game_state::GameStatePlugin,
+            events::EventsPlugin,
+            ui::UiPlugin,
         ));
     }
 }
