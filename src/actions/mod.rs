@@ -1,8 +1,3 @@
-use bevy::prelude::*;
-use bevy_sequential_actions::*;
-
-use crate::prelude::*;
-
 mod action_sequence;
 mod animation_action;
 mod emote_action;
@@ -24,6 +19,11 @@ pub use repeat_action::*;
 pub use repeat_sequence::*;
 pub use sound_action::*;
 pub use wait_action::*;
+
+use bevy::prelude::*;
+use bevy_sequential_actions::*;
+
+use crate::game_state::{ActiveWhenPausedSet, GameState};
 
 pub(super) struct ActionsPlugin;
 

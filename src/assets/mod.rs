@@ -13,7 +13,7 @@ pub use sound_waves::*;
 use bevy::{prelude::*, utils::HashMap};
 use bevy_asset_loader::prelude::*;
 
-use crate::prelude::*;
+use crate::game_state::GameState;
 
 pub struct AssetsPlugin;
 

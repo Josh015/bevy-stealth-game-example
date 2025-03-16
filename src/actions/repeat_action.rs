@@ -2,13 +2,13 @@ use bevy::ecs::prelude::*;
 use bevy_sequential_actions::*;
 use derive_new::new;
 
-use crate::prelude::*;
+use crate::util::Repeat;
 
 /// Takes a single action and repeats it.
 ///
 /// **WARNING**: Doesn't work with
-/// [`ActionSequence`](crate::actions::ActionSequence). Use
-/// [`RepeatSequence`](crate::actions::RepeatSequence) instead.
+/// [`ActionSequence`](super::ActionSequence). Use
+/// [`RepeatSequence`](super::RepeatSequence) instead.
 #[derive(new)]
 pub struct RepeatAction<A: Action> {
     repeat: Repeat,

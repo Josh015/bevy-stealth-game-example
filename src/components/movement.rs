@@ -5,7 +5,12 @@ use bevy::{
 };
 use vleue_navigator::{NavMesh, prelude::ManagedNavMesh};
 
-use crate::prelude::*;
+use crate::{
+    game_state::StoppedWhenPausedSet, system_params::Animations,
+    util::wrap_angle,
+};
+
+use super::{MoveSpeed, RotateSpeed};
 
 const MOVING_ANIMATION: &str = "moving";
 const DESTINATION_MARGIN_OF_ERROR: f32 = 0.001;
@@ -49,11 +54,11 @@ impl Heading {
 #[derive(Clone, Component, Debug)]
 pub struct StoredAnimation(pub AnimationNodeIndex);
 
-/// Rotation around the Y-axis required to reach a [Heading].
+/// Rotation around the Y-axis required to reach a [`Heading`].
 #[derive(Clone, Component, Debug)]
 pub struct Yaw(pub f32);
 
-/// The navigation route an entity will take to reach a [Destination].
+/// The navigation route an entity will take to reach a [`Destination`].
 #[derive(Clone, Component, Debug)]
 pub struct Route {
     pub next: Vec3,

@@ -2,12 +2,12 @@ use bevy::prelude::*;
 use bevy_sequential_actions::*;
 use derive_new::new;
 
-use crate::prelude::*;
+use crate::components::Destination;
 
 /// Move to a destination using navmesh.
 ///
-/// **WARNING**: Malfunctions when used in [`ParallelActions`] with
-/// [`FaceDirectionAction`].
+/// **WARNING**: Malfunctions when used in [`ParallelActions`](super::ParallelActions) with
+/// [`FaceDirectionAction`](super::FaceDirectionAction).
 #[derive(new)]
 pub struct MoveToAction {
     destination: Vec3,

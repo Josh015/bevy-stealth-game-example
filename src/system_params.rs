@@ -4,7 +4,7 @@ use bevy::{
 };
 use std::time::Duration;
 
-use crate::prelude::*;
+use crate::components::{AnimationClips, AnimationEntityLink};
 
 const ANIMATION_TRANSITION_DELAY: Duration = Duration::from_millis(500);
 

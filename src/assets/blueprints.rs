@@ -3,7 +3,17 @@ use bevy_common_assets::ron::RonAssetPlugin;
 use derive_new::new;
 use serde::Deserialize;
 
-use crate::prelude::*;
+use crate::{
+    components::{
+        AnimationClips, Barrier, BlocksVision, DeflectsSounds, Door,
+        DropShadow, FloorSwitch, Footsteps, ForStates, Glass, GuardBundle,
+        Hearing, MoveSpeed, Pickup, Player, RotateSpeed, SecurityCamera,
+        Stunnable, Vision, Weapon,
+    },
+    game_state::GameState,
+};
+
+use super::GameAssets;
 
 pub(super) struct BlueprintsPlugin;
 

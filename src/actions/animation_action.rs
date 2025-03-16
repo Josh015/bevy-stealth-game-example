@@ -2,12 +2,12 @@ use bevy::ecs::{prelude::*, system::SystemState};
 use bevy_sequential_actions::*;
 use derive_new::new;
 
-use crate::prelude::*;
+use crate::system_params::Animations;
 
 /// Plays an animation.
 ///
-/// **WARNING**: Malfunctions when used in [`ParallelActions`] with
-/// [`MoveToAction`] or [`FaceDirectionAction`].
+/// **WARNING**: Malfunctions when used in [`ParallelActions`](super::ParallelActions) with
+/// [`MoveToAction`](super::MoveToAction) or [`FaceDirectionAction`](super::FaceDirectionAction).
 #[derive(new)]
 pub struct AnimationAction {
     #[new(into)]

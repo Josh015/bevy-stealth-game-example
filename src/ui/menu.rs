@@ -1,7 +1,7 @@
 use bevy::{prelude::*, window::WindowFocused};
 pub use leafwing_input_manager::prelude::*;
 
-use crate::prelude::*;
+use crate::game_state::{GameState, GameplaySet, PostAssetLoadingSet};
 
 pub(super) struct MenuPlugin;
 

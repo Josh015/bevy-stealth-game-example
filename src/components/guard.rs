@@ -4,7 +4,13 @@ use rand::prelude::*;
 use seldom_state::prelude::*;
 use std::time::Duration;
 
-use crate::prelude::*;
+use crate::{
+    actions::{
+        AnimationAction, EmoteAction, FaceDirectionAction, MoveToAction,
+        ParallelActions, SoundAction, WaitAction,
+    },
+    game_state::StoppedWhenPausedSet,
+};
 
 pub(super) struct GuardPlugin;
 

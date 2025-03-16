@@ -1,5 +1,16 @@
 #![allow(clippy::too_many_arguments, clippy::type_complexity)]
 
+mod actions;
+mod assets;
+mod components;
+mod events;
+mod game_state;
+mod system_params;
+mod ui;
+mod util;
+
+use actions::*;
+use assets::*;
 use avian3d::prelude::*;
 use bevy::{
     asset::LoadState,
@@ -13,12 +24,15 @@ use bevy::{
     window::PresentMode,
 };
 use bevy_sequential_actions::*;
-use bevy_stealth_game_example::{prelude::*, *};
 use bevy_tweening::*;
+use components::*;
+use events::*;
+use game_state::*;
 use polyanya::Triangulation;
 use rand::prelude::*;
 use seldom_state::prelude::*;
 use std::{f32::consts::FRAC_PI_2, time::Duration};
+use ui::*;
 use vleue_navigator::{
     NavMesh, VleueNavigatorPlugin,
     prelude::{
@@ -51,7 +65,14 @@ fn main() {
             StateMachinePlugin,
             TweeningPlugin,
         ))
-        .add_plugins(LibPlugin)
+        .add_plugins((
+            ActionsPlugin,
+            AssetsPlugin,
+            ComponentsPlugin,
+            GameStatePlugin,
+            EventsPlugin,
+            UiPlugin,
+        ))
         .add_systems(OnEnter(GameState::StartMenu), setup)
         .add_systems(
             Update,

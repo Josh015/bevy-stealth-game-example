@@ -3,7 +3,7 @@ use bevy_sequential_actions::*;
 use derive_new::new;
 use std::time::Duration;
 
-use crate::prelude::*;
+use crate::game_state::StoppedWhenPausedSet;
 
 pub(super) struct WaitActionPlugin;
 

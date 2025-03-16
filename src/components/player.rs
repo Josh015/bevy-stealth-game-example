@@ -1,7 +1,9 @@
 use bevy::prelude::*;
 use leafwing_input_manager::prelude::*;
 
-use crate::prelude::*;
+use crate::game_state::GameplaySet;
+
+use super::{Destination, MoveSpeed};
 
 pub(super) struct PlayerPlugin;
 

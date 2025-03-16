@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::prelude::*;
+use crate::assets::SoundWaveConfig;
 
 pub(super) struct FootstepsPlugin;
 

@@ -2,12 +2,12 @@ use bevy::prelude::*;
 use bevy_sequential_actions::*;
 use derive_new::new;
 
-use crate::prelude::*;
+use crate::components::Heading;
 
 /// Rotate to face a given direction.
 ///
-/// **WARNING**: Malfunctions when used in [`ParallelActions`] with
-/// [`MoveToAction`].
+/// **WARNING**: Malfunctions when used in [`ParallelActions`](super::ParallelActions) with
+/// [`MoveToAction`](super::MoveToAction).
 #[derive(new)]
 pub struct FaceDirectionAction {
     direction: Dir3,

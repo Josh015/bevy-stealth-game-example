@@ -1,5 +1,3 @@
-use bevy::app::prelude::*;
-
 mod animations_clips;
 mod barrier;
 mod door;
@@ -37,6 +35,8 @@ pub use script::*;
 pub use security_camera::*;
 pub use speed::*;
 pub use weapon::*;
+
+use bevy::app::prelude::*;
 
 pub(super) struct ComponentsPlugin;
 

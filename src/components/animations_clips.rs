@@ -1,6 +1,9 @@
 use bevy::{ecs::prelude::*, prelude::*, utils::HashMap};
 
-use crate::prelude::*;
+use crate::{
+    game_state::{ActiveWhenPausedSet, GameState},
+    system_params::Animations,
+};
 
 const DEFAULT_ANIMATION: &str = "idle";
 
