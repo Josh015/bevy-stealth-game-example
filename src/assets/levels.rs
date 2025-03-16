@@ -18,6 +18,7 @@ pub struct LevelConfig {
     on_start: ScriptCommands,
     on_alert: ScriptCommands,
     on_escape: ScriptCommands,
+    on_end_level: ScriptCommands,
     //glass
     //grates
 }
@@ -42,9 +43,16 @@ pub enum ScriptCommandConfig {
     LookAt,       // (waypoint ID), blocking.
     Wait,         // (delay), blocking.
     Repeat,       // (), non-blocking, Repeats the script indefinitely.
-    PlayAudio,    // (sound name, text), non-blocking.
-    TickCount,    // (tick count), Pair with sync? Set how long actions take?
-    Sync,         // (), blocking, Blocks until other actions complete?
+    PlayVideo,    // (file name), non-blocking. Interrupt via mouse click.
+    PlayAudio,    // (file name, text), non-blocking.
+    TickCount,    // (tick count), non-blocking, Set interval for syncs.
+    Sync,         // (tick count), blocking, Blocks until tick count reached.
     Reset,        // (self), Reset floor switches to their off state.
     SetDoorTimer, // (countdown time), Shows door timer UI, non-blocking.
+    SetGlobal,    // (string, string), Set a global variable to access later.
+    Achievement,  // (string), Triggers an achievement.
+    NextLevel,    // (), Go to next level.
 }
+
+// TODO: Sync system is based on current time in integer second intervals.
+// It's needed for synchronizing enemy patrol scripts.
