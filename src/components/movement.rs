@@ -6,8 +6,7 @@ use bevy::{
 use vleue_navigator::{NavMesh, prelude::ManagedNavMesh};
 
 use crate::{
-    system_params::Animations, system_sets::StoppedWhenPausedSet,
-    util::wrap_angle,
+    system_params::Animations, system_sets::StopWhenPausedSet, util::wrap_angle,
 };
 
 use super::{MoveSpeed, RotateSpeed};
@@ -31,7 +30,7 @@ impl Plugin for MovementPlugin {
                     .run_if(on_timer(Duration::from_secs_f32(0.1))),
                 follow_route_to_destination,
             )
-                .in_set(StoppedWhenPausedSet),
+                .in_set(StopWhenPausedSet),
         );
     }
 }

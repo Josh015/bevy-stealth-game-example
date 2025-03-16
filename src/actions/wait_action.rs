@@ -3,13 +3,13 @@ use bevy_sequential_actions::*;
 use derive_new::new;
 use std::time::Duration;
 
-use crate::system_sets::StoppedWhenPausedSet;
+use crate::system_sets::StopWhenPausedSet;
 
 pub(super) struct WaitActionPlugin;
 
 impl Plugin for WaitActionPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, wait_timer_update.in_set(StoppedWhenPausedSet));
+        app.add_systems(Update, wait_timer_update.in_set(StopWhenPausedSet));
     }
 }
 

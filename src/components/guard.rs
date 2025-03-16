@@ -9,7 +9,7 @@ use crate::{
         AnimationAction, EmoteAction, FaceDirectionAction, MoveToAction,
         ParallelActions, SoundAction, WaitAction,
     },
-    system_sets::StoppedWhenPausedSet,
+    system_sets::StopWhenPausedSet,
 };
 
 pub(super) struct GuardPlugin;
@@ -19,7 +19,7 @@ impl Plugin for GuardPlugin {
         app.add_systems(
             Update,
             (guard_states, trigger_game_over_on_player_collision)
-                .in_set(StoppedWhenPausedSet),
+                .in_set(StopWhenPausedSet),
         );
     }
 }
