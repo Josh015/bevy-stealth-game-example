@@ -3,7 +3,7 @@ pub use leafwing_input_manager::prelude::*;
 
 use crate::{
     states::GameState,
-    system_sets::{GameplaySet, PostAssetLoadingSet},
+    system_sets::{ActiveAfterLoadingSet, ActiveDuringGameplaySet},
 };
 
 pub(super) struct MenuPlugin;
@@ -13,10 +13,14 @@ impl Plugin for MenuPlugin {
         app.add_plugins(InputManagerPlugin::<MenuAction>::default())
             .init_resource::<ActionState<MenuAction>>()
             .insert_resource(MenuAction::make_input_map())
-            .add_systems(Update, handle_menu_inputs.in_set(PostAssetLoadingSet))
             .add_systems(
                 Update,
-                pause_game_when_window_loses_focus.in_set(GameplaySet),
+                handle_menu_inputs.in_set(ActiveAfterLoadingSet),
+            )
+            .add_systems(
+                Update,
+                pause_game_when_window_loses_focus
+                    .in_set(ActiveDuringGameplaySet),
             );
     }
 }

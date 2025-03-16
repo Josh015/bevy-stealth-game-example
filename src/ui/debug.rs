@@ -2,7 +2,7 @@ use bevy::{color::palettes, prelude::*};
 pub use leafwing_input_manager::prelude::*;
 use vleue_navigator::{NavMeshDebug, prelude::*};
 
-use crate::{components::Route, system_sets::GameplaySet};
+use crate::{components::Route, system_sets::ActiveDuringGameplaySet};
 
 pub(super) struct DebugPlugin;
 
@@ -12,10 +12,13 @@ impl Plugin for DebugPlugin {
             .init_resource::<ActionState<DebugUiAction>>()
             .insert_resource(DebugUiAction::make_input_map())
             .init_resource::<DebugUiToggles>()
-            .add_systems(Update, handle_debug_inputs.in_set(GameplaySet))
             .add_systems(
                 Update,
-                debug_display_routes.in_set(GameplaySet).run_if(
+                handle_debug_inputs.in_set(ActiveDuringGameplaySet),
+            )
+            .add_systems(
+                Update,
+                debug_display_routes.in_set(ActiveDuringGameplaySet).run_if(
                     |debug_ui_toggles: Res<DebugUiToggles>| {
                         debug_ui_toggles.route
                     },

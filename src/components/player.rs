@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use leafwing_input_manager::prelude::*;
 
-use crate::system_sets::GameplaySet;
+use crate::system_sets::ActiveDuringGameplaySet;
 
 use super::{Destination, MoveSpeed};
 
@@ -10,7 +10,7 @@ pub(super) struct PlayerPlugin;
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins(InputManagerPlugin::<PlayerAction>::default())
-            .add_systems(Update, control_player.in_set(GameplaySet));
+            .add_systems(Update, control_player.in_set(ActiveDuringGameplaySet));
     }
 }
 
