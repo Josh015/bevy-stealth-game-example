@@ -6,7 +6,7 @@ use bevy::{
 use vleue_navigator::{NavMesh, prelude::ManagedNavMesh};
 
 use crate::{
-    game_state::StoppedWhenPausedSet, system_params::Animations,
+    system_params::Animations, system_sets::StoppedWhenPausedSet,
     util::wrap_angle,
 };
 

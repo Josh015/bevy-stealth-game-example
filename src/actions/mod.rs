@@ -23,7 +23,7 @@ pub use wait_action::*;
 use bevy::prelude::*;
 use bevy_sequential_actions::*;
 
-use crate::game_state::{ActiveWhenPausedSet, GameState};
+use crate::{states::GameState, system_sets::ActiveWhenPausedSet};
 
 pub(super) struct ActionsPlugin;
 

@@ -9,7 +9,7 @@ use crate::{
         AnimationAction, EmoteAction, FaceDirectionAction, MoveToAction,
         ParallelActions, SoundAction, WaitAction,
     },
-    game_state::StoppedWhenPausedSet,
+    system_sets::StoppedWhenPausedSet,
 };
 
 pub(super) struct GuardPlugin;

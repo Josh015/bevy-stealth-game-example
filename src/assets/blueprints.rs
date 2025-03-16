@@ -10,7 +10,7 @@ use crate::{
         Hearing, MoveSpeed, Pickup, Player, RotateSpeed, SecurityCamera,
         Stunnable, Vision, Weapon,
     },
-    game_state::GameState,
+    states::GameState,
 };
 
 use super::GameAssets;

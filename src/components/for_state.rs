@@ -2,7 +2,7 @@ use bevy::{ecs::prelude::*, prelude::*};
 use derive_new::new;
 use strum::IntoEnumIterator;
 
-use crate::game_state::GameState;
+use crate::states::GameState;
 
 pub(super) struct ForStatePlugin;
 

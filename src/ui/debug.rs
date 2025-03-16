@@ -2,7 +2,7 @@ use bevy::{color::palettes, prelude::*};
 pub use leafwing_input_manager::prelude::*;
 use vleue_navigator::{NavMeshDebug, prelude::*};
 
-use crate::{components::Route, game_state::GameplaySet};
+use crate::{components::Route, system_sets::GameplaySet};
 
 pub(super) struct DebugPlugin;
 

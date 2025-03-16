@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use leafwing_input_manager::prelude::*;
 
-use crate::game_state::GameplaySet;
+use crate::system_sets::GameplaySet;
 
 use super::{Destination, MoveSpeed};
 

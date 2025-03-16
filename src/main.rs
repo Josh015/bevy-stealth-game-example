@@ -4,8 +4,9 @@ mod actions;
 mod assets;
 mod components;
 mod events;
-mod game_state;
+mod states;
 mod system_params;
+mod system_sets;
 mod ui;
 mod util;
 
@@ -27,11 +28,12 @@ use bevy_sequential_actions::*;
 use bevy_tweening::*;
 use components::*;
 use events::*;
-use game_state::*;
 use polyanya::Triangulation;
 use rand::prelude::*;
 use seldom_state::prelude::*;
+use states::*;
 use std::{f32::consts::FRAC_PI_2, time::Duration};
+use system_sets::*;
 use ui::*;
 use vleue_navigator::{
     NavMesh, VleueNavigatorPlugin,
@@ -69,8 +71,9 @@ fn main() {
             ActionsPlugin,
             AssetsPlugin,
             ComponentsPlugin,
-            GameStatePlugin,
+            StatesPlugin,
             EventsPlugin,
+            SystemSetsPlugin,
             UiPlugin,
         ))
         .add_systems(OnEnter(GameState::StartMenu), setup)
