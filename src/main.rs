@@ -21,6 +21,10 @@ use bevy::{
     math::Vec3Swizzles,
     pbr::NotShadowCaster,
     prelude::*,
+    render::{
+        RenderPlugin,
+        settings::{Backends, RenderCreation, WgpuSettings},
+    },
     time::common_conditions::on_timer,
     window::PresentMode,
 };
@@ -53,6 +57,13 @@ fn main() {
                         title: "Bevy Stealth Game Example".to_owned(),
                         present_mode: PresentMode::AutoVsync,
                         fit_canvas_to_parent: true,
+                        ..default()
+                    }),
+                    ..default()
+                })
+                .set(RenderPlugin {
+                    render_creation: RenderCreation::Automatic(WgpuSettings {
+                        backends: Some(Backends::VULKAN),
                         ..default()
                     }),
                     ..default()

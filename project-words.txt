@@ -77,5 +77,6 @@ voxels
 vsmarketplacebadge
 vsync
 wasd
+wgpu
 xyza
 xyzw
